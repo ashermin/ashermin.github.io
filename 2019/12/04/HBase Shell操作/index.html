@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.0.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/avatar.jpg">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/avatar.jpg">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/avatar.jpg">
+  <link rel="mask-icon" href="/images/avatar.jpg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+
+
+<script id="hexo-configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '7.4.2',
+    exturl: false,
+    sidebar: {"position":"left","width":260,"display":"post","offset":12,"onmobile":false},
+    copycode: {"enable":true,"show_result":true,"style":"default"},
+    back2top: {"enable":true,"sidebar":false,"scrollpercent":true},
+    bookmark: {"enable":false,"color":"#222","save":"auto"},
+    fancybox: false,
+    mediumzoom: false,
+    lazyload: false,
+    pangu: false,
+    algolia: {
+      appID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    localsearch: {"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},
+    path: '',
+    motion: {"enable":false,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    translation: {
+      copy_button: '复制',
+      copy_success: '复制成功',
+      copy_failure: '复制失败'
+    },
+    sidebarPadding: 40
+  };
+</script>
+
+  <meta name="description" content="进入HBase：$ bin&#x2F;hbase shell1. DDL命令——命名空间&#x2F;表的管理1.1 命名空间的管理 创建namespace：create_namespace &amp;#39;DOTA2&amp;#39; 查看namespace结构：describe_namespace &amp;#39;DOTA2&amp;#39; 删除namespace：drop_namespace &amp;#39;DOTA2&amp;#39;（必须为空）">
+<meta property="og:type" content="article">
+<meta property="og:title" content="HBase Shell操作">
+<meta property="og:url" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2019&#x2F;12&#x2F;04&#x2F;HBase%20Shell%E6%93%8D%E4%BD%9C&#x2F;index.html">
+<meta property="og:site_name" content="MIN MIN">
+<meta property="og:description" content="进入HBase：$ bin&#x2F;hbase shell1. DDL命令——命名空间&#x2F;表的管理1.1 命名空间的管理 创建namespace：create_namespace &amp;#39;DOTA2&amp;#39; 查看namespace结构：describe_namespace &amp;#39;DOTA2&amp;#39; 删除namespace：drop_namespace &amp;#39;DOTA2&amp;#39;（必须为空）">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;images&#x2F;HBase%20Shell%E6%93%8D%E4%BD%9C&#x2F;image-20191205101438113.png">
+<meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;images&#x2F;HBase%20Shell%E6%93%8D%E4%BD%9C&#x2F;image-20191205101726490.png">
+<meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;images&#x2F;HBase%20Shell%E6%93%8D%E4%BD%9C&#x2F;image-20191205100947866.png">
+<meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;images&#x2F;HBase%20Shell%E6%93%8D%E4%BD%9C&#x2F;image-20191205100822381.png">
+<meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;images&#x2F;HBase%20Shell%E6%93%8D%E4%BD%9C&#x2F;image-20191205102907792.png">
+<meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;images&#x2F;HBase%20Shell%E6%93%8D%E4%BD%9C&#x2F;image-20191204173733014.png">
+<meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;images&#x2F;HBase%20Shell%E6%93%8D%E4%BD%9C&#x2F;image-20191205101210820.png">
+<meta property="og:updated_time" content="2019-12-10T13:16:15.143Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;images&#x2F;HBase%20Shell%E6%93%8D%E4%BD%9C&#x2F;image-20191205101438113.png">
+
+<link rel="canonical" href="http://yoursite.com/2019/12/04/HBase%20Shell%E6%93%8D%E4%BD%9C/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true,
+    isPage: false,
+    isArchive: false
+  };
+</script>
+
+  <title>HBase Shell操作 | MIN MIN</title>
+  
+
+
+  <script>
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?cad2a7930afd095772e571e6eab3628f";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+  <!--  -->
+<link href='//fonts.googleapis.com/css?family=Kaushan+Script' rel='stylesheet' type='text/css'>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">MIN MIN</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+        <p class="site-subtitle">BLOG</p>
+  </div>
+
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档</a>
+
+  </li>
+  </ul>
+
+</nav>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/12/04/HBase%20Shell%E6%93%8D%E4%BD%9C/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="MIN MIN">
+      <meta itemprop="description" content="即使最后没有人为你鼓掌，也要优雅地谢幕，感谢自己的认真付出。">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="MIN MIN">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          HBase Shell操作
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2019-12-04 11:49:34" itemprop="dateCreated datePublished" datetime="2019-12-04T11:49:34+08:00">2019-12-04</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2019-12-10 21:16:15" itemprop="dateModified" datetime="2019-12-10T21:16:15+08:00">2019-12-10</time>
+              </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>进入HBase：</p><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> bin/hbase shell</span></span><br></pre></td></tr></table></figure><h3 id="1-DDL命令——命名空间-表的管理"><a href="#1-DDL命令——命名空间-表的管理" class="headerlink" title="1. DDL命令——命名空间/表的管理"></a>1. DDL命令——命名空间/表的管理</h3><h4 id="1-1-命名空间的管理"><a href="#1-1-命名空间的管理" class="headerlink" title="1.1 命名空间的管理"></a>1.1 命名空间的管理</h4><ol>
+<li>创建namespace：<code>create_namespace &#39;DOTA2&#39;</code></li>
+<li>查看namespace结构：<code>describe_namespace &#39;DOTA2&#39;</code></li>
+<li>删除namespace：<code>drop_namespace &#39;DOTA2&#39;</code>（必须为空）</li>
+</ol><a id="more"></a>
+
+
+
+<h4 id="1-2-创建表（增）"><a href="#1-2-创建表（增）" class="headerlink" title="1.2 创建表（增）"></a>1.2 创建表（增）</h4><p>语法：<code>create &lt;table&gt;, {NAME =&gt; &lt;family1&gt;, VERSIONS =&gt; &lt;versions&gt;}, family2</code></p>
+<p>例：创建表<code>DOTA2_Hexoes</code>，有两个列簇：<code>Hexo_Info</code>和<code>Ability_Info</code>，且版本数均为<code>2</code></p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">hbase(main)&gt;</span><span class="bash"> create <span class="string">'DOTA2_Hexoes'</span>, &#123;NAME =&gt; <span class="string">'Hexo_Info'</span>, VERSIONS =&gt; 2&#125;,&#123;NAME =&gt; <span class="string">'Ability_Info'</span>, VERSIONS =&gt; 2&#125;</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="1-3-删除表（删）"><a href="#1-3-删除表（删）" class="headerlink" title="1.3 删除表（删）"></a>1.3 删除表（删）</h4><p>分两步：</p>
+<ol>
+<li><code>disable &lt;table&gt;</code></li>
+<li><code>drop &lt;table&gt;</code></li>
+</ol>
+<p>例：删除表<code>DOTA2_Hexoes</code></p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">hbase(main)&gt;</span><span class="bash"> <span class="built_in">disable</span> <span class="string">'DOTA2_Hexoes'</span></span></span><br><span class="line"><span class="meta">hbase(main)&gt;</span><span class="bash"> drop <span class="string">'DOTA2_Hexoes'</span></span></span><br></pre></td></tr></table></figure>
+
+<h4 id="1-4-修改表结构（改）"><a href="#1-4-修改表结构（改）" class="headerlink" title="1.4 修改表结构（改）"></a>1.4 修改表结构（改）</h4><p>分三步：</p>
+<ol>
+<li><code>disable &lt;table&gt;</code></li>
+<li>语法：<code>alter &lt;table&gt;, {NAME =&gt; &lt;family&gt;, ...}</code></li>
+<li><code>enable &lt;table&gt;</code></li>
+</ol>
+<p>例：修改表<code>DOTA2_Hexoes</code>的<code>Ability_Info</code>为<code>Abilities_Info</code></p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">hbase(main)&gt;</span><span class="bash"> alter <span class="string">'DOTA2_Hexoes'</span>, &#123;NAME =&gt; <span class="string">'Abilities_Info'</span>&#125;</span></span><br></pre></td></tr></table></figure>
+
+<h5 id="1-4-1-删除列簇"><a href="#1-4-1-删除列簇" class="headerlink" title="1.4.1 删除列簇"></a>1.4.1 删除列簇</h5><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">hbase(main)&gt;</span><span class="bash"> alter <span class="string">'DOTA2_Hexoes'</span>, &#123;<span class="string">'delete'</span> =&gt; <span class="string">'Abilities_Info'</span>&#125;</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="1-5-查看表及结构（查）"><a href="#1-5-查看表及结构（查）" class="headerlink" title="1.5 查看表及结构（查）"></a>1.5 查看表及结构（查）</h4><h5 id="1-5-1-查看有哪些表"><a href="#1-5-1-查看有哪些表" class="headerlink" title="1.5.1 查看有哪些表"></a>1.5.1 查看有哪些表</h5><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">hbase(main)&gt;</span><span class="bash"> list</span></span><br></pre></td></tr></table></figure>
+
+<h5 id="1-5-2-查看表的结构"><a href="#1-5-2-查看表的结构" class="headerlink" title="1.5.2 查看表的结构"></a>1.5.2 查看表的结构</h5><p>语法：<code>describe/desc &lt;table&gt;</code></p>
+<p>例如：查看表<code>DOTA2_Hexoes</code>的结构</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">hbase(main)&gt;</span><span class="bash"> desc <span class="string">'DOTA2_Hexoes'</span></span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="string">Table</span> <span class="string">DOTA2_Hexoes</span> <span class="string">is</span> <span class="string">ENABLED</span></span><br><span class="line"><span class="string">DOTA2_Hexoes</span>  <span class="string">//namespace_name(default):table_name</span></span><br><span class="line"><span class="string">COLUMN</span> <span class="string">FAMILIES</span> <span class="string">DESCRIPTION&#123;</span></span><br><span class="line"><span class="string">NAME</span> <span class="string">=&gt;</span> <span class="string">'Abilities_Info'</span><span class="string">,</span>  <span class="string">//列簇</span></span><br><span class="line"><span class="string">BLOOMFILTER</span> <span class="string">=&gt;</span> <span class="string">'ROW'</span><span class="string">,</span>  <span class="string">//布隆过滤器,http://hbase.apache.org/book.html#bloom.filters.when</span></span><br><span class="line"><span class="string">VERSIONS</span> <span class="string">=&gt;</span> <span class="string">'1'</span><span class="string">,</span>  <span class="string">//设置保存的版本数</span></span><br><span class="line"><span class="string">IN_MEMORY</span> <span class="string">=&gt;</span> <span class="string">'false'</span><span class="string">,</span>  <span class="string">//设置激进缓存，优先考虑将该列族放入块缓存中。针对随机读操作相对较多的列族可以设置该属性为true</span></span><br><span class="line"><span class="string">KEEP_DELETED_CELLS</span> <span class="string">=&gt;</span> <span class="string">'FALSE'</span><span class="string">,</span> </span><br><span class="line"><span class="string">DATA_BLOCK_ENCODING</span> <span class="string">=&gt;</span> <span class="string">'NONE'</span><span class="string">,</span>  <span class="string">//数据块编码方式,http://hbase.apache.org/book.html#data.block.encoding.enable</span></span><br><span class="line"><span class="string">TTL</span> <span class="string">=&gt;</span> <span class="string">'FOREVER'</span><span class="string">,</span>  <span class="string">//Time</span> <span class="string">To</span> <span class="string">Live,设置数据的过期时间，单位ms</span></span><br><span class="line"><span class="string">COMPRESSION</span> <span class="string">=&gt;</span> <span class="string">'NONE'</span><span class="string">,</span>  <span class="string">//设置压缩算法</span></span><br><span class="line"><span class="string">MIN_VERSIONS</span> <span class="string">=&gt;</span> <span class="string">'0'</span><span class="string">,</span>  <span class="string">//最小存储版本数</span></span><br><span class="line"><span class="string">BLOCKCACHE</span> <span class="string">=&gt;</span> <span class="string">'true'</span><span class="string">,</span>  <span class="string">//设置数据库缓存</span></span><br><span class="line"><span class="string">BLOCKSIZE</span> <span class="string">=&gt;</span> <span class="string">'65536'</span><span class="string">,</span>  <span class="string">//设置HFile数据块大小（默认64KB）</span></span><br><span class="line"><span class="string">REPLICATION_SCOPE</span> <span class="string">=&gt;</span> <span class="string">'0'</span>  <span class="string">//配置HBase集群replication时需要将该参数设置为1</span></span><br><span class="line"><span class="string">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<hr>
+<h3 id="2-DML命令——表数据"><a href="#2-DML命令——表数据" class="headerlink" title="2. DML命令——表数据"></a>2. DML命令——表数据</h3><h4 id="2-1-添加数据（增）"><a href="#2-1-添加数据（增）" class="headerlink" title="2.1 添加数据（增）"></a>2.1 添加数据（增）</h4><p>语法: <code>put &lt;table&gt;,&lt;rowkey&gt;,&lt;family:column&gt;,&lt;value&gt;,&lt;timestamp&gt;</code></p>
+<p>例：给<code>DOTA2:DOTA2_Hexoes</code>表添加列簇<code>Hexo_Info</code>中的数据：</p>
+<img src="/images/HBase%20Shell%E6%93%8D%E4%BD%9C/image-20191205101438113.png" alt="image-20191205101438113" style="zoom:50%;">
+
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">hbase(main)&gt;</span><span class="bash"> put <span class="string">'DOTA2:DOTA2_Hexoes'</span>,<span class="string">'row_key_1'</span>,<span class="string">'Hexo_Info:Name'</span>,<span class="string">'莉娜'</span></span></span><br><span class="line"><span class="meta">hbase(main)&gt;</span><span class="bash"> put <span class="string">'DOTA2:DOTA2_Hexoes'</span>,<span class="string">'row_key_1'</span>,<span class="string">'Hexo_Info:Attribute'</span>,<span class="string">'智力'</span></span></span><br><span class="line"><span class="meta">hbase(main)&gt;</span><span class="bash"> put <span class="string">'DOTA2:DOTA2_Hexoes'</span>,<span class="string">'row_key_1'</span>,<span class="string">'Hexo_Info:Attack_types'</span>,<span class="string">'远程'</span></span></span><br><span class="line"><span class="meta">hbase(main)&gt;</span><span class="bash"> put <span class="string">'DOTA2:DOTA2_Hexoes'</span>,<span class="string">'row_key_11'</span>,<span class="string">'Hexo_Info:Name'</span>,<span class="string">'撼地者'</span></span></span><br><span class="line"><span class="meta">hbase(main)&gt;</span><span class="bash"> put <span class="string">'DOTA2:DOTA2_Hexoes'</span>,<span class="string">'row_key_11'</span>,<span class="string">'Hexo_Info:Attribute'</span>,<span class="string">'力量'</span></span></span><br><span class="line"><span class="meta">hbase(main)&gt;</span><span class="bash"> put <span class="string">'DOTA2:DOTA2_Hexoes'</span>,<span class="string">'row_key_11'</span>,<span class="string">'Hexo_Info:Attack_types'</span>,<span class="string">'近战'</span></span></span><br><span class="line"><span class="meta">hbase(main)&gt;</span><span class="bash"> put <span class="string">'DOTA2:DOTA2_Hexoes'</span>,<span class="string">'row_key_2'</span>,<span class="string">'Hexo_Info:Name'</span>,<span class="string">'敌法师'</span></span></span><br><span class="line"><span class="meta">hbase(main)&gt;</span><span class="bash"> put <span class="string">'DOTA2:DOTA2_Hexoes'</span>,<span class="string">'row_key_2'</span>,<span class="string">'Hexo_Info:Attribute'</span>,<span class="string">'敏捷'</span></span></span><br><span class="line"><span class="meta">hbase(main)&gt;</span><span class="bash"> put <span class="string">'DOTA2:DOTA2_Hexoes'</span>,<span class="string">'row_key_2'</span>,<span class="string">'Hexo_Info:Attack_types'</span>,<span class="string">'近战'</span></span></span><br><span class="line"><span class="meta">hbase(main)&gt;</span><span class="bash"> put <span class="string">'DOTA2:DOTA2_Hexoes'</span>,<span class="string">'row_key_3'</span>,<span class="string">'Hexo_Info:Name'</span>,<span class="string">'灰烬之灵'</span></span></span><br><span class="line"><span class="meta">hbase(main)&gt;</span><span class="bash"> put <span class="string">'DOTA2:DOTA2_Hexoes'</span>,<span class="string">'row_key_3'</span>,<span class="string">'Hexo_Info:Attribute'</span>,<span class="string">'敏捷'</span></span></span><br><span class="line"><span class="meta">hbase(main)&gt;</span><span class="bash"> put <span class="string">'DOTA2:DOTA2_Hexoes'</span>,<span class="string">'row_key_3'</span>,<span class="string">'Hexo_Info:Attack_types'</span>,<span class="string">'近战'</span></span></span><br><span class="line"><span class="meta">hbase(main)&gt;</span><span class="bash"> put <span class="string">'DOTA2:DOTA2_Hexoes'</span>,<span class="string">'row_key_4'</span>,<span class="string">'Hexo_Info:Name'</span>,<span class="string">'莱恩'</span></span></span><br><span class="line"><span class="meta">hbase(main)&gt;</span><span class="bash"> put <span class="string">'DOTA2:DOTA2_Hexoes'</span>,<span class="string">'row_key_4'</span>,<span class="string">'Hexo_Info:Attribute'</span>,<span class="string">'智力'</span></span></span><br><span class="line"><span class="meta">hbase(main)&gt;</span><span class="bash"> put <span class="string">'DOTA2:DOTA2_Hexoes'</span>,<span class="string">'row_key_4'</span>,<span class="string">'Hexo_Info:Attack_types'</span>,<span class="string">'远程'</span></span></span><br><span class="line"><span class="meta">hbase(main)&gt;</span><span class="bash"> put <span class="string">'DOTA2:DOTA2_Hexoes'</span>,<span class="string">'row_key_5'</span>,<span class="string">'Hexo_Info:Name'</span>,<span class="string">'潮汐猎人'</span></span></span><br><span class="line"><span class="meta">hbase(main)&gt;</span><span class="bash"> put <span class="string">'DOTA2:DOTA2_Hexoes'</span>,<span class="string">'row_key_5'</span>,<span class="string">'Hexo_Info:Attribute'</span>,<span class="string">'力量'</span></span></span><br><span class="line"><span class="meta">hbase(main)&gt;</span><span class="bash"> put <span class="string">'DOTA2:DOTA2_Hexoes'</span>,<span class="string">'row_key_5'</span>,<span class="string">'Hexo_Info:Attack_types'</span>,<span class="string">'近战'</span></span></span><br><span class="line"><span class="meta">hbase(main)&gt;</span><span class="bash"> put <span class="string">'DOTA2:DOTA2_Hexoes'</span>,<span class="string">'row_key_6'</span>,<span class="string">'Hexo_Info:Name'</span>,<span class="string">'影魔'</span></span></span><br><span class="line"><span class="meta">hbase(main)&gt;</span><span class="bash"> put <span class="string">'DOTA2:DOTA2_Hexoes'</span>,<span class="string">'row_key_6'</span>,<span class="string">'Hexo_Info:Attribute'</span>,<span class="string">'敏捷'</span></span></span><br><span class="line"><span class="meta">hbase(main)&gt;</span><span class="bash"> put <span class="string">'DOTA2:DOTA2_Hexoes'</span>,<span class="string">'row_key_6'</span>,<span class="string">'Hexo_Info:Attack_types'</span>,<span class="string">'远程'</span></span></span><br><span class="line"><span class="meta">hbase(main)&gt;</span><span class="bash"> put <span class="string">'DOTA2:DOTA2_Hexoes'</span>,<span class="string">'row_key_7'</span>,<span class="string">'Hexo_Info:Name'</span>,<span class="string">'米波'</span></span></span><br><span class="line"><span class="meta">hbase(main)&gt;</span><span class="bash"> put <span class="string">'DOTA2:DOTA2_Hexoes'</span>,<span class="string">'row_key_7'</span>,<span class="string">'Hexo_Info:Attribute'</span>,<span class="string">'敏捷'</span></span></span><br><span class="line"><span class="meta">hbase(main)&gt;</span><span class="bash"> put <span class="string">'DOTA2:DOTA2_Hexoes'</span>,<span class="string">'row_key_7'</span>,<span class="string">'Hexo_Info:Attack_types'</span>,<span class="string">'近战'</span></span></span><br></pre></td></tr></table></figure>
+
+<img src="/images/HBase%20Shell%E6%93%8D%E4%BD%9C/image-20191205101726490.png" alt="image-20191205101726490" style="zoom: 50%;">
+
+<h4 id="2-2-删除数据（删）"><a href="#2-2-删除数据（删）" class="headerlink" title="2.2 删除数据（删）"></a>2.2 删除数据（删）</h4><h5 id="2-2-1-删除行中的某个列值"><a href="#2-2-1-删除行中的某个列值" class="headerlink" title="2.2.1 删除行中的某个列值"></a>2.2.1 删除行中的某个列值</h5><p>语法：<code>delete &lt;table&gt;, &lt;rowkey&gt;, &lt;family:column&gt; [,&lt;timestamp&gt;]</code>，需要指定列名</p>
+<p>例：删除<code>DOTA2:DOTA2_Hexoes</code>表的<code>row_key_7</code>的<code>Hexo_Info:Name</code>列：</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">hbase(main)&gt;</span><span class="bash"> delete <span class="string">'DOTA2:DOTA2_Hexoes'</span>,<span class="string">'row_key_7'</span>,<span class="string">'Hexo_Info:Name'</span></span></span><br></pre></td></tr></table></figure>
+
+<h5 id="2-2-2-删除行"><a href="#2-2-2-删除行" class="headerlink" title="2.2.2 删除行"></a>2.2.2 删除行</h5><p>语法：<code>deleteall &lt;table&gt;, &lt;rowkey&gt;[,&lt;timestamp&gt;]</code></p>
+<h5 id="2-2-3-清空表"><a href="#2-2-3-清空表" class="headerlink" title="2.2.3 清空表"></a>2.2.3 清空表</h5><p>语法：<code>truncate &lt;table&gt;</code></p>
+<p>清空表流程：<code>disable table</code> =&gt;<code>drop table</code> =&gt; <code>create table</code></p>
+<h4 id="2-3-修改数据（改）"><a href="#2-3-修改数据（改）" class="headerlink" title="2.3 修改数据（改）"></a>2.3 修改数据（改）</h4><p>所谓的修改数据，就是直接<code>put</code>就行了，数据会被最新的<code>timestamp</code>时间戳所覆盖。</p>
+<h4 id="2-4-查询数据（查）"><a href="#2-4-查询数据（查）" class="headerlink" title="2.4 查询数据（查）"></a>2.4 查询数据（查）</h4><h5 id="2-4-1-全表扫描——scan"><a href="#2-4-1-全表扫描——scan" class="headerlink" title="2.4.1 全表扫描——scan"></a>2.4.1 全表扫描——scan</h5><p>语法：<code>scan &lt;table&gt;, {COLUMNS =&gt; [ &lt;family:column&gt;,.... ], LIMIT =&gt; num}</code></p>
+<p>例1：查询<code>DOTA2:DOTA2_Hexoes</code>表的前三行数据：</p>
+<img src="/images/HBase%20Shell%E6%93%8D%E4%BD%9C/image-20191205100947866.png" alt="image-20191205100947866" style="zoom:50%;">
+
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">hbase(main)&gt;</span><span class="bash"> scan <span class="string">'DOTA2:DOTA2_Hexoes'</span>,&#123;LIMIT =&gt; 3&#125;</span></span><br></pre></td></tr></table></figure>
+
+<img src="/images/HBase%20Shell%E6%93%8D%E4%BD%9C/image-20191205100822381.png" alt="image-20191205100822381" style="zoom:50%;">
+
+<p>例2：查询<code>DOTA2:DOTA2_Hexoes</code>表<code>Row Key</code>范围为<code>row_key_2</code>至<code>row_key_3</code>的数据：</p>
+<p>⚠️注意：范围是左闭右开的！所以<code>STOPROW</code>要写<code>row_key_4</code></p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">hbase(main)&gt;</span><span class="bash"> scan <span class="string">'DOTA2:DOTA2_Hexoes'</span>,&#123;STARTROW=&gt;<span class="string">'row_key_2'</span>,STOPROW=&gt;<span class="string">'row_key_4'</span>&#125;</span></span><br></pre></td></tr></table></figure>
+
+<img src="/images/HBase%20Shell%E6%93%8D%E4%BD%9C/image-20191205102907792.png" alt="image-20191205102907792" style="zoom:50%;">
+
+<h5 id="2-4-2-按条件查询——get"><a href="#2-4-2-按条件查询——get" class="headerlink" title="2.4.2 按条件查询——get"></a>2.4.2 按条件查询——get</h5><p>语法：<code>get &lt;table&gt;,&lt;rowkey&gt;,[&lt;family:column&gt;,....]</code></p>
+<p>例：查询<code>DOTA2:DOTA2_Hexoes</code>表<code>row_key_1</code>下所有的列值：</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">hbase(main)&gt;</span><span class="bash"> get <span class="string">'DOTA2:DOTA2_Hexoes'</span>,<span class="string">'row_key_1'</span></span></span><br></pre></td></tr></table></figure>
+
+<img src="/images/HBase%20Shell%E6%93%8D%E4%BD%9C/image-20191204173733014.png" alt="image-20191204173733014" style="zoom:50%;">
+
+<h5 id="2-4-3-查询表中数据行数"><a href="#2-4-3-查询表中数据行数" class="headerlink" title="2.4.3 查询表中数据行数"></a>2.4.3 查询表中数据行数</h5><p>语法：<code>count &lt;table&gt;, {INTERVAL =&gt; intervalNum, CACHE =&gt; cacheNum}</code> </p>
+<p> <code>INTERVAL</code>设置多少行显示一次及对应的<code>Row Key</code>（默认1000）；<code>CACHE</code>每次去取的缓存区大小（默认10），调整该参数可提高查询速度</p>
+<p>例：查询表<code>DOTA2:DOTA2_Hexoes</code>的行数，每2条显示一次：</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">hbase(main)&gt;</span><span class="bash"> count <span class="string">'DOTA2:DOTA2_Hexoes'</span>,&#123;INTERVAL =&gt; 2&#125;</span></span><br></pre></td></tr></table></figure>
+
+<img src="/images/HBase%20Shell%E6%93%8D%E4%BD%9C/image-20191205101210820.png" alt="image-20191205101210820" style="zoom:50%;">
+
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-next post-nav-item">
+                <a href="/2019/12/03/HBase%E5%8E%9F%E7%90%86%E8%A7%A3%E6%9E%90/" rel="next" title="HBase原理解析">
+                  <i class="fa fa-chevron-left"></i> HBase原理解析
+                </a>
+            </div>
+
+            <span class="post-nav-divider"></span>
+
+            <div class="post-nav-prev post-nav-item">
+                <a href="/2019/12/06/HBase%E4%BC%AA%E5%88%86%E5%B8%83%E5%BC%8F%E7%8E%AF%E5%A2%83%E9%83%A8%E7%BD%B2/" rel="prev" title="HBase伪分布式环境部署">
+                  HBase伪分布式环境部署 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-DDL命令——命名空间-表的管理"><span class="nav-number">1.</span> <span class="nav-text">1. DDL命令——命名空间/表的管理</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-1-命名空间的管理"><span class="nav-number">1.1.</span> <span class="nav-text">1.1 命名空间的管理</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#1-2-创建表（增）"><span class="nav-number">1.2.</span> <span class="nav-text">1.2 创建表（增）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#1-3-删除表（删）"><span class="nav-number">1.3.</span> <span class="nav-text">1.3 删除表（删）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#1-4-修改表结构（改）"><span class="nav-number">1.4.</span> <span class="nav-text">1.4 修改表结构（改）</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#1-4-1-删除列簇"><span class="nav-number">1.4.1.</span> <span class="nav-text">1.4.1 删除列簇</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#1-5-查看表及结构（查）"><span class="nav-number">1.5.</span> <span class="nav-text">1.5 查看表及结构（查）</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#1-5-1-查看有哪些表"><span class="nav-number">1.5.1.</span> <span class="nav-text">1.5.1 查看有哪些表</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#1-5-2-查看表的结构"><span class="nav-number">1.5.2.</span> <span class="nav-text">1.5.2 查看表的结构</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-DML命令——表数据"><span class="nav-number">2.</span> <span class="nav-text">2. DML命令——表数据</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#2-1-添加数据（增）"><span class="nav-number">2.1.</span> <span class="nav-text">2.1 添加数据（增）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-2-删除数据（删）"><span class="nav-number">2.2.</span> <span class="nav-text">2.2 删除数据（删）</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#2-2-1-删除行中的某个列值"><span class="nav-number">2.2.1.</span> <span class="nav-text">2.2.1 删除行中的某个列值</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#2-2-2-删除行"><span class="nav-number">2.2.2.</span> <span class="nav-text">2.2.2 删除行</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#2-2-3-清空表"><span class="nav-number">2.2.3.</span> <span class="nav-text">2.2.3 清空表</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-3-修改数据（改）"><span class="nav-number">2.3.</span> <span class="nav-text">2.3 修改数据（改）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-4-查询数据（查）"><span class="nav-number">2.4.</span> <span class="nav-text">2.4 查询数据（查）</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#2-4-1-全表扫描——scan"><span class="nav-number">2.4.1.</span> <span class="nav-text">2.4.1 全表扫描——scan</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#2-4-2-按条件查询——get"><span class="nav-number">2.4.2.</span> <span class="nav-text">2.4.2 按条件查询——get</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#2-4-3-查询表中数据行数"><span class="nav-number">2.4.3.</span> <span class="nav-text">2.4.3 查询表中数据行数</span></a></li></ol></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <img class="site-author-image" itemprop="image" alt="MIN MIN"
+    src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">MIN MIN</p>
+  <div class="site-description" itemprop="description">即使最后没有人为你鼓掌，也要优雅地谢幕，感谢自己的认真付出。</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">54</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">13</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+        <span class="site-state-item-count">32</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/ashermin" title="GitHub &amp;rarr; https:&#x2F;&#x2F;github.com&#x2F;ashermin" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+<div class="copyright">
+  
+  &copy; 2019 – 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user-circle"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">MIN MIN</span>
+</div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+<script src="/js/utils.js"></script>
+<script src="/js/schemes/pisces.js"></script>
+<script src="/js/next-boot.js"></script>
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+</body>
+</html>

@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.0.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/avatar.jpg">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/avatar.jpg">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/avatar.jpg">
+  <link rel="mask-icon" href="/images/avatar.jpg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+
+
+<script id="hexo-configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '7.4.2',
+    exturl: false,
+    sidebar: {"position":"left","width":260,"display":"post","offset":12,"onmobile":false},
+    copycode: {"enable":true,"show_result":true,"style":"default"},
+    back2top: {"enable":true,"sidebar":false,"scrollpercent":true},
+    bookmark: {"enable":false,"color":"#222","save":"auto"},
+    fancybox: false,
+    mediumzoom: false,
+    lazyload: false,
+    pangu: false,
+    algolia: {
+      appID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    localsearch: {"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},
+    path: '',
+    motion: {"enable":false,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    translation: {
+      copy_button: '复制',
+      copy_success: '复制成功',
+      copy_failure: '复制失败'
+    },
+    sidebarPadding: 40
+  };
+</script>
+
+  <meta name="description" content="HBase的官方文档中关于HBase表的列簇的个数有两处描述： A typical schema has between 1 and 3 column families per table. HBase tables should not be designed to mimic RDBMS tables.  HBase currently does not do well with anythi">
+<meta name="keywords" content="HBase">
+<meta property="og:type" content="article">
+<meta property="og:title" content="为什么不建议在HBase中使用过多的列簇">
+<meta property="og:url" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2019&#x2F;12&#x2F;08&#x2F;%E4%B8%BA%E4%BB%80%E4%B9%88%E4%B8%8D%E5%BB%BA%E8%AE%AE%E5%9C%A8HBase%E4%B8%AD%E4%BD%BF%E7%94%A8%E8%BF%87%E5%A4%9A%E7%9A%84%E5%88%97%E7%B0%87&#x2F;index.html">
+<meta property="og:site_name" content="MIN MIN">
+<meta property="og:description" content="HBase的官方文档中关于HBase表的列簇的个数有两处描述： A typical schema has between 1 and 3 column families per table. HBase tables should not be designed to mimic RDBMS tables.  HBase currently does not do well with anythi">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2019-12-08T07:13:28.993Z">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://yoursite.com/2019/12/08/%E4%B8%BA%E4%BB%80%E4%B9%88%E4%B8%8D%E5%BB%BA%E8%AE%AE%E5%9C%A8HBase%E4%B8%AD%E4%BD%BF%E7%94%A8%E8%BF%87%E5%A4%9A%E7%9A%84%E5%88%97%E7%B0%87/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true,
+    isPage: false,
+    isArchive: false
+  };
+</script>
+
+  <title>为什么不建议在HBase中使用过多的列簇 | MIN MIN</title>
+  
+
+
+  <script>
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?cad2a7930afd095772e571e6eab3628f";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+  <!--  -->
+<link href='//fonts.googleapis.com/css?family=Kaushan+Script' rel='stylesheet' type='text/css'>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">MIN MIN</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+        <p class="site-subtitle">BLOG</p>
+  </div>
+
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档</a>
+
+  </li>
+  </ul>
+
+</nav>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/12/08/%E4%B8%BA%E4%BB%80%E4%B9%88%E4%B8%8D%E5%BB%BA%E8%AE%AE%E5%9C%A8HBase%E4%B8%AD%E4%BD%BF%E7%94%A8%E8%BF%87%E5%A4%9A%E7%9A%84%E5%88%97%E7%B0%87/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="MIN MIN">
+      <meta itemprop="description" content="即使最后没有人为你鼓掌，也要优雅地谢幕，感谢自己的认真付出。">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="MIN MIN">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          为什么不建议在HBase中使用过多的列簇
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2019-12-08 14:38:49 / 修改时间：15:13:28" itemprop="dateCreated datePublished" datetime="2019-12-08T14:38:49+08:00">2019-12-08</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/HBase/" itemprop="url" rel="index">
+                    <span itemprop="name">HBase</span>
+                  </a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p><a href="https://hbase.apache.org/book.html" target="_blank" rel="noopener">HBase</a>的官方文档中关于HBase表的列簇的个数有两处描述：</p><blockquote>
+<p>A typical schema has between 1 and 3 column families per table. HBase tables should not be designed to mimic RDBMS tables.</p>
+<p> HBase currently does not do well with anything above two or three column families so keep the number of column families in your schema low.</p>
+</blockquote><a id="more"></a>
+
+<p>总结下来就是：<strong>HBase中每张表的列簇个数建议设在1~3之间</strong>。之所以这么建议，主要由以下五点来考虑。</p>
+<h3 id="1-列簇数对Flush的影响"><a href="#1-列簇数对Flush的影响" class="headerlink" title="1. 列簇数对Flush的影响"></a>1. 列簇数对Flush的影响</h3><p>在HBase中，调用<em>API</em>往对应的表插入数据是会写到<code>MemStore</code>的，每个列簇是会对应一个<code>MemStore</code>以及零或多个<code>HFile</code>。</p>
+<p>那么列簇越多，那<code>MemStore</code>也越多，而储存在<code>MemStore</code>中的数据在满足一定条件的时候将会进行Flush操作，Flush操作是<code>Region</code>级别的，那当<code>Region</code>中某个<code>MemStore</code>被Flush，同一个<code>Region</code>的其它<code>MemStore</code>也会进行Flush操作。当表有很多列簇，而且列簇之间数据不均匀（比如一个列族有100W行，一个列族只有10行），这样会导致持久化到磁盘的文件数很多，同时有很多小文件，而且每次Flush操作也涉及到一定的IO操作。</p>
+<blockquote>
+<p>为了解决每次Flush都对整个Region中MemStore进行的，HBASE-10201/HBASE-3149引入了对Flush策略进行选择的功能（<code>hbase.regionserver.flush.policy</code>），可以仅对超过阈值（<code>hbase.hregion.percolumnfamilyflush.size.lower.bound.min</code>）的MemStore进行Flush操作。但是如果没有MemStore大于这个阈值，还是会对所有的MemStore进行Flush操作。</p>
+</blockquote>
+<p>此外，如果我们的列簇数过多，这可能会导致触发<code>RegionServer级别</code>的Flush操作！这将会导致落在该 <code>RegionServer</code>上的更新操作被阻塞，而且阻塞时间可能会达到分钟级别。</p>
+<hr>
+<h3 id="2-列簇数对Spilt的影响"><a href="#2-列簇数对Spilt的影响" class="headerlink" title="2. 列簇数对Spilt的影响"></a>2. 列簇数对Spilt的影响</h3><p>当HBase表中<strong>某个<code>Region</code>的某个最大的Store/HFile/storeFile大于<code>hbase.hregion.max.filesize</code></strong> 时，会被拆分成两个<code>HFile</code>。如果有很多个列簇，而这些列簇之间的数据量相差悬殊，比如有些列族有100W行，而有些列族只有10行，这样在Region Split的时候会导致原本数据量很小的<code>HFile</code>文件进一步被拆分，从而产生更多的小文件。</p>
+<p>⚠️注意：Region Split是针对所有的列簇进行的，这样做的目的是同一行的数据即使在Split后也是存在同一个<code>Region</code>的。</p>
+<hr>
+<h3 id="3-列簇数对Compaction的影响"><a href="#3-列簇数对Compaction的影响" class="headerlink" title="3. 列簇数对Compaction的影响"></a>3. 列簇数对Compaction的影响</h3><p>与第一点所讲的Flush操作一样，目前HBase的Compaction操作也是<code>Region</code>级别的，过多的列簇也会产生不必要的IO。</p>
+<hr>
+<h3 id="4-列簇数对HDFS的影响"><a href="#4-列簇数对HDFS的影响" class="headerlink" title="4. 列簇数对HDFS的影响"></a>4. 列簇数对HDFS的影响</h3><p>HDFS 其实对一个目录下的文件数有限制的（<code>dfs.namenode.fs-limits.max-directory-items</code>）。如果有<code>N</code>个列簇，<code>M</code>个Region，那么持久化到HDFS至少会产生<code>N*M</code>个文件；而每个列簇对应底层的<code>HFile</code>文件假设为<code>K</code>个，那么最终表在HDFS目录下的文件数将是<code>N*M*K</code>，这可能会操作HDFS的限制。</p>
+<hr>
+<h3 id="5-列簇对RegionServer的影响"><a href="#5-列簇对RegionServer的影响" class="headerlink" title="5. 列簇对RegionServer的影响"></a>5. 列簇对RegionServer的影响</h3><p>一个列簇对应于一个<code>MemStore</code>，而HBase从0.90.1版本开始引入了<code>MSLAB（Memstore-Local Allocation Buffers，参考HBASE-3455）</code>，这个功能默认是开启的（通过<code>hbase.hregion.memstore.mslab.enabled</code>），这使得每个<code>MemStore</code>在内存占用了<code>2MB</code>（通过<code>hbase.hregion.memstore.mslab.chunksize</code> 配置）的<code>buffer</code>。如果我们有很多的列簇，而且一般一个 RegionServer上会存在很多个Region，这么算起来光<code>MemStore</code>的缓存就会占用很多的内存。</p>
+<p>⚠️注意：如果没有往<code>MemStore</code>里面写数据，那么<code>MemStore</code>的<code>MSLAB</code>是不占用空间的。</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/HBase/" rel="tag"># HBase</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-next post-nav-item">
+                <a href="/2019/12/06/HBase%E7%9A%84Flush:Compact:Spilt/" rel="next" title="HBase的Flush/Compact/Spilt">
+                  <i class="fa fa-chevron-left"></i> HBase的Flush/Compact/Spilt
+                </a>
+            </div>
+
+            <span class="post-nav-divider"></span>
+
+            <div class="post-nav-prev post-nav-item">
+                <a href="/2019/12/08/HBase-API%E7%BC%96%E7%A8%8B/" rel="prev" title="HBase API编程">
+                  HBase API编程 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-列簇数对Flush的影响"><span class="nav-number">1.</span> <span class="nav-text">1. 列簇数对Flush的影响</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-列簇数对Spilt的影响"><span class="nav-number">2.</span> <span class="nav-text">2. 列簇数对Spilt的影响</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-列簇数对Compaction的影响"><span class="nav-number">3.</span> <span class="nav-text">3. 列簇数对Compaction的影响</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-列簇数对HDFS的影响"><span class="nav-number">4.</span> <span class="nav-text">4. 列簇数对HDFS的影响</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-列簇对RegionServer的影响"><span class="nav-number">5.</span> <span class="nav-text">5. 列簇对RegionServer的影响</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <img class="site-author-image" itemprop="image" alt="MIN MIN"
+    src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">MIN MIN</p>
+  <div class="site-description" itemprop="description">即使最后没有人为你鼓掌，也要优雅地谢幕，感谢自己的认真付出。</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">54</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">13</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+        <span class="site-state-item-count">32</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/ashermin" title="GitHub &amp;rarr; https:&#x2F;&#x2F;github.com&#x2F;ashermin" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+<div class="copyright">
+  
+  &copy; 2019 – 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user-circle"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">MIN MIN</span>
+</div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+<script src="/js/utils.js"></script>
+<script src="/js/schemes/pisces.js"></script>
+<script src="/js/next-boot.js"></script>
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+</body>
+</html>

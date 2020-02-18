@@ -1,0 +1,626 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.0.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/avatar.jpg">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/avatar.jpg">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/avatar.jpg">
+  <link rel="mask-icon" href="/images/avatar.jpg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+
+
+<script id="hexo-configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '7.4.2',
+    exturl: false,
+    sidebar: {"position":"left","width":260,"display":"post","offset":12,"onmobile":false},
+    copycode: {"enable":true,"show_result":true,"style":"default"},
+    back2top: {"enable":true,"sidebar":false,"scrollpercent":true},
+    bookmark: {"enable":false,"color":"#222","save":"auto"},
+    fancybox: false,
+    mediumzoom: false,
+    lazyload: false,
+    pangu: false,
+    algolia: {
+      appID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    localsearch: {"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},
+    path: '',
+    motion: {"enable":false,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    translation: {
+      copy_button: '复制',
+      copy_success: '复制成功',
+      copy_failure: '复制失败'
+    },
+    sidebarPadding: 40
+  };
+</script>
+
+  <meta name="description" content="String1. 字符串比较要用equals()，不能用==。因为equals()比较的是内容值，而==比较的是地址。 忽略大小写比较 &quot;Hello&quot;.equalsIgnoreCase(&quot;HELLO&quot;) &#x2F;&#x2F;true 是否包含字串 &quot;Hello&quot;.contains(&quot;lo&quot;) &#x2F;&#x2F;true 搜索字串（索引从0开始）">
+<meta name="keywords" content="面向对象">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Java面向对象——核心类">
+<meta property="og:url" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2019&#x2F;10&#x2F;24&#x2F;Java%E9%9D%A2%E5%90%91%E5%AF%B9%E8%B1%A1%E2%80%94%E2%80%94%E6%A0%B8%E5%BF%83%E7%B1%BB&#x2F;index.html">
+<meta property="og:site_name" content="MIN MIN">
+<meta property="og:description" content="String1. 字符串比较要用equals()，不能用==。因为equals()比较的是内容值，而==比较的是地址。 忽略大小写比较 &quot;Hello&quot;.equalsIgnoreCase(&quot;HELLO&quot;) &#x2F;&#x2F;true 是否包含字串 &quot;Hello&quot;.contains(&quot;lo&quot;) &#x2F;&#x2F;true 搜索字串（索引从0开始）">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2019-11-17T14:01:08.982Z">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://yoursite.com/2019/10/24/Java%E9%9D%A2%E5%90%91%E5%AF%B9%E8%B1%A1%E2%80%94%E2%80%94%E6%A0%B8%E5%BF%83%E7%B1%BB/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true,
+    isPage: false,
+    isArchive: false
+  };
+</script>
+
+  <title>Java面向对象——核心类 | MIN MIN</title>
+  
+
+
+  <script>
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?cad2a7930afd095772e571e6eab3628f";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+  <!--  -->
+<link href='//fonts.googleapis.com/css?family=Kaushan+Script' rel='stylesheet' type='text/css'>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">MIN MIN</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+        <p class="site-subtitle">BLOG</p>
+  </div>
+
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档</a>
+
+  </li>
+  </ul>
+
+</nav>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/10/24/Java%E9%9D%A2%E5%90%91%E5%AF%B9%E8%B1%A1%E2%80%94%E2%80%94%E6%A0%B8%E5%BF%83%E7%B1%BB/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="MIN MIN">
+      <meta itemprop="description" content="即使最后没有人为你鼓掌，也要优雅地谢幕，感谢自己的认真付出。">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="MIN MIN">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Java面向对象——核心类
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2019-10-24 23:28:32" itemprop="dateCreated datePublished" datetime="2019-10-24T23:28:32+08:00">2019-10-24</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2019-11-17 22:01:08" itemprop="dateModified" datetime="2019-11-17T22:01:08+08:00">2019-11-17</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Java/" itemprop="url" rel="index">
+                    <span itemprop="name">Java</span>
+                  </a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h3 id="String"><a href="#String" class="headerlink" title="String"></a>String</h3><p><strong>1. 字符串比较</strong></p><p>要用<strong><code>equals()</code></strong>，不能用<code>==</code>。因为<code>equals()</code>比较的是内容值，而<code>==</code>比较的是地址。</p><ul>
+<li>忽略大小写比较</li>
+</ul><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="string">"Hello"</span>.equalsIgnoreCase(<span class="string">"HELLO"</span>) <span class="comment">//true</span></span><br></pre></td></tr></table></figure><ul>
+<li>是否包含字串</li>
+</ul><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="string">"Hello"</span>.contains(<span class="string">"lo"</span>) <span class="comment">//true</span></span><br></pre></td></tr></table></figure><ul>
+<li>搜索字串（索引从0开始）</li>
+</ul><a id="more"></a>
+
+
+
+
+
+
+
+
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="string">"Hello"</span>.indexOf(<span class="string">"l"</span>); <span class="comment">// 2</span></span><br><span class="line"><span class="string">"Hello"</span>.lastIndexOf(<span class="string">"l"</span>); <span class="comment">// 3</span></span><br><span class="line"><span class="string">"Hello"</span>.startsWith(<span class="string">"He"</span>); <span class="comment">// true</span></span><br><span class="line"><span class="string">"Hello"</span>.endsWith(<span class="string">"lo"</span>); <span class="comment">// true</span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>提取字串</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="string">"Hello"</span>.substring(<span class="number">2</span>); <span class="comment">// 从第三个单词开始提取："llo"</span></span><br><span class="line"><span class="string">"Hello"</span>.substring(<span class="number">2</span>, <span class="number">4</span>); <span class="comment">//提取第3~4个单词："ll"</span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>获取指定索引的字符</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">char</span> result = <span class="string">"asher"</span>.charAt(<span class="number">2</span>); <span class="comment">//h</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>2. 去除首尾空白字符</strong></p>
+<p><code>trim()</code>可以移除字符串<strong>首尾</strong><u>空白字符</u>。空白字符包括：空格、\t、\r、\n。</p>
+<blockquote>
+<p><code>strip()</code>也可以移除字符串首尾空白字符。它不同于<code>trim()</code>，它还可以移除类似中文的空格字符<code>\u3000</code>。不过要 JDK11 及以上才能支持。</p>
+</blockquote>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="string">"  \tHello \r\n "</span>.trim() <span class="comment">//Hello</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>3. 替换字串</strong></p>
+<ul>
+<li>根据字符/字符串替换</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">String s = <span class="string">"hello"</span>;</span><br><span class="line">s.replace(<span class="string">'l'</span>, <span class="string">'w'</span>); <span class="comment">// "hewwo"，所有字符'l'被替换为'w'</span></span><br><span class="line">s.replace(<span class="string">"ll"</span>, <span class="string">"~~"</span>); <span class="comment">// "he~~o"，所有子串"ll"被替换为"~~"</span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>通过正则表达式替换</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">String s = <span class="string">"A,,B;C ,D"</span>;</span><br><span class="line">s.replaceAll(<span class="string">"[\\,\\;\\s]+"</span>, <span class="string">","</span>); <span class="comment">// "A,B,C,D"</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>4. 分割字符串</strong></p>
+<p>使用<code>split()</code>方法，并且传入的也是正则表达式：</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">String s = <span class="string">"A,B,C,D"</span>;</span><br><span class="line">String[] ss = s.split(<span class="string">"\\,"</span>); <span class="comment">// &#123;"A", "B", "C", "D"&#125;</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>5. 拼接字符串</strong></p>
+<p>使用<code>String.join()</code>方法，第一个参数是分隔符，第二个是待拼接的字符串数组</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">String[] arr = &#123;<span class="string">"Hello"</span>,<span class="string">"World"</span>,<span class="string">"!!!"</span>&#125;;</span><br><span class="line">String arrs = String.join(<span class="string">"#"</span>,arr); <span class="comment">//Hello#World#!!!</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>6. 类型转换</strong></p>
+<ul>
+<li>基本类型==&gt;字符串</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">String.valueOf(<span class="number">123</span>); <span class="comment">// "123"</span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>字符串==&gt;<code>int</code></li>
+</ul>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">int</span> n1 = Integer.parseInt(<span class="string">"123"</span>); <span class="comment">//123</span></span><br><span class="line"><span class="keyword">int</span> n2 = Integer.parseInt(<span class="string">"ff"</span>, <span class="number">16</span>); <span class="comment">// 按十六进制转换，255</span></span><br><span class="line"><span class="keyword">int</span> n3 = Integer.valueOf(<span class="string">"123"</span>); <span class="comment">//123</span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>字符串==&gt;<code>boolean</code></li>
+</ul>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">boolean</span> b1 = Boolean.parseBoolean(<span class="string">"true"</span>); <span class="comment">// true</span></span><br><span class="line"><span class="keyword">boolean</span> b2 = Boolean.parseBoolean(<span class="string">"FALSE"</span>); <span class="comment">// false</span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>字符串&lt;==&gt;<code>char[]</code></li>
+</ul>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">char</span>[] cs = <span class="string">"Hello"</span>.toCharArray(); <span class="comment">// String ==&gt; char[]</span></span><br><span class="line">String s = <span class="keyword">new</span> String(cs); <span class="comment">// char[] ==&gt; String</span></span><br></pre></td></tr></table></figure>
+
+
+
+<hr>
+<h3 id="StringBuilder"><a href="#StringBuilder" class="headerlink" title="StringBuilder"></a>StringBuilder</h3><blockquote>
+<p>问题：使用<code>+</code>拼接字符串会一直创建新的对象，很浪费内存，还会影响GC效率。</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">String s = <span class="string">""</span>;</span><br><span class="line"><span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="number">1000</span>; i++) &#123;</span><br><span class="line"> s = s + <span class="string">","</span> + i;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</blockquote>
+<p><code>StringBuilder</code>是一个可变对象，可以预分配缓冲区。这样新增字符时，不会创建新的临时对象了。</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">StringBuilder sb = <span class="keyword">new</span> StringBuilder(<span class="number">1024</span>);</span><br><span class="line"><span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="number">1000</span>; i++) &#123;</span><br><span class="line">    sb.append(<span class="string">','</span>);</span><br><span class="line">    sb.append(i);</span><br><span class="line">&#125;</span><br><span class="line">String s = sb.toString();</span><br></pre></td></tr></table></figure>
+
+
+
+<hr>
+<h3 id="enum枚举类"><a href="#enum枚举类" class="headerlink" title="enum枚举类"></a>enum枚举类</h3><p><strong>enum</strong>eration相比与普通常量的好处：</p>
+<ul>
+<li>不会引用到非枚举的值。因为无法通过编译</li>
+<li>不同类型的枚举不能进行比较或赋值。因为类型都不符</li>
+</ul>
+<p>注意：<code>enum</code>是一个<code>class</code>，每个枚举的值都是<code>class实例</code>！</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Main</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        Weekday day = Weekday.SUN;</span><br><span class="line">        <span class="keyword">if</span> (day.dayValue == <span class="number">6</span> || day.dayValue == <span class="number">0</span>) &#123;</span><br><span class="line">            System.out.println(<span class="string">"Today is "</span> + day + <span class="string">". Work at home!"</span>);</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            System.out.println(<span class="string">"Today is "</span> + day + <span class="string">". Work at office!"</span>);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">enum</span> Weekday &#123;</span><br><span class="line">    MON(<span class="number">1</span>, <span class="string">"星期一"</span>), TUE(<span class="number">2</span>, <span class="string">"星期二"</span>), WED(<span class="number">3</span>, <span class="string">"星期三"</span>), THU(<span class="number">4</span>, <span class="string">"星期四"</span>), FRI(<span class="number">5</span>, <span class="string">"星期五"</span>), SAT(<span class="number">6</span>, <span class="string">"星期六"</span>), SUN(<span class="number">0</span>, <span class="string">"星期日"</span>);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">final</span> <span class="keyword">int</span> dayValue;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> String chinese;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="title">Weekday</span><span class="params">(<span class="keyword">int</span> dayValue, String chinese)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.dayValue = dayValue;</span><br><span class="line">        <span class="keyword">this</span>.chinese = chinese;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">toString</span><span class="params">()</span> </span>&#123; <span class="comment">//重写toString()是为了输出是更具可读性</span></span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">this</span>.chinese;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>Today is 星期日. Work at home!</p>
+</blockquote>
+<p><code>enum</code>更适合用在<code>switch</code>语句中：</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Main</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        Weekday day = Weekday.SUN;</span><br><span class="line">        <span class="keyword">switch</span>(day) &#123;</span><br><span class="line">        <span class="keyword">case</span> MON:</span><br><span class="line">        <span class="keyword">case</span> TUE:</span><br><span class="line">        <span class="keyword">case</span> WED:</span><br><span class="line">        <span class="keyword">case</span> THU:</span><br><span class="line">        <span class="keyword">case</span> FRI:</span><br><span class="line">            System.out.println(<span class="string">"Today is "</span> + day + <span class="string">". Work at office!"</span>);</span><br><span class="line">            <span class="keyword">break</span>;</span><br><span class="line">        <span class="keyword">case</span> SAT:</span><br><span class="line">        <span class="keyword">case</span> SUN:</span><br><span class="line">            System.out.println(<span class="string">"Today is "</span> + day + <span class="string">". Work at home!"</span>);</span><br><span class="line">            <span class="keyword">break</span>;</span><br><span class="line">        <span class="keyword">default</span>:</span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> RuntimeException(<span class="string">"cannot process "</span> + day);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">enum</span> Weekday &#123;</span><br><span class="line">    MON, TUE, WED, THU, FRI, SAT, SUN;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<hr>
+<h3 id="BigInteger"><a href="#BigInteger" class="headerlink" title="BigInteger"></a>BigInteger</h3><blockquote>
+<p>表示任意大小的整数，(-∞,+∞)。</p>
+</blockquote>
+<p>可以把<code>BigInteger</code>转换为<strong>基本类型</strong>的数，如<code>long</code>型：</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">BigInteger i = <span class="keyword">new</span> BigInteger(<span class="string">"123456789000"</span>);</span><br><span class="line">System.out.println(i.longValue()); <span class="comment">// 123456789000</span></span><br></pre></td></tr></table></figure>
+
+<p>如果<code>BigInteger</code>表示的范围超过了基本类型的范围，转换时将丢失高位信息，即结果不一定是准确的。如果需要准确地转换成基本类型，可以使用<code>intValueExact()</code>、<code>longValueExact()</code>等方法，在转换时如果超出范围，将直接抛出<code>ArithmeticException</code>异常：</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">System.out.println(i.multiply(i).longValueExact()); <span class="comment">// java.lang.ArithmeticException: BigInteger out of long range</span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>转换为<code>byte</code>：<code>byteValue()</code></li>
+<li>转换为<code>short</code>：<code>shortValue()</code></li>
+<li>转换为<code>int</code>：<code>intValue()</code></li>
+<li>转换为<code>long</code>：<code>longValue()</code></li>
+<li>转换为<code>float</code>：<code>floatValue()</code></li>
+<li>转换为<code>double</code>：<code>doubleValue()</code></li>
+</ul>
+<hr>
+<h3 id="BigDecimal"><a href="#BigDecimal" class="headerlink" title="BigDecimal"></a>BigDecimal</h3><blockquote>
+<p>表示一个任意大小且精度完全准确的浮点数。常用于财务计算</p>
+</blockquote>
+<ul>
+<li><p><code>scale()</code>表示小数位数</p>
+</li>
+<li><p><code>stripTrailingZeros()</code>去掉小数点末尾多余的零</p>
+</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">BigDecimal num1 = <span class="keyword">new</span> BigDecimal(<span class="string">"123.4500"</span>);</span><br><span class="line">BigDecimal num2 = num1.stripTrailingZeros();</span><br><span class="line">System.out.println(num1.scale()); <span class="comment">// 4</span></span><br><span class="line">System.out.println(num2.scale()); <span class="comment">// 2,因为去掉了00==&gt;123.45</span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><code>setScale()</code>指定小数点后的精度</li>
+<li><code>divide()</code>做除法时除不尽就要指定精度</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">BigDecimal d1 = <span class="keyword">new</span> BigDecimal(<span class="string">"123.456789"</span>);</span><br><span class="line">BigDecimal d2 = d1.setScale(<span class="number">4</span>, RoundingMode.HALF_UP); <span class="comment">// 四舍五入，123.4568</span></span><br><span class="line">BigDecimal d3 = d1.setScale(<span class="number">4</span>, RoundingMode.DOWN); <span class="comment">// 直接截断，123.4567</span></span><br><span class="line">BigDecimal d4 = d1.divide(d2, <span class="number">10</span>, RoundingMode.HALF_UP); <span class="comment">// 保留10位小数并四舍五入</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>注意</strong>：总是使用<strong><code>compareTo()</code></strong>比较两个<code>BigDecimal</code>的值，不要使用<del><code>equals()</code></del>！</p>
+<ul>
+<li><code>equals()</code>方法不但要求两个<code>BigDecimal</code>的值相等，还要求它们的<code>scale()</code>相等</li>
+<li><code>compareTo()</code>方法根据两个值的大小分别返回负数（小于）、正数（大于）和0（等于）</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">BigDecimal d1 = <span class="keyword">new</span> BigDecimal(<span class="string">"123.456"</span>);</span><br><span class="line">BigDecimal d2 = <span class="keyword">new</span> BigDecimal(<span class="string">"123.45600"</span>);</span><br><span class="line">System.out.println(d1.equals(d2)); <span class="comment">// false,因为scale不同</span></span><br><span class="line">System.out.println(d1.equals(d2.stripTrailingZeros())); <span class="comment">// true,因为d2去除尾部0后scale变为2</span></span><br><span class="line">System.out.println(d1.compareTo(d2)); <span class="comment">// 0</span></span><br></pre></td></tr></table></figure>
+
+
+
+<hr>
+<h3 id="常用工具类"><a href="#常用工具类" class="headerlink" title="常用工具类"></a>常用工具类</h3><p><strong>1. Math</strong></p>
+<ul>
+<li>abs/min/max</li>
+<li>pow/sqrt/exp/log/log10</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">Math.pow(<span class="number">2</span>,<span class="number">10</span>); <span class="comment">// 2的10次方==&gt;1024</span></span><br><span class="line">Math.exp(<span class="number">2</span>); <span class="comment">// e的2次方==&gt;7.389...</span></span><br><span class="line">Math.log(<span class="number">4</span>); <span class="comment">// 以e为底的对数==&gt;1.386...</span></span><br><span class="line">Math.log10(<span class="number">100</span>); <span class="comment">// 2</span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>sin/cos/tan/asin/acos</li>
+<li>常量<ul>
+<li><code>Math.PI</code> = 3.1415926…</li>
+<li><code>Math.E</code> = 2.71828…</li>
+</ul>
+</li>
+</ul>
+<p><strong>2. Random 伪随机数</strong></p>
+<blockquote>
+<p><code>Random</code>用来创建伪随机数。</p>
+<p>所谓伪随机数，是指只要给定一个初始的种子，产生的随机数序列是完全一样的，一次产生就不会变了。</p>
+</blockquote>
+<ul>
+<li>创建<code>Random</code>实例时，如果不给定种子，每次产生的随机数序列都会不同；</li>
+<li>如果指定了种子，就会得到不会变的随机数。</li>
+</ul>
+<p>要生成一个随机数，可以使用<code>nextInt()</code>、<code>nextLong()</code>、<code>nextFloat()</code>、<code>nextDouble()</code>：</p>
+<p>（1）不给定种子</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">Random r = <span class="keyword">new</span> Random();</span><br><span class="line">r.nextInt(); <span class="comment">// 2071575453,每次都不一样</span></span><br><span class="line">r.nextInt(<span class="number">10</span>); <span class="comment">// 5,生成一个[0,10)之间的int</span></span><br><span class="line">r.nextLong(); <span class="comment">// 8811649292570369305,每次都不一样</span></span><br><span class="line">r.nextFloat(); <span class="comment">// 0.54335...生成一个[0,1)之间的float</span></span><br><span class="line">r.nextDouble(); <span class="comment">// 0.3716...生成一个[0,1)之间的double</span></span><br></pre></td></tr></table></figure>
+
+<p>（2）给定种子</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">Random r = <span class="keyword">new</span> Random(<span class="number">123456</span>);</span><br><span class="line">r.nextInt(); <span class="comment">// 2071575453,每次都一样！</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>3. SecureRandom 安全随机数</strong></p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">SecureRandom sr = <span class="keyword">new</span> SecureRandom();</span><br><span class="line">System.out.println(sr.nextInt(<span class="number">100</span>));</span><br></pre></td></tr></table></figure>
+
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E9%9D%A2%E5%90%91%E5%AF%B9%E8%B1%A1/" rel="tag"># 面向对象</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-next post-nav-item">
+                <a href="/2019/10/24/Java%E9%9D%A2%E5%90%91%E5%AF%B9%E8%B1%A1%E2%80%94%E2%80%94%E5%9F%BA%E7%A1%80/" rel="next" title="Java面向对象——基础">
+                  <i class="fa fa-chevron-left"></i> Java面向对象——基础
+                </a>
+            </div>
+
+            <span class="post-nav-divider"></span>
+
+            <div class="post-nav-prev post-nav-item">
+                <a href="/2019/10/24/Java%E5%BC%82%E5%B8%B8/" rel="prev" title="Java异常">
+                  Java异常 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#String"><span class="nav-number">1.</span> <span class="nav-text">String</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#StringBuilder"><span class="nav-number">2.</span> <span class="nav-text">StringBuilder</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#enum枚举类"><span class="nav-number">3.</span> <span class="nav-text">enum枚举类</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#BigInteger"><span class="nav-number">4.</span> <span class="nav-text">BigInteger</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#BigDecimal"><span class="nav-number">5.</span> <span class="nav-text">BigDecimal</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#常用工具类"><span class="nav-number">6.</span> <span class="nav-text">常用工具类</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <img class="site-author-image" itemprop="image" alt="MIN MIN"
+    src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">MIN MIN</p>
+  <div class="site-description" itemprop="description">即使最后没有人为你鼓掌，也要优雅地谢幕，感谢自己的认真付出。</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">54</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">13</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+        <span class="site-state-item-count">32</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/ashermin" title="GitHub &amp;rarr; https:&#x2F;&#x2F;github.com&#x2F;ashermin" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+<div class="copyright">
+  
+  &copy; 2019 – 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user-circle"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">MIN MIN</span>
+</div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+<script src="/js/utils.js"></script>
+<script src="/js/schemes/pisces.js"></script>
+<script src="/js/next-boot.js"></script>
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+</body>
+</html>

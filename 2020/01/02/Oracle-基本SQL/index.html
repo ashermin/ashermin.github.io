@@ -1,0 +1,959 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.0.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/avatar.jpg">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/avatar.jpg">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/avatar.jpg">
+  <link rel="mask-icon" href="/images/avatar.jpg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+
+
+<script id="hexo-configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '7.4.2',
+    exturl: false,
+    sidebar: {"position":"left","width":260,"display":"post","offset":12,"onmobile":false},
+    copycode: {"enable":true,"show_result":true,"style":"default"},
+    back2top: {"enable":true,"sidebar":false,"scrollpercent":true},
+    bookmark: {"enable":false,"color":"#222","save":"auto"},
+    fancybox: false,
+    mediumzoom: false,
+    lazyload: false,
+    pangu: false,
+    algolia: {
+      appID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    localsearch: {"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},
+    path: '',
+    motion: {"enable":false,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    translation: {
+      copy_button: '复制',
+      copy_success: '复制成功',
+      copy_failure: '复制失败'
+    },
+    sidebarPadding: 40
+  };
+</script>
+
+  <meta name="description" content="1. 常用数据类型加粗的表示常用。1.1 字符型字符型在数据库中是以ASCII码的格式存储的：   数据类型 取值范围(字节) 说明    varchar2 0~4000 可变长度的字符串（最常用），与char类型区别就是它不会用空格填充至最大长度   nvarchar2 0~1000 包含unicode格式数据的变长字符串   char 0~2000 不可变长，会用空格填充至最大长度   nch">
+<meta name="keywords" content="Oracle">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Oracle 基本SQL">
+<meta property="og:url" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2020&#x2F;01&#x2F;02&#x2F;Oracle-%E5%9F%BA%E6%9C%ACSQL&#x2F;index.html">
+<meta property="og:site_name" content="MIN MIN">
+<meta property="og:description" content="1. 常用数据类型加粗的表示常用。1.1 字符型字符型在数据库中是以ASCII码的格式存储的：   数据类型 取值范围(字节) 说明    varchar2 0~4000 可变长度的字符串（最常用），与char类型区别就是它不会用空格填充至最大长度   nvarchar2 0~1000 包含unicode格式数据的变长字符串   char 0~2000 不可变长，会用空格填充至最大长度   nch">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;images&#x2F;Oracle-%E5%9F%BA%E6%9C%ACSQL&#x2F;image-20200106131856332.png">
+<meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;images&#x2F;Oracle-%E5%9F%BA%E6%9C%ACSQL&#x2F;image-20200106164637280.png">
+<meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;images&#x2F;Oracle-%E5%9F%BA%E6%9C%ACSQL&#x2F;image-20200106164447967.png">
+<meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;images&#x2F;Oracle-%E5%9F%BA%E6%9C%ACSQL&#x2F;image-20200106171055064.png">
+<meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;images&#x2F;Oracle-%E5%9F%BA%E6%9C%ACSQL&#x2F;image-20200107102306504.png">
+<meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;images&#x2F;Oracle-%E5%9F%BA%E6%9C%ACSQL&#x2F;image-20200107135626364.png">
+<meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;images&#x2F;Oracle-%E5%9F%BA%E6%9C%ACSQL&#x2F;image-20200117102653835.png">
+<meta property="og:updated_time" content="2020-01-17T02:27:03.119Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;images&#x2F;Oracle-%E5%9F%BA%E6%9C%ACSQL&#x2F;image-20200106131856332.png">
+
+<link rel="canonical" href="http://yoursite.com/2020/01/02/Oracle-%E5%9F%BA%E6%9C%ACSQL/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true,
+    isPage: false,
+    isArchive: false
+  };
+</script>
+
+  <title>Oracle 基本SQL | MIN MIN</title>
+  
+
+
+  <script>
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?cad2a7930afd095772e571e6eab3628f";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+  <!--  -->
+<link href='//fonts.googleapis.com/css?family=Kaushan+Script' rel='stylesheet' type='text/css'>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">MIN MIN</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+        <p class="site-subtitle">BLOG</p>
+  </div>
+
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档</a>
+
+  </li>
+  </ul>
+
+</nav>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/01/02/Oracle-%E5%9F%BA%E6%9C%ACSQL/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="MIN MIN">
+      <meta itemprop="description" content="即使最后没有人为你鼓掌，也要优雅地谢幕，感谢自己的认真付出。">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="MIN MIN">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Oracle 基本SQL
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-01-02 21:04:15" itemprop="dateCreated datePublished" datetime="2020-01-02T21:04:15+08:00">2020-01-02</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-01-17 10:27:03" itemprop="dateModified" datetime="2020-01-17T10:27:03+08:00">2020-01-17</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Oracle/" itemprop="url" rel="index">
+                    <span itemprop="name">Oracle</span>
+                  </a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h3 id="1-常用数据类型"><a href="#1-常用数据类型" class="headerlink" title="1. 常用数据类型"></a>1. 常用数据类型</h3><p>加粗的表示常用。</p><h4 id="1-1-字符型"><a href="#1-1-字符型" class="headerlink" title="1.1 字符型"></a>1.1 字符型</h4><p>字符型在数据库中是以ASCII码的格式存储的：</p><table>
+<thead>
+<tr>
+<th align="center">数据类型</th>
+<th align="center">取值范围(字节)</th>
+<th align="center">说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center"><strong>varchar2</strong></td>
+<td align="center">0~4000</td>
+<td align="center">可变长度的字符串（最常用），与char类型区别就是它不会用空格填充至最大长度</td>
+</tr>
+<tr>
+<td align="center">nvarchar2</td>
+<td align="center">0~1000</td>
+<td align="center">包含unicode格式数据的变长字符串</td>
+</tr>
+<tr>
+<td align="center">char</td>
+<td align="center">0~2000</td>
+<td align="center">不可变长，会用空格填充至最大长度</td>
+</tr>
+<tr>
+<td align="center">nchar</td>
+<td align="center">0~1000</td>
+<td align="center">Unicode字符集的定长数据（适合中文数据）</td>
+</tr>
+<tr>
+<td align="center">long</td>
+<td align="center">0~2G</td>
+<td align="center">变长的字符串（基本不用，尽可能将long类型转换为clob类型）</td>
+</tr>
+</tbody></table><a id="more"></a>
+
+
+<h4 id="1-2-数字型"><a href="#1-2-数字型" class="headerlink" title="1.2 数字型"></a>1.2 数字型</h4><table>
+<thead>
+<tr>
+<th align="center">数据类型</th>
+<th align="center">取值范围</th>
+<th align="center">说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center"><strong>number(p,s)</strong></td>
+<td align="center">p最大精度是38位（十进制）</td>
+<td align="center">p代表的是有效数字，s代表的是小数点后的位数。可以用来存储定长的整数和小数（常用）<br><code>NUMBER(5,2)</code>：有效数字5位，保留2位小数，如123.45</td>
+</tr>
+<tr>
+<td align="center">float</td>
+<td align="center">用来存储126位数据（二进制）</td>
+<td align="center">存储精度是按二进制计算的，精度范围为二进制的1~126，在转化为十进制时需要乘以0.30103</td>
+</tr>
+</tbody></table>
+<h4 id="1-3-日期类型"><a href="#1-3-日期类型" class="headerlink" title="1.3 日期类型"></a>1.3 日期类型</h4><p>timestamp与date类型的区别为：timestamp显示日期和时间更精确：</p>
+<table>
+<thead>
+<tr>
+<th align="center">数据类型</th>
+<th align="center">说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center"><strong>date</strong></td>
+<td align="center">日期和时间，精确到秒。范围：公元前4712年1月1日~公元9999年12月31日</td>
+</tr>
+<tr>
+<td align="center"><strong>timestamp</strong></td>
+<td align="center">日期和时间，精确到小数点后9位，显示上午/下午</td>
+</tr>
+</tbody></table>
+<h4 id="1-4-其它类型"><a href="#1-4-其它类型" class="headerlink" title="1.4 其它类型"></a>1.4 其它类型</h4><p>还有存放大数据量的数据类型和二进制文件的数据类型：</p>
+<table>
+<thead>
+<tr>
+<th align="center">数据类型</th>
+<th align="center">取值范围(字节)</th>
+<th align="center">说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">blob</td>
+<td align="center">最多可以存放4GB</td>
+<td align="center">存储二进制数据，适合存储电子表格、字处理文档、图像文件等（不过一般不会使用blob类型直接存储图片、文档的二进制数据，往往是保存它在磁盘上的路径）</td>
+</tr>
+<tr>
+<td align="center">clob</td>
+<td align="center">最多可以存放4GB</td>
+<td align="center">存储字符串数据，适合纯文本</td>
+</tr>
+<tr>
+<td align="center">bfile</td>
+<td align="center">大小与操作系统有关</td>
+<td align="center">这种数据类型允许在数据库列中存储一个Oracle目录对象（操作系统目录的一个指针）和一个文件名，并读取这个文件</td>
+</tr>
+</tbody></table>
+<h3 id="2-DDL"><a href="#2-DDL" class="headerlink" title="2. DDL"></a>2. DDL</h3><h4 id="2-1-创建表——CREATE-TABLE"><a href="#2-1-创建表——CREATE-TABLE" class="headerlink" title="2.1 创建表——CREATE TABLE"></a>2.1 创建表——CREATE TABLE</h4><figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">CREATE</span> <span class="keyword">TABLE</span> table_name(</span><br><span class="line">   column_name datatype,</span><br><span class="line">   ...</span><br><span class="line">  [<span class="keyword">CONSTRAINT</span>]</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+
+<h4 id="2-2-修改表——ALTER-TABLE"><a href="#2-2-修改表——ALTER-TABLE" class="headerlink" title="2.2 修改表——ALTER TABLE"></a>2.2 修改表——ALTER TABLE</h4><p>添加字段：</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">ALTER</span> <span class="keyword">TABLE</span> table_nbame <span class="keyword">ADD</span> column_name datatype;</span><br></pre></td></tr></table></figure>
+
+<p>更改字段数据类型：</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">ALTER</span> <span class="keyword">TABLE</span> table_name <span class="keyword">MODIFY</span> column_name datatype;</span><br></pre></td></tr></table></figure>
+
+<p>更改字段名：</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">ALTER</span> <span class="keyword">TABLE</span> table_name <span class="keyword">RENAME</span> <span class="keyword">COLUMN</span> old_column_name <span class="keyword">TO</span> new_column_name;</span><br></pre></td></tr></table></figure>
+
+<p>删除字段：</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">ALTER</span> <span class="keyword">TABLE</span> table_name <span class="keyword">DROP</span> <span class="keyword">COLUMN</span> column_name;</span><br></pre></td></tr></table></figure>
+
+<p>修改表名：</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">RENAME</span> old_table_name <span class="keyword">TO</span> new_table_name;</span><br></pre></td></tr></table></figure>
+
+<h4 id="2-3-删除表——TRUNCATE-DROP-TABLE"><a href="#2-3-删除表——TRUNCATE-DROP-TABLE" class="headerlink" title="2.3 删除表——TRUNCATE|DROP TABLE"></a>2.3 删除表——TRUNCATE|DROP TABLE</h4><p>删除表中的数据，表结构（元数据）没删：</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">TRUNCATE</span> <span class="keyword">TABLE</span> table_name;</span><br></pre></td></tr></table></figure>
+
+<p>完全删除表：</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">DROP</span> <span class="keyword">TABLE</span> table_name;</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h3 id="3-约束"><a href="#3-约束" class="headerlink" title="3. 约束"></a>3. 约束</h3><p>如果对表中的约束不太清楚，可以查看Oracle数据字典user_constraints：</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> constraint_name,constraint_type,<span class="keyword">status</span> <span class="keyword">FROM</span> user_constraints <span class="keyword">WHERE</span> table_name=<span class="string">'table_name'</span>;</span><br></pre></td></tr></table></figure>
+
+<p>对表中约束名称进行重命名：</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">ALTER</span> <span class="keyword">TABLE</span> table_name <span class="keyword">RENAME</span> <span class="keyword">CONSTRAINT</span> old_name <span class="keyword">TO</span> new_name;</span><br></pre></td></tr></table></figure>
+
+<h4 id="3-1-非空约束——NOT-NULL"><a href="#3-1-非空约束——NOT-NULL" class="headerlink" title="3.1 非空约束——NOT NULL"></a>3.1 非空约束——NOT NULL</h4><h5 id="创建表时添加非空约束"><a href="#创建表时添加非空约束" class="headerlink" title="创建表时添加非空约束"></a>创建表时添加非空约束</h5><figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">CREATE</span> <span class="keyword">TABLE</span> table_name(</span><br><span class="line">column_name datetype <span class="keyword">NOT</span> <span class="literal">NULL</span>,</span><br><span class="line">...</span><br><span class="line">);</span><br></pre></td></tr></table></figure>
+
+<h5 id="事后添加非空约束"><a href="#事后添加非空约束" class="headerlink" title="事后添加非空约束"></a>事后添加非空约束</h5><figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">ALTER</span> <span class="keyword">TABLE</span> table_name <span class="keyword">MODIFY</span> column_name datatype <span class="keyword">NOT</span> <span class="literal">NULL</span>;</span><br></pre></td></tr></table></figure>
+
+<h5 id="事后删除非空约束"><a href="#事后删除非空约束" class="headerlink" title="事后删除非空约束"></a>事后删除非空约束</h5><p>其实不需要删除，将非空约束写成NULL即可：</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">ALTER</span> <span class="keyword">TABLE</span> table_name <span class="keyword">MODIFY</span> column_name datatype <span class="literal">NULL</span>;</span><br></pre></td></tr></table></figure>
+
+<h4 id="3-2-主键约束——PRIMARY-KEY"><a href="#3-2-主键约束——PRIMARY-KEY" class="headerlink" title="3.2 主键约束——PRIMARY KEY"></a>3.2 主键约束——PRIMARY KEY</h4><p>主键约束在一个数据表中只有一个，但可以由多个字段组成联合/复合主键。</p>
+<h5 id="创建表时添加主键约束"><a href="#创建表时添加主键约束" class="headerlink" title="创建表时添加主键约束"></a>创建表时添加主键约束</h5><figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="comment">--列级，单字段主键</span></span><br><span class="line"><span class="keyword">CREATE</span> <span class="keyword">TABLE</span> table_name(</span><br><span class="line">  column_name datatype PRIMARY <span class="keyword">KEY</span></span><br><span class="line">);</span><br><span class="line"><span class="comment">--表级，联合主键</span></span><br><span class="line"><span class="keyword">CREATE</span> <span class="keyword">TABLE</span> table_name(</span><br><span class="line">  <span class="keyword">id</span> <span class="built_in">NUMBER</span>(<span class="number">5</span>,<span class="number">0</span>),</span><br><span class="line">  <span class="keyword">name</span> VARCHAR2(<span class="number">20</span>),</span><br><span class="line">  score <span class="built_in">NUMBER</span>(<span class="number">3</span>,<span class="number">0</span>),</span><br><span class="line">  <span class="keyword">CONSTRAINT</span> pk_id_name PRIMARY <span class="keyword">KEY</span>(<span class="keyword">id</span>,<span class="keyword">name</span>)</span><br><span class="line">);</span><br></pre></td></tr></table></figure>
+
+<h5 id="事后添加主键约束"><a href="#事后添加主键约束" class="headerlink" title="事后添加主键约束"></a>事后添加主键约束</h5><figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">ALTER</span> <span class="keyword">TABLE</span> table_name <span class="keyword">ADD</span> <span class="keyword">CONSTRAINT</span> constraint_name PRIMARY <span class="keyword">KEY</span>(column_name1,...);</span><br></pre></td></tr></table></figure>
+
+<h5 id="删除主键约束，分两步"><a href="#删除主键约束，分两步" class="headerlink" title="删除主键约束，分两步"></a>删除主键约束，分两步</h5><ol>
+<li>禁用/启用约束</li>
+</ol>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">ALTER</span> <span class="keyword">TABLE</span> table_name <span class="keyword">DISABLE</span>|<span class="keyword">ENABLE</span> <span class="keyword">CONSTRAINT</span> constraint_name;</span><br></pre></td></tr></table></figure>
+
+<ol start="2">
+<li>彻底删除约束</li>
+</ol>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">ALTER</span> <span class="keyword">TABLE</span> table_name <span class="keyword">DROP</span> <span class="keyword">CONSTRAINT</span> constraint_name;</span><br><span class="line"><span class="comment">--如果没有约束名，直接删</span></span><br><span class="line"><span class="keyword">ALTER</span> <span class="keyword">TABLE</span> table_name <span class="keyword">DROP</span> PRIMARY <span class="keyword">KEY</span>[<span class="keyword">CASCADE</span>];</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p><code>CASCADE</code>是级联删除，删了一个，其它与之有关的都会删除。</p>
+</blockquote>
+<h4 id="3-3-外键约束——REFERENCES"><a href="#3-3-外键约束——REFERENCES" class="headerlink" title="3.3 外键约束——REFERENCES"></a>3.3 外键约束——REFERENCES</h4><p>外键约束要定义在从表上，主表则必须具有主键约束或是唯一约束。当定义外键约束后，要求外键列数据必须在主表的主键列存在或是为NULL。</p>
+<h5 id="创建表时添加外键约束"><a href="#创建表时添加外键约束" class="headerlink" title="创建表时添加外键约束"></a>创建表时添加外键约束</h5><figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="comment">--列级</span></span><br><span class="line"><span class="keyword">CREATE</span> <span class="keyword">TABLE</span> table_name1(</span><br><span class="line">  column_name1 datatype <span class="keyword">REFERENCES</span> table2(column_name2),table3(column_name3)...</span><br><span class="line">);</span><br><span class="line"><span class="comment">--表级</span></span><br><span class="line"><span class="keyword">CREATE</span> <span class="keyword">TABLE</span> table_name1(</span><br><span class="line">  column_name1 datatype,</span><br><span class="line">  ...</span><br><span class="line">  <span class="keyword">CONSTRAINT</span> constraint_name <span class="keyword">FOREIGN</span> <span class="keyword">KEY</span>(column_name1) <span class="keyword">REFERENCES</span> table_name2(column_name2) [<span class="keyword">ON</span> <span class="keyword">DELETE</span> <span class="keyword">CASCADE</span>]</span><br><span class="line">);</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p><code>ON DELETE CASCADE</code>：级联删除，当主表的引用字段被删除时，外键字段也同时被删除。</p>
+</blockquote>
+<h5 id="事后添加外键约束"><a href="#事后添加外键约束" class="headerlink" title="事后添加外键约束"></a>事后添加外键约束</h5><figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">ALTER</span> <span class="keyword">TABLE</span> table_name1 <span class="keyword">ADD</span> <span class="keyword">CONSTRAINT</span> constraint_name <span class="keyword">FOREIGN</span> <span class="keyword">KEY</span>(column_name1) <span class="keyword">REFERENCES</span> table_name2(column_name2) [<span class="keyword">ON</span> <span class="keyword">DELETE</span> <span class="keyword">CASCADE</span>];</span><br></pre></td></tr></table></figure>
+
+<h5 id="删除外键约束，和主键约束一样也分两步"><a href="#删除外键约束，和主键约束一样也分两步" class="headerlink" title="删除外键约束，和主键约束一样也分两步"></a>删除外键约束，和主键约束一样也分两步</h5><ol>
+<li>禁用/启用约束</li>
+</ol>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">ALTER</span> <span class="keyword">TABLE</span> table_name <span class="keyword">DISABLE</span>|<span class="keyword">ENABLE</span> <span class="keyword">CONSTRAINT</span> constraint_name;</span><br></pre></td></tr></table></figure>
+
+<ol start="2">
+<li>彻底删除约束</li>
+</ol>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">ALTER</span> <span class="keyword">TABLE</span> table_name <span class="keyword">DROP</span> <span class="keyword">CONSTRAINT</span> constraint_name;</span><br></pre></td></tr></table></figure>
+
+<h4 id="3-4-唯一约束——UNIQUE"><a href="#3-4-唯一约束——UNIQUE" class="headerlink" title="3.4 唯一约束——UNIQUE"></a>3.4 唯一约束——UNIQUE</h4><p>其实主键约束=唯一约束+非空约束+全表只能一个</p>
+<h5 id="创建表时添加唯一约束"><a href="#创建表时添加唯一约束" class="headerlink" title="创建表时添加唯一约束"></a>创建表时添加唯一约束</h5><figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="comment">--列级</span></span><br><span class="line"><span class="keyword">CREATE</span> <span class="keyword">TABLE</span> table_name(</span><br><span class="line">  column_name datatype <span class="keyword">UNIQUE</span>,</span><br><span class="line">  ...</span><br><span class="line">);</span><br><span class="line"><span class="comment">--表级</span></span><br><span class="line"><span class="keyword">CREATE</span> <span class="keyword">TABLE</span> table_name(</span><br><span class="line">  column_name datatype,</span><br><span class="line">  ...</span><br><span class="line">  <span class="keyword">CONSTRAINT</span> constraint_name <span class="keyword">UNIQUE</span>(column_name)</span><br><span class="line">);</span><br></pre></td></tr></table></figure>
+
+<h5 id="事后添加唯一约束"><a href="#事后添加唯一约束" class="headerlink" title="事后添加唯一约束"></a>事后添加唯一约束</h5><figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">ALTER</span> <span class="keyword">TABLE</span> table_name <span class="keyword">ADD</span> <span class="keyword">CONSTRAINT</span> constraint_name <span class="keyword">UNIQUE</span>(column_name);</span><br></pre></td></tr></table></figure>
+
+<h5 id="删除唯一约束，和主键约束-外键约束一样也分两步"><a href="#删除唯一约束，和主键约束-外键约束一样也分两步" class="headerlink" title="删除唯一约束，和主键约束/外键约束一样也分两步"></a>删除唯一约束，和主键约束/外键约束一样也分两步</h5><ol>
+<li>禁用/启用约束</li>
+</ol>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">ALTER</span> <span class="keyword">TABLE</span> table_name <span class="keyword">DISABLE</span>|<span class="keyword">ENABLE</span> <span class="keyword">CONSTRAINT</span> constraint_name;</span><br></pre></td></tr></table></figure>
+
+<ol start="2">
+<li>彻底删除约束</li>
+</ol>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">ALTER</span> <span class="keyword">TABLE</span> table_name <span class="keyword">DROP</span> <span class="keyword">CONSTRAINT</span> constraint_name;</span><br></pre></td></tr></table></figure>
+
+<h4 id="3-5-检查约束——CHECK"><a href="#3-5-检查约束——CHECK" class="headerlink" title="3.5 检查约束——CHECK"></a>3.5 检查约束——CHECK</h4><h5 id="创建表时添加检查约束"><a href="#创建表时添加检查约束" class="headerlink" title="创建表时添加检查约束"></a>创建表时添加检查约束</h5><figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="comment">--列级</span></span><br><span class="line"><span class="keyword">CREATE</span> <span class="keyword">TABLE</span> table_name(</span><br><span class="line">  column_name datatype <span class="keyword">CHECK</span>(expressions),</span><br><span class="line">  ...</span><br><span class="line">);</span><br><span class="line"><span class="comment">--表级</span></span><br><span class="line"><span class="keyword">CREATE</span> <span class="keyword">TABLE</span> table_name(</span><br><span class="line">  column_name datatype,</span><br><span class="line">  ...</span><br><span class="line">  <span class="keyword">CONSTRAINT</span> constraint_name <span class="keyword">CHECK</span>(expressions)</span><br><span class="line">);</span><br></pre></td></tr></table></figure>
+
+<h5 id="事后添加检查约束"><a href="#事后添加检查约束" class="headerlink" title="事后添加检查约束"></a>事后添加检查约束</h5><figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">ALTER</span> <span class="keyword">TABLE</span> table_name <span class="keyword">ADD</span> <span class="keyword">CONSTRAINT</span> constraint_name <span class="keyword">CHECK</span>(expressions);</span><br></pre></td></tr></table></figure>
+
+<h5 id="删除检查约束，和主键约束-外键约束-唯一约束一样也分两步"><a href="#删除检查约束，和主键约束-外键约束-唯一约束一样也分两步" class="headerlink" title="删除检查约束，和主键约束/外键约束/唯一约束一样也分两步"></a>删除检查约束，和主键约束/外键约束/唯一约束一样也分两步</h5><ol>
+<li>禁用/启用约束</li>
+</ol>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">ALTER</span> <span class="keyword">TABLE</span> table_name <span class="keyword">DISABLE</span>|<span class="keyword">ENABLE</span> <span class="keyword">CONSTRAINT</span> constraint_name;</span><br></pre></td></tr></table></figure>
+
+<ol start="2">
+<li>彻底删除约束</li>
+</ol>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">ALTER</span> <span class="keyword">TABLE</span> table_name <span class="keyword">DROP</span> <span class="keyword">CONSTRAINT</span> constraint_name;</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h3 id="4-结合DDL-约束，创建表"><a href="#4-结合DDL-约束，创建表" class="headerlink" title="4. 结合DDL+约束，创建表"></a>4. 结合DDL+约束，创建表</h3><h4 id="员工表"><a href="#员工表" class="headerlink" title="员工表"></a>员工表</h4><figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">CREATE</span> <span class="keyword">TABLE</span> Emp(</span><br><span class="line">    empno <span class="built_in">NUMBER</span>(<span class="number">4</span>),</span><br><span class="line">    ename VARCHAR2(<span class="number">10</span>),</span><br><span class="line">    job VARCHAR2(<span class="number">9</span>),</span><br><span class="line">    mgrno <span class="built_in">NUMBER</span>(<span class="number">4</span>),</span><br><span class="line">    hiredate <span class="built_in">DATE</span>,</span><br><span class="line">    sal <span class="built_in">NUMBER</span>(<span class="number">7</span>,<span class="number">2</span>),</span><br><span class="line">    comm <span class="built_in">NUMBER</span>(<span class="number">7</span>,<span class="number">2</span>),</span><br><span class="line">    deptno <span class="built_in">NUMBER</span>(<span class="number">2</span>)</span><br><span class="line">);</span><br></pre></td></tr></table></figure>
+
+<h4 id="部门表"><a href="#部门表" class="headerlink" title="部门表"></a>部门表</h4><figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">CREATE</span> <span class="keyword">TABLE</span> Dept(</span><br><span class="line">    deptno <span class="built_in">NUMBER</span>(<span class="number">2</span>),</span><br><span class="line">    dname VARCHAR2(<span class="number">14</span>),</span><br><span class="line">    loc VARCHAR2(<span class="number">13</span>)</span><br><span class="line">);</span><br></pre></td></tr></table></figure>
+
+<h4 id="工资等级表"><a href="#工资等级表" class="headerlink" title="工资等级表"></a>工资等级表</h4><figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">CREATE</span> <span class="keyword">TABLE</span> Salgrade(</span><br><span class="line">    grade <span class="built_in">NUMBER</span>(<span class="number">2</span>),</span><br><span class="line">    losal <span class="built_in">NUMBER</span>(<span class="number">7</span>,<span class="number">2</span>),</span><br><span class="line">    hisal <span class="built_in">NUMBER</span>(<span class="number">7</span>,<span class="number">2</span>)</span><br><span class="line">);</span><br></pre></td></tr></table></figure>
+
+<p>添加约束：</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">ALTER</span> <span class="keyword">TABLE</span> Emp <span class="keyword">ADD</span> <span class="keyword">CONSTRAINT</span> emp_pk PRIMARY <span class="keyword">KEY</span>(empno);</span><br><span class="line"><span class="keyword">ALTER</span> <span class="keyword">TABle</span> Dept <span class="keyword">ADD</span> <span class="keyword">CONSTRAINT</span> dept_pk PRIMARY <span class="keyword">KEY</span>(deptno);</span><br><span class="line"><span class="keyword">ALTER</span> <span class="keyword">TABle</span> Salgrade <span class="keyword">ADD</span> <span class="keyword">CONSTRAINT</span> salgrade_pk PRIMARY <span class="keyword">KEY</span>(grade);</span><br><span class="line"><span class="keyword">ALTER</span> <span class="keyword">TABLE</span> Emp <span class="keyword">ADD</span> <span class="keyword">CONSTRAINT</span> emp_fk_dept <span class="keyword">FOREIGN</span> <span class="keyword">KEY</span>(deptno) <span class="keyword">REFERENCES</span> Dept(deptno);</span><br><span class="line"><span class="keyword">ALTER</span> <span class="keyword">TABLE</span> Emp <span class="keyword">ADD</span> <span class="keyword">CONSTRAINT</span> emp_ck_sal <span class="keyword">CHECK</span>(sal&gt;=<span class="number">0</span>);</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h3 id="5-DML"><a href="#5-DML" class="headerlink" title="5. DML"></a>5. DML</h3><h4 id="5-1-添加数据——INSERT"><a href="#5-1-添加数据——INSERT" class="headerlink" title="5.1 添加数据——INSERT"></a>5.1 添加数据——INSERT</h4><h5 id="手动直接添加"><a href="#手动直接添加" class="headerlink" title="手动直接添加"></a>手动直接添加</h5><p>插入时注意，由于<code>emp_fk_dept</code>外键的作用，必须先插入<code>DEPT</code>部门表再插入员工表，不然会报错</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">INSERT</span> <span class="keyword">INTO</span> <span class="string">"DEPT"</span> <span class="keyword">VALUES</span> (<span class="string">'10'</span>, <span class="string">'ACCOUNTING'</span>, <span class="string">'NEW YORK'</span>);</span><br><span class="line"><span class="keyword">INSERT</span> <span class="keyword">INTO</span> <span class="string">"DEPT"</span> <span class="keyword">VALUES</span> (<span class="string">'20'</span>, <span class="string">'RESEARCH'</span>, <span class="string">'DALLAS'</span>);</span><br><span class="line"><span class="keyword">INSERT</span> <span class="keyword">INTO</span> <span class="string">"DEPT"</span> <span class="keyword">VALUES</span> (<span class="string">'30'</span>, <span class="string">'SALES'</span>, <span class="string">'CHICAGO'</span>);</span><br><span class="line"><span class="keyword">INSERT</span> <span class="keyword">INTO</span> <span class="string">"DEPT"</span> <span class="keyword">VALUES</span> (<span class="string">'40'</span>, <span class="string">'OPERATIONS'</span>, <span class="string">'BOSTON'</span>);</span><br><span class="line"></span><br><span class="line"><span class="keyword">INSERT</span> <span class="keyword">INTO</span> <span class="string">"EMP"</span> <span class="keyword">VALUES</span> (<span class="string">'7369'</span>, <span class="string">'SMITH'</span>, <span class="string">'CLERK'</span>, <span class="string">'7902'</span>, <span class="keyword">TO_DATE</span>(<span class="string">'1980-12-17 00:00:00'</span>, <span class="string">'SYYYY-MM-DD HH24:MI:SS'</span>), <span class="string">'1400'</span>, <span class="literal">NULL</span>, <span class="string">'20'</span>);</span><br><span class="line"><span class="keyword">INSERT</span> <span class="keyword">INTO</span> <span class="string">"EMP"</span> <span class="keyword">VALUES</span> (<span class="string">'7499'</span>, <span class="string">'allen'</span>, <span class="string">'SALESMAN'</span>, <span class="string">'7698'</span>, <span class="keyword">TO_DATE</span>(<span class="string">'1981-02-28 00:00:00'</span>, <span class="string">'SYYYY-MM-DD HH24:MI:SS'</span>), <span class="string">'1700'</span>, <span class="string">'320'</span>, <span class="string">'30'</span>);</span><br><span class="line"><span class="keyword">INSERT</span> <span class="keyword">INTO</span> <span class="string">"EMP"</span> <span class="keyword">VALUES</span> (<span class="string">'7521'</span>, <span class="string">'WARD'</span>, <span class="string">'SALESMAN'</span>, <span class="string">'7698'</span>, <span class="keyword">TO_DATE</span>(<span class="string">'1981-02-22 00:00:00'</span>, <span class="string">'SYYYY-MM-DD HH24:MI:SS'</span>), <span class="string">'1350'</span>, <span class="string">'520'</span>, <span class="string">'30'</span>);</span><br><span class="line"><span class="keyword">INSERT</span> <span class="keyword">INTO</span> <span class="string">"EMP"</span> <span class="keyword">VALUES</span> (<span class="string">'7566'</span>, <span class="string">'JONES'</span>, <span class="string">'MANAGER'</span>, <span class="string">'7839'</span>, <span class="keyword">TO_DATE</span>(<span class="string">'1981-04-02 00:00:00'</span>, <span class="string">'SYYYY-MM-DD HH24:MI:SS'</span>), <span class="string">'3075'</span>, <span class="literal">NULL</span>, <span class="string">'20'</span>);</span><br><span class="line"><span class="keyword">INSERT</span> <span class="keyword">INTO</span> <span class="string">"EMP"</span> <span class="keyword">VALUES</span> (<span class="string">'7654'</span>, <span class="string">'MARTIN'</span>, <span class="string">'SALESMAN'</span>, <span class="string">'7698'</span>, <span class="keyword">TO_DATE</span>(<span class="string">'1981-09-28 00:00:00'</span>, <span class="string">'SYYYY-MM-DD HH24:MI:SS'</span>), <span class="string">'1350'</span>, <span class="string">'1420'</span>, <span class="string">'30'</span>);</span><br><span class="line"><span class="keyword">INSERT</span> <span class="keyword">INTO</span> <span class="string">"EMP"</span> <span class="keyword">VALUES</span> (<span class="string">'7698'</span>, <span class="string">'BLAKE'</span>, <span class="string">'MANAGER'</span>, <span class="string">'7839'</span>, <span class="keyword">TO_DATE</span>(<span class="string">'1981-05-01 00:00:00'</span>, <span class="string">'SYYYY-MM-DD HH24:MI:SS'</span>), <span class="string">'2950'</span>, <span class="literal">NULL</span>, <span class="string">'30'</span>);</span><br><span class="line"><span class="keyword">INSERT</span> <span class="keyword">INTO</span> <span class="string">"EMP"</span> <span class="keyword">VALUES</span> (<span class="string">'7782'</span>, <span class="string">'CLARK'</span>, <span class="string">'MANAGER'</span>, <span class="string">'7839'</span>, <span class="keyword">TO_DATE</span>(<span class="string">'1981-06-09 00:00:00'</span>, <span class="string">'SYYYY-MM-DD HH24:MI:SS'</span>), <span class="string">'2550'</span>, <span class="literal">NULL</span>, <span class="string">'10'</span>);</span><br><span class="line"><span class="keyword">INSERT</span> <span class="keyword">INTO</span> <span class="string">"EMP"</span> <span class="keyword">VALUES</span> (<span class="string">'7788'</span>, <span class="string">'SCOTT'</span>, <span class="string">'ANALYST'</span>, <span class="string">'7566'</span>, <span class="keyword">TO_DATE</span>(<span class="string">'1982-12-09 00:00:00'</span>, <span class="string">'SYYYY-MM-DD HH24:MI:SS'</span>), <span class="string">'3100'</span>, <span class="literal">NULL</span>, <span class="string">'20'</span>);</span><br><span class="line"><span class="keyword">INSERT</span> <span class="keyword">INTO</span> <span class="string">"EMP"</span> <span class="keyword">VALUES</span> (<span class="string">'7844'</span>, <span class="string">'TURNER'</span>, <span class="string">'SALESMAN'</span>, <span class="string">'7698'</span>, <span class="keyword">TO_DATE</span>(<span class="string">'1981-09-08 00:00:00'</span>, <span class="string">'SYYYY-MM-DD HH24:MI:SS'</span>), <span class="string">'1600'</span>, <span class="string">'20'</span>, <span class="string">'30'</span>);</span><br><span class="line"><span class="keyword">INSERT</span> <span class="keyword">INTO</span> <span class="string">"EMP"</span> <span class="keyword">VALUES</span> (<span class="string">'7876'</span>, <span class="string">'ADAMS'</span>, <span class="string">'CLERK'</span>, <span class="string">'7788'</span>, <span class="keyword">TO_DATE</span>(<span class="string">'1983-01-12 00:00:00'</span>, <span class="string">'SYYYY-MM-DD HH24:MI:SS'</span>), <span class="string">'1700'</span>, <span class="literal">NULL</span>, <span class="string">'20'</span>);</span><br><span class="line"><span class="keyword">INSERT</span> <span class="keyword">INTO</span> <span class="string">"EMP"</span> <span class="keyword">VALUES</span> (<span class="string">'7900'</span>, <span class="string">'JAMES'</span>, <span class="string">'CLERK'</span>, <span class="string">'7698'</span>, <span class="keyword">TO_DATE</span>(<span class="string">'1981-12-03 00:00:00'</span>, <span class="string">'SYYYY-MM-DD HH24:MI:SS'</span>), <span class="string">'1550'</span>, <span class="literal">NULL</span>, <span class="string">'30'</span>);</span><br><span class="line"><span class="keyword">INSERT</span> <span class="keyword">INTO</span> <span class="string">"EMP"</span> <span class="keyword">VALUES</span> (<span class="string">'7902'</span>, <span class="string">'FORD'</span>, <span class="string">'ANALYST'</span>, <span class="string">'7566'</span>, <span class="keyword">TO_DATE</span>(<span class="string">'1981-12-03 00:00:00'</span>, <span class="string">'SYYYY-MM-DD HH24:MI:SS'</span>), <span class="string">'3100'</span>, <span class="literal">NULL</span>, <span class="string">'20'</span>);</span><br><span class="line"><span class="keyword">INSERT</span> <span class="keyword">INTO</span> <span class="string">"EMP"</span> <span class="keyword">VALUES</span> (<span class="string">'7934'</span>, <span class="string">'MILLER'</span>, <span class="string">'CLERK'</span>, <span class="string">'7782'</span>, <span class="keyword">TO_DATE</span>(<span class="string">'1982-01-23 00:00:00'</span>, <span class="string">'SYYYY-MM-DD HH24:MI:SS'</span>), <span class="string">'1900'</span>, <span class="literal">NULL</span>, <span class="string">'10'</span>);</span><br><span class="line"></span><br><span class="line"><span class="keyword">INSERT</span> <span class="keyword">INTO</span> <span class="string">"SALGRADE"</span> <span class="keyword">VALUES</span> (<span class="string">'1'</span>,<span class="string">'700'</span>,<span class="string">'1200'</span>);</span><br><span class="line"><span class="keyword">INSERT</span> <span class="keyword">INTO</span> <span class="string">"SALGRADE"</span> <span class="keyword">VALUES</span> (<span class="string">'2'</span>,<span class="string">'1201'</span>,<span class="string">'1400'</span>);</span><br><span class="line"><span class="keyword">INSERT</span> <span class="keyword">INTO</span> <span class="string">"SALGRADE"</span> <span class="keyword">VALUES</span> (<span class="string">'3'</span>,<span class="string">'1401'</span>,<span class="string">'2000'</span>);</span><br><span class="line"><span class="keyword">INSERT</span> <span class="keyword">INTO</span> <span class="string">"SALGRADE"</span> <span class="keyword">VALUES</span> (<span class="string">'4'</span>,<span class="string">'2001'</span>,<span class="string">'3000'</span>);</span><br><span class="line"><span class="keyword">INSERT</span> <span class="keyword">INTO</span> <span class="string">"SALGRADE"</span> <span class="keyword">VALUES</span> (<span class="string">'5'</span>,<span class="string">'3001'</span>,<span class="string">'9999'</span>);</span><br><span class="line"></span><br><span class="line"><span class="keyword">COMMIT</span>;</span><br></pre></td></tr></table></figure>
+
+<p>也可以指定字段插入：</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">INSERT</span> <span class="keyword">INTO</span> <span class="string">"EMP"</span> <span class="keyword">VALUES</span> (<span class="string">'9999'</span>, <span class="string">'MINMIN'</span>, <span class="string">'BOSS'</span>, <span class="string">'9999'</span>, <span class="keyword">SYSDATE</span>, <span class="string">'19999'</span>, <span class="string">'99999'</span>, <span class="string">'10'</span>);</span><br><span class="line"><span class="keyword">INSERT</span> <span class="keyword">INTO</span> <span class="string">"SALGRADE"</span>(grade,losal,hisal) <span class="keyword">VALUES</span> (<span class="string">'6'</span>,<span class="string">'10000'</span>,<span class="string">'20000'</span>);</span><br><span class="line"><span class="keyword">COMMIT</span>;</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p><code>SYSDATE</code>：获取当前日期</p>
+</blockquote>
+<h5 id="通过外表添加"><a href="#通过外表添加" class="headerlink" title="通过外表添加"></a>通过外表添加</h5><p>建表时添加：</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">CREATE</span> <span class="keyword">TABLE</span> table_name1</span><br><span class="line"><span class="keyword">AS</span> </span><br><span class="line"><span class="keyword">SELECT</span> column_name1,... <span class="keyword">FROM</span> table_name2;</span><br></pre></td></tr></table></figure>
+
+<p>事后添加：</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">INSERT</span> <span class="keyword">INTO</span> table_name1[(column_name1,...)] <span class="keyword">SELECT</span> column_name1,... <span class="keyword">FROM</span> table_name2;</span><br></pre></td></tr></table></figure>
+
+<h4 id="5-2-修改数据——UPDATE"><a href="#5-2-修改数据——UPDATE" class="headerlink" title="5.2 修改数据——UPDATE"></a>5.2 修改数据——UPDATE</h4><figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">UPDATE</span> table_name <span class="keyword">SET</span> column_name1=value1,... [<span class="keyword">WHERE</span> conditions];</span><br></pre></td></tr></table></figure>
+
+<h4 id="5-3-添加-修改数据——MERGE"><a href="#5-3-添加-修改数据——MERGE" class="headerlink" title="5.3 添加/修改数据——MERGE"></a>5.3 添加/修改数据——MERGE</h4><p>作用：根据一张表或子查询的连接条件对另外一张表进行查询，连接条件匹配上的进行UPDATE，无法匹配的执行INSERT操作。</p>
+<blockquote>
+<p>在Oracle 9i，MERGE语句要求必须同时指定INSERT和UPDATE子句；而在Oracle 10g后，可以省略UPDATE或INSERT子句中的一个。</p>
+</blockquote>
+<p>语法：</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">MERGE</span> [<span class="keyword">INTO</span>] table_name1</span><br><span class="line"><span class="keyword">USING</span> table_name2</span><br><span class="line"><span class="keyword">ON</span> (condition)</span><br><span class="line"><span class="keyword">WHEN</span> <span class="keyword">MATCHED</span> <span class="keyword">THEN</span> <span class="keyword">UPDATE</span> <span class="keyword">SET</span> column_name1=value1</span><br><span class="line"><span class="keyword">WHEN</span> <span class="keyword">NOT</span> <span class="keyword">MATCHED</span> <span class="keyword">THEN</span> <span class="keyword">INSERT</span> (column_name2,...) <span class="keyword">VALUES</span> (value2,...);</span><br></pre></td></tr></table></figure>
+
+<p>案例需求：DEPT表根据deptno字段与DEPT_TMP表进行匹配，匹配上的更新DEPT_TMP表中数据，匹配不上的就插入到DEPT_TMP表。</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="comment">--之前建的DEPT表的部门编号有10,20,30,40四个；这里再新建一个部门表，只有20,30两个。</span></span><br><span class="line"><span class="keyword">CREATE</span> <span class="keyword">TABLE</span> Dept_tmp(</span><br><span class="line">    deptno <span class="built_in">NUMBER</span>(<span class="number">2</span>),</span><br><span class="line">    dname VARCHAR2(<span class="number">14</span>),</span><br><span class="line">    loc VARCHAR2(<span class="number">13</span>)</span><br><span class="line">);</span><br><span class="line"><span class="keyword">INSERT</span> <span class="keyword">INTO</span> <span class="string">"DEPT_TMP"</span> <span class="keyword">VALUES</span> (<span class="string">'20'</span>, <span class="string">'NONAME'</span>, <span class="string">'NONAME'</span>);</span><br><span class="line"><span class="keyword">INSERT</span> <span class="keyword">INTO</span> <span class="string">"DEPT_TMP"</span> <span class="keyword">VALUES</span> (<span class="string">'30'</span>, <span class="string">'NONAME'</span>, <span class="string">'NONAME'</span>);</span><br><span class="line"><span class="keyword">COMMIT</span>;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">MERGE</span> <span class="keyword">INTO</span> DEPT_TMP d1</span><br><span class="line"><span class="keyword">USING</span> DEPT d2</span><br><span class="line"><span class="keyword">ON</span> (d1.deptno=d2.deptno)</span><br><span class="line"><span class="keyword">WHEN</span> <span class="keyword">MATCHED</span> <span class="keyword">THEN</span> <span class="keyword">UPDATE</span> <span class="keyword">SET</span> d1.dname=d2.dname,d1.loc=d2.loc</span><br><span class="line"><span class="keyword">WHEN</span> <span class="keyword">NOT</span> <span class="keyword">MATCHED</span> <span class="keyword">THEN</span> <span class="keyword">INSERT</span> <span class="keyword">VALUES</span> (d2.deptno,d2.dname,d2.loc);</span><br><span class="line"><span class="keyword">COMMIT</span>;</span><br></pre></td></tr></table></figure>
+
+<h4 id="5-4-删除数据——DELETE"><a href="#5-4-删除数据——DELETE" class="headerlink" title="5.4 删除数据——DELETE"></a>5.4 删除数据——DELETE</h4><p>不指定<code>WHERE conditions</code>的话那就是删除表中全部数据，跟<code>TRUNCATE</code>作用一样了，但是<code>TRUNCATE</code>的速度更快！</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">DELETE</span> <span class="keyword">FROM</span> table_name [<span class="keyword">WHERE</span> conditions];</span><br></pre></td></tr></table></figure>
+
+<p>⚠️注意：删除数据都是指删除表中的一整行数据，不是一行中的某几个字段。要删除一行中的某几个字段的值，直接<code>UPDATE</code>为NULL。</p>
+<h4 id="5-5-查询数据——SELECT"><a href="#5-5-查询数据——SELECT" class="headerlink" title="5.5 查询数据——SELECT"></a>5.5 查询数据——SELECT</h4><p>语法：</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> [<span class="keyword">DISTINCT</span>]</span><br><span class="line">	select_list</span><br><span class="line"><span class="keyword">FROM</span></span><br><span class="line">	table_list</span><br><span class="line">[<span class="keyword">WHERE</span> clause]</span><br><span class="line">[<span class="keyword">GROUP</span> <span class="keyword">BY</span> clause]</span><br><span class="line">[<span class="keyword">HAVING</span> condition]</span><br><span class="line">[<span class="keyword">ORDER</span> <span class="keyword">BY</span> clause];</span><br></pre></td></tr></table></figure>
+
+<h5 id="NULL值的各种处理"><a href="#NULL值的各种处理" class="headerlink" title="NULL值的各种处理"></a>NULL值的各种处理</h5><p><strong>排序</strong>：排序时默认NULL值为最大值，即升序在最后降序在首位。不过可以手动指定NULL值的位置：</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> empno,comm <span class="keyword">FROM</span> emp <span class="keyword">ORDER</span> <span class="keyword">BY</span> <span class="number">2</span> <span class="keyword">DESC</span> <span class="keyword">NULLS</span> <span class="keyword">FIRST</span>; <span class="comment">--升序在队首</span></span><br><span class="line"><span class="keyword">SELECT</span> empno,comm <span class="keyword">FROM</span> emp <span class="keyword">ORDER</span> <span class="keyword">BY</span> comm <span class="keyword">DESC</span> <span class="keyword">NULLS</span> <span class="keyword">LAST</span>; <span class="comment">--降序在队尾</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>查询</strong>：检索NULL数据不能使用<code>=</code>，而要使用<code>IS NULL</code>或<code>IS NOT NULL</code></p>
+<p><strong>四则运算</strong>：对NULL进行四则运算后，其值都为NULL，这时就要用到<code>NVL</code>或<code>NVL2</code>单行函数</p>
+<ul>
+<li><code>NVL(x, value)</code>：若x为NULL，则返回value；否则返回x</li>
+<li><code>NVL2(x, value1, value2)</code>：若x为NULL，则返回value1；否则返回value2</li>
+</ul>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> empno,sal,comm,sal+NVL(comm,<span class="number">0</span>) sum_sal <span class="keyword">FROM</span> emp <span class="keyword">ORDER</span> <span class="keyword">BY</span> <span class="number">4</span> <span class="keyword">DESC</span>;</span><br></pre></td></tr></table></figure>
+
+<img src="/images/Oracle-%E5%9F%BA%E6%9C%ACSQL/image-20200106131856332.png" alt="image-20200106131856332" style="zoom:50%;">
+
+<h5 id="模糊查询——LIKE"><a href="#模糊查询——LIKE" class="headerlink" title="模糊查询——LIKE"></a>模糊查询——LIKE</h5><p>通配符：<code>_</code>表示一个字符，<code>%</code>表示0到多个字符</p>
+<h5 id="范围查询"><a href="#范围查询" class="headerlink" title="范围查询"></a>范围查询</h5><ul>
+<li>BETWEEN a AND b：闭区间[a, b]</li>
+</ul>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="comment">--工资在[3000, 5000]</span></span><br><span class="line"><span class="keyword">SELECT</span> empno,ename,sal <span class="keyword">FROM</span> emp <span class="keyword">WHERE</span> sal <span class="keyword">BETWEEN</span> <span class="number">3000</span> <span class="keyword">AND</span> <span class="number">5000</span> <span class="keyword">ORDER</span> <span class="keyword">BY</span> <span class="number">3</span> <span class="keyword">DESC</span>;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>IN / NOT IN：从列表里选取</li>
+</ul>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="comment">--部门编号为10和30</span></span><br><span class="line"><span class="keyword">SELECT</span> empno,ename,sal,deptno <span class="keyword">FROM</span> emp <span class="keyword">WHERE</span> deptno <span class="keyword">IN</span>(<span class="string">'10'</span>,<span class="string">'30'</span>) <span class="keyword">ORDER</span> <span class="keyword">BY</span> <span class="number">3</span> <span class="keyword">DESC</span>;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>SOME / ANY / ALL：子查询时配合&lt;、&gt;和=来使用<ul>
+<li>ANY：满足子查询结果的任意一个</li>
+<li>SOME：和ANY用法一样，不过ANY多用在非“=”环境</li>
+<li>ALL：满足子查询所有结果</li>
+</ul>
+</li>
+</ul>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="comment">--工资小于2000或整个部门最低工资中的任何一个</span></span><br><span class="line"><span class="keyword">SELECT</span> ename,sal <span class="keyword">FROM</span> emp <span class="keyword">WHERE</span> sal &lt; <span class="keyword">ANY</span>(<span class="string">'2000'</span>,(<span class="keyword">SELECT</span> <span class="keyword">MIN</span>(sal) <span class="keyword">FROM</span> emp));</span><br></pre></td></tr></table></figure>
+
+<h5 id="GROUP-BY和HAVING"><a href="#GROUP-BY和HAVING" class="headerlink" title="GROUP BY和HAVING"></a>GROUP BY和HAVING</h5><p>⚠️注意：使用GROUP BY时，SELECT列表中只能存在分组函数或GROUP BY子句中的字段。</p>
+<p>HAVING和GROUP BY联合使用，其与WHERE的区别就是WHERE是与<em>单个值</em>有关，而HAVING与<em>组</em>有关。换句话说就是，HAVING对于GROUP BY创建的组负责；WHERE对FROM负责。</p>
+<blockquote>
+<p><em>练习</em>：列出工资低于每个部门平均工资的员工信息：</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> </span><br><span class="line">    ename,</span><br><span class="line">    sal,</span><br><span class="line">    e1.deptno </span><br><span class="line"><span class="keyword">FROM</span> </span><br><span class="line">    emp e1 </span><br><span class="line"><span class="keyword">INNER</span> <span class="keyword">JOIN</span> </span><br><span class="line">    (<span class="keyword">SELECT</span> <span class="keyword">AVG</span>(sal) avg_sal,deptno <span class="keyword">FROM</span> emp <span class="keyword">GROUP</span> <span class="keyword">BY</span> deptno) e2 </span><br><span class="line"><span class="keyword">ON</span> </span><br><span class="line">    e1.deptno=e2.deptno </span><br><span class="line"><span class="keyword">WHERE</span> </span><br><span class="line">    e1.sal&lt;e2.avg_sal</span><br><span class="line"><span class="keyword">ORDER</span> <span class="keyword">BY</span> e1.deptno;</span><br></pre></td></tr></table></figure>
+</blockquote>
+<h5 id="CASE…WHEN…"><a href="#CASE…WHEN…" class="headerlink" title="CASE…WHEN…"></a>CASE…WHEN…</h5><p>形式1：</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line">CASE column_name </span><br><span class="line">WHEN value1 THEN result1 WHEN value2 THEN result2 ...</span><br><span class="line">[ELSE result] <span class="keyword">END</span>;</span><br><span class="line"><span class="comment">--案例：</span></span><br><span class="line"><span class="keyword">SELECT</span> </span><br><span class="line">	<span class="keyword">name</span>,</span><br><span class="line">	<span class="keyword">CASE</span> <span class="keyword">name</span> <span class="keyword">WHEN</span> <span class="string">'asher'</span> <span class="keyword">THEN</span> <span class="string">'ASHER'</span> <span class="keyword">WHEN</span> <span class="string">'miao'</span> <span class="keyword">THEN</span> <span class="string">'miaomin'</span> <span class="keyword">END</span> </span><br><span class="line"><span class="keyword">FROM</span> <span class="keyword">users</span>;</span><br></pre></td></tr></table></figure>
+
+<p>形式2：</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line">CASE</span><br><span class="line">WHEN column_name=value1 </span><br><span class="line">THEN result1,...[ELSE result] <span class="keyword">END</span>;</span><br><span class="line"><span class="comment">--案例：</span></span><br><span class="line"><span class="keyword">SELECT</span> </span><br><span class="line">	<span class="keyword">name</span>,</span><br><span class="line">	<span class="keyword">CASE</span> <span class="keyword">WHEN</span> <span class="keyword">name</span>=<span class="string">'asher'</span> <span class="keyword">THEN</span> <span class="string">'ASHER'</span> <span class="keyword">WHEN</span> <span class="keyword">name</span>=<span class="string">'miao'</span> <span class="keyword">THEN</span> <span class="string">'miaomin'</span> <span class="keyword">END</span> </span><br><span class="line"><span class="keyword">FROM</span> <span class="keyword">users</span>;</span><br></pre></td></tr></table></figure>
+
+<h5 id="DECODE，类似于CASE-WHEN"><a href="#DECODE，类似于CASE-WHEN" class="headerlink" title="DECODE，类似于CASE-WHEN"></a>DECODE，类似于CASE-WHEN</h5><figure class="highlight sql"><table><tr><td class="code"><pre><span class="line">DECODE(column_name,value1,result1,</span><br><span class="line">...,</span><br><span class="line">[defaultvalue]);</span><br><span class="line"><span class="comment">--案例：如果name字段有asher则显示为ASHER，如果有miao则显示为MIAO，没有就显示other</span></span><br><span class="line"><span class="keyword">SELECT</span> <span class="keyword">name</span>,<span class="keyword">DECODE</span>(<span class="keyword">name</span>,<span class="string">'asher'</span>,<span class="string">'ASHER'</span>,<span class="string">'miao'</span>,<span class="string">'MIAOMIN'</span>,<span class="string">'other'</span>) </span><br><span class="line"><span class="keyword">FROM</span> <span class="keyword">users</span>;</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h3 id="6-函数"><a href="#6-函数" class="headerlink" title="6. 函数"></a>6. 函数</h3><h4 id="6-1-数值型函数"><a href="#6-1-数值型函数" class="headerlink" title="6.1 数值型函数"></a>6.1 数值型函数</h4><table>
+<thead>
+<tr>
+<th>函数</th>
+<th>功能</th>
+<th>示例</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>ABS(x)</td>
+<td>x的绝对值</td>
+<td>ABS(-1.234)=1.234</td>
+</tr>
+<tr>
+<td>SIGN(x)</td>
+<td>x的正负值（正返1，负返-1，0返0）</td>
+<td>SIGN(-1.234)=-1</td>
+</tr>
+<tr>
+<td>CEIL(x)</td>
+<td>大于等于x的最小整数</td>
+<td>CEIL(-1.234)=-1</td>
+</tr>
+<tr>
+<td>FLOOR(x)</td>
+<td>小于等于x的最大整数</td>
+<td>FLOOR(-1.234)=-2</td>
+</tr>
+<tr>
+<td>POWER(x, y)</td>
+<td>x的y次幂</td>
+<td>POWER(2.5,2)=6.25</td>
+</tr>
+<tr>
+<td>EXP(y)</td>
+<td>自然对数e的y次幂</td>
+<td>EXP(2)=7.38905…</td>
+</tr>
+<tr>
+<td>LOG(x, y)</td>
+<td>logxy (x&gt;0,y&gt;0)​</td>
+<td>LOG(16,2)=0.25</td>
+</tr>
+<tr>
+<td>LN(y)</td>
+<td>lny</td>
+<td>LN(2)=0.69314…</td>
+</tr>
+<tr>
+<td>MOD(x, y)</td>
+<td>x除以y的余数</td>
+<td>MOD(5,2)=1</td>
+</tr>
+<tr>
+<td>ROUND(x [,y])</td>
+<td>四舍五入。y只取整数部分<br>y&gt;0则四舍五入为y位小数；<br>y&lt;0则四舍五入到小数点向左第y位；<br>y=0则四舍五入到整数</td>
+<td>ROUND(1234.5678,2.1)=1234.57<br>ROUND(1234.5678,-2.1)=1200<br>ROUND(1234.5678)=1235</td>
+</tr>
+<tr>
+<td>TRUNC(x [,y])</td>
+<td>用法同ROUND(x [,y])，只是不做四舍五入</td>
+<td>TRUNC(1234.5678,2.1)=1234.56<br>TRUNC(1234.5678,-2.1)=1200<br>TRUNC(1234.5678)=1234</td>
+</tr>
+<tr>
+<td>SQRT(x)</td>
+<td>\sqrt{x}(x\geq0)​</td>
+<td>SQRT(4)=2</td>
+</tr>
+</tbody></table>
+<h4 id="6-2-字符型函数"><a href="#6-2-字符型函数" class="headerlink" title="6.2 字符型函数"></a>6.2 字符型函数</h4><h5 id="ASCII码与字符串转换"><a href="#ASCII码与字符串转换" class="headerlink" title="ASCII码与字符串转换"></a>ASCII码与字符串转换</h5><p>ASCII码➡️字符串：</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> <span class="keyword">CHR</span>(<span class="number">65</span>),<span class="keyword">CHR</span>(<span class="number">97</span>),<span class="keyword">CHR</span>(<span class="number">32</span>),<span class="keyword">CHR</span>(<span class="number">14989485</span>) <span class="keyword">FROM</span> dual;</span><br></pre></td></tr></table></figure>
+
+<img src="/images/Oracle-%E5%9F%BA%E6%9C%ACSQL/image-20200106164637280.png" alt="image-20200106164637280" style="zoom:50%;">
+
+<p>字符串➡️ASCII码：</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> <span class="keyword">ASCII</span>(<span class="string">'A'</span>),<span class="keyword">ASCII</span>(<span class="string">'a'</span>),<span class="keyword">ASCII</span>(<span class="string">' '</span>),<span class="keyword">ASCII</span>(<span class="string">'中'</span>) <span class="keyword">FROM</span> dual;</span><br></pre></td></tr></table></figure>
+
+<img src="/images/Oracle-%E5%9F%BA%E6%9C%ACSQL/image-20200106164447967.png" alt="image-20200106164447967" style="zoom:50%;">
+
+<h5 id="拼接两个字符串——CONCAT-c1-c2-或"><a href="#拼接两个字符串——CONCAT-c1-c2-或" class="headerlink" title="拼接两个字符串——CONCAT(c1, c2)或||"></a>拼接两个字符串——CONCAT(c1, c2)或||</h5><figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> <span class="keyword">CONCAT</span>(<span class="string">'数据库'</span>,<span class="string">'Oracle'</span>)||<span class="string">'博大精深'</span> <span class="keyword">FROM</span> dual;</span><br><span class="line">数据库Oracle博大精深</span><br></pre></td></tr></table></figure>
+
+<h5 id="搜索字符的位置——INSTR-c1-c2-i-j-和INSTB-c1-c2-i-j"><a href="#搜索字符的位置——INSTR-c1-c2-i-j-和INSTB-c1-c2-i-j" class="headerlink" title="搜索字符的位置——INSTR(c1, c2, [i], [j])和INSTB(c1, c2, [i], [j])"></a>搜索字符的位置——INSTR(c1, c2, [i], [j])和INSTB(c1, c2, [i], [j])</h5><p>这两个函数区别是对<em>汉字</em>、<em>全角符</em>的计算：INSTR按1个算，而INSTRB按3个算</p>
+<ul>
+<li>c1：被搜索的字符串</li>
+<li>c2：希望搜索的字符串</li>
+<li>i：搜索的开始位置，默认为1</li>
+<li>j：第j次出现的位置，默认为1</li>
+</ul>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> <span class="keyword">INSTR</span>(<span class="string">'Oracle数据库'</span>,<span class="string">'据'</span>,<span class="number">1</span>,<span class="number">1</span>) <span class="keyword">FROM</span> dual; <span class="comment">--8</span></span><br><span class="line"><span class="keyword">SELECT</span> INSTRB(<span class="string">'Oracle数据库'</span>,<span class="string">'据'</span>,<span class="number">1</span>,<span class="number">1</span>) <span class="keyword">FROM</span> dual; <span class="comment">--10</span></span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>如果value=ZHS16GBK，那么一个汉字占用2个字节；如果value=AL32UTF8，那么一个汉字占用3个字节：</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> * <span class="keyword">FROM</span> v$nls_parameters <span class="keyword">WHERE</span> PARAMETER=<span class="string">'NLS_CHARACTERSET'</span>;</span><br><span class="line">NLS_CHARACTERSET AL32UTF8</span><br></pre></td></tr></table></figure>
+
+<p>所以本篇笔记中，我的中文字占3个字节。</p>
+</blockquote>
+<h5 id="字符串长度"><a href="#字符串长度" class="headerlink" title="字符串长度"></a>字符串长度</h5><ul>
+<li>LENGTH(x)：以字符为单位</li>
+<li>LENGTHB(x)：以byte字节为单位（由于我是AL32UTF8，所以中文我这里占3个字节）</li>
+<li>LENGTHC(x)：以Unicode字符为单位</li>
+<li>LENGTH2(x)：以UCS2代码点为单位</li>
+<li>LENGTH4(x)：以UCS4代码点为单位</li>
+</ul>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> <span class="keyword">LENGTH</span>(<span class="string">'你好'</span>),LENGTHB(<span class="string">'你好'</span>),LENGTHC(<span class="string">'你好'</span>),LENGTH2(<span class="string">'你好'</span>), LENGTH4(<span class="string">'你好'</span>) <span class="keyword">FROM</span> dual;</span><br></pre></td></tr></table></figure>
+
+<img src="/images/Oracle-%E5%9F%BA%E6%9C%ACSQL/image-20200106171055064.png" alt="image-20200106171055064" style="zoom:50%;">
+
+<h5 id="替换字符串——REPLACE-c1-c2-c3"><a href="#替换字符串——REPLACE-c1-c2-c3" class="headerlink" title="替换字符串——REPLACE(c1, c2, [c3])"></a>替换字符串——REPLACE(c1, c2, [c3])</h5><p>功能：将c1中的c2字符串用c3替换。c3不写即为将c2从c3中删除</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> <span class="keyword">REPLACE</span>(<span class="string">'Oracle数据库'</span>,<span class="string">'Oracle'</span>,<span class="string">'MySQL'</span>) <span class="keyword">FROM</span> dual; <span class="comment">--MySQL数据库</span></span><br></pre></td></tr></table></figure>
+
+<h5 id="截取字符串——SUBSTR-c1-n1-n2"><a href="#截取字符串——SUBSTR-c1-n1-n2" class="headerlink" title="截取字符串——SUBSTR(c1, n1, [n2])"></a>截取字符串——SUBSTR(c1, n1, [n2])</h5><ul>
+<li><p>n1：字符串开始位置（从1开始）</p>
+<ul>
+<li>n1=0：从首字母开始，等效于n1=1</li>
+<li>n1&lt;0：从末尾开始</li>
+</ul>
+</li>
+<li><p>n2：截取的位数（省略表示从n1开始一直到最后）</p>
+</li>
+</ul>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="comment">--裁剪出“数”这个字</span></span><br><span class="line"><span class="keyword">SELECT</span> <span class="keyword">SUBSTR</span>(<span class="string">'Oracle数据库'</span>,<span class="number">7</span>,<span class="number">1</span>) <span class="keyword">FROM</span> dual;</span><br><span class="line"><span class="keyword">SELECT</span> SUBSTRB(<span class="string">'Oracle数据库'</span>,<span class="number">7</span>,<span class="number">3</span>) <span class="keyword">FROM</span> dual; <span class="comment">--一个中文占3个字节</span></span><br></pre></td></tr></table></figure>
+
+<h5 id="首尾去除字符串"><a href="#首尾去除字符串" class="headerlink" title="首尾去除字符串"></a>首尾去除字符串</h5><p>TRIM的用法与LTRIM、RTRIM不一样，不过它们c2不写都默认为去除空格：</p>
+<ul>
+<li>TRIM(c1 [FROM c2])：左右两边去除</li>
+<li>LTRIM(c2, c1)：左边去除</li>
+<li>RTRIM(c2, c1)：右边去除</li>
+</ul>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> <span class="keyword">TRIM</span>(<span class="string">'a'</span> <span class="keyword">FROM</span> <span class="string">'aababaa'</span>),<span class="keyword">LTRIM</span>(<span class="string">'aababaa'</span>,<span class="string">'a'</span>),<span class="keyword">RTRIM</span>(<span class="string">'aababaa'</span>,<span class="string">'a'</span>) <span class="keyword">FROM</span> dual;</span><br></pre></td></tr></table></figure>
+
+<img src="/images/Oracle-%E5%9F%BA%E6%9C%ACSQL/image-20200107102306504.png" alt="image-20200107102306504" style="zoom:50%;">
+
+<h5 id="字母大小写转换"><a href="#字母大小写转换" class="headerlink" title="字母大小写转换"></a>字母大小写转换</h5><p>整个字符串大小写转换：LOWER(c1)和UPPER(c1)</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> <span class="keyword">LOWER</span>(<span class="string">'AaBbCcDd'</span>) <span class="keyword">FROM</span> dual; <span class="comment">--aabbccdd</span></span><br><span class="line"><span class="keyword">SELECT</span> <span class="keyword">UPPER</span>(<span class="string">'AaBbCcDd'</span>) <span class="keyword">FROM</span> dual; <span class="comment">--AABBCCDD</span></span><br></pre></td></tr></table></figure>
+
+<p>每个单词首字母大写：INITCAP(c1)</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> INITCAP(<span class="string">'how are you?'</span>) <span class="keyword">FROM</span> dual; <span class="comment">--How Are You?</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="6-3-日期型函数"><a href="#6-3-日期型函数" class="headerlink" title="6.3 日期型函数"></a>6.3 日期型函数</h4><h5 id="系统的日期时间"><a href="#系统的日期时间" class="headerlink" title="系统的日期时间"></a>系统的日期时间</h5><p><code>SYSDATE</code>：系统时间，一般与TO_CHAR()转换函数联用</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> TO_CHAR(<span class="keyword">SYSDATE</span>, <span class="string">'YYYY-MM-DD HH24:MI:SS'</span>) <span class="keyword">FROM</span> dual; <span class="comment">--2020-01-07 10:36:24</span></span><br></pre></td></tr></table></figure>
+
+<p><code>SYSTIMESTAMP</code>：系统时间带时区</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> SYSTIMESTAMP <span class="keyword">FROM</span> dual; <span class="comment">--07-1月 -20 10.52.15.311000000 上午 +08:00</span></span><br></pre></td></tr></table></figure>
+
+<h5 id="系统的时区"><a href="#系统的时区" class="headerlink" title="系统的时区"></a>系统的时区</h5><p><code>DBTIMEZONE</code>：返回时区</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> <span class="keyword">DBTIMEZONE</span> <span class="keyword">FROM</span> dual; <span class="comment">--+00:00</span></span><br></pre></td></tr></table></figure>
+
+<h5 id="当前会话的时区、日期、时间"><a href="#当前会话的时区、日期、时间" class="headerlink" title="当前会话的时区、日期、时间"></a>当前会话的时区、日期、时间</h5><p><code>CURRENT_TIMESTAMP</code>：当前会话的时间，带时区</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> <span class="keyword">CURRENT_TIMESTAMP</span> <span class="keyword">FROM</span> dual; <span class="comment">--07-1月 -20 10.43.07.072000000 上午 ASIA/SHANGHAI</span></span><br></pre></td></tr></table></figure>
+
+<p><code>CURRENT_DATE</code>：当前会话的时间</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> TO_CHAR(<span class="keyword">CURRENT_DATE</span>, <span class="string">'YYYYMMDDHH24MISS'</span>) <span class="keyword">FROM</span> dual; <span class="comment">--20200107105836</span></span><br></pre></td></tr></table></figure>
+
+<h5 id="日期操作"><a href="#日期操作" class="headerlink" title="日期操作"></a>日期操作</h5><p><code>ADD_MONTHS(date, integer)</code>：在制定月份上添加月份</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> TO_CHAR(ADD_MONTHS(<span class="keyword">TO_DATE</span>(<span class="string">'2019-10-31'</span>,<span class="string">'YYYY-MM-DD'</span>),<span class="number">1</span>),<span class="string">'YYYY-MM-DD'</span>) <span class="keyword">FROM</span> dual; <span class="comment">--2019-11-30</span></span><br><span class="line"><span class="keyword">SELECT</span> TO_CHAR(ADD_MONTHS(<span class="keyword">TO_DATE</span>(<span class="string">'2019-9-30'</span>,<span class="string">'YYYY-MM-DD'</span>),<span class="number">4</span>),<span class="string">'YYYY-MM-DD'</span>) <span class="keyword">FROM</span> dual; <span class="comment">--2020-01-31</span></span><br></pre></td></tr></table></figure>
+
+<p><code>LAST_DAY(date)</code>：指定日期对应月份的最后一天</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> <span class="keyword">LAST_DAY</span>(<span class="keyword">TO_DATE</span>(<span class="string">'2020-1-7'</span>,<span class="string">'YYYY-MM-DD'</span>)) <span class="keyword">FROM</span> dual; <span class="comment">--31-1月 -20</span></span><br></pre></td></tr></table></figure>
+
+<p><code>NEXT_DAY(date, char)</code>：如果char值是’星期一’，则返回date指定日期的下个星期一是哪天</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> NEXT_DAY(<span class="keyword">TO_DATE</span>(<span class="string">'2020-1-7'</span>,<span class="string">'YYYY-MM-DD'</span>),<span class="string">'星期一'</span>) <span class="keyword">FROM</span> dual; <span class="comment">--13-1月 -20</span></span><br></pre></td></tr></table></figure>
+
+<p><code>MONTH_BETWEEN(date1,date2)</code>：日期date1到日期date2之间的月数</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">SELECT</span></span><br><span class="line">	<span class="keyword">SYSDATE</span>, <span class="comment">--07-1月 -20</span></span><br><span class="line">	MONTHS_BETWEEN(<span class="keyword">SYSDATE</span>,<span class="keyword">TO_DATE</span>(<span class="string">'2016-01-01'</span>,<span class="string">'YYYY-MM-DD'</span>)), <span class="comment">--48.20...</span></span><br><span class="line">	MONTHS_BETWEEN(<span class="keyword">SYSDATE</span>,<span class="keyword">TO_DATE</span>(<span class="string">'2026-01-01'</span>,<span class="string">'YYYY-MM-DD'</span>))  <span class="comment">---71.79..</span></span><br><span class="line"><span class="keyword">FROM</span> dual;</span><br></pre></td></tr></table></figure>
+
+<p><code>EXTRACT(fmt FROM date)</code>：提取日期中的特定部分。fmt为YEAR、MONTH、DAY、HOUR、MINUTE和SECOND</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> <span class="keyword">EXTRACT</span>(<span class="keyword">hour</span> <span class="keyword">FROM</span> <span class="built_in">TIMESTAMP</span><span class="string">'2019-05-06 15:23:56'</span>) <span class="keyword">FROM</span> dual; <span class="comment">--15</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="6-4-转换函数"><a href="#6-4-转换函数" class="headerlink" title="6.4 转换函数"></a>6.4 转换函数</h4><h5 id="日期➡️字符串：TO-CHAR-date-fmt-params"><a href="#日期➡️字符串：TO-CHAR-date-fmt-params" class="headerlink" title="日期➡️字符串：TO_CHAR(date, [fmt], [params])"></a>日期➡️字符串：<code>TO_CHAR(date, [fmt], [params])</code></h5><ul>
+<li><p>fmt：转换格式（YY YYYY YEAR｜MM MONTH｜DD DAY｜HH24 HH12｜MI｜SS）</p>
+</li>
+<li><p>params：控制格式化时使用的语言类型，一般不写</p>
+</li>
+</ul>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> TO_CHAR(<span class="keyword">SYSDATE</span>,<span class="string">'YYYY-MM-DD HH24:MI:SS'</span>) <span class="keyword">FROM</span> dual; <span class="comment">--2020-01-07 11:43:47</span></span><br></pre></td></tr></table></figure>
+
+<h5 id="字符串➡️日期：TO-DATE-char-fmt-params"><a href="#字符串➡️日期：TO-DATE-char-fmt-params" class="headerlink" title="字符串➡️日期：TO_DATE(char, [fmt], [params])"></a>字符串➡️日期：<code>TO_DATE(char, [fmt], [params])</code></h5><p>⚠️注意：TO_DATE()是转回为系统默认日期格式，所以很少用！</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> <span class="keyword">TO_DATE</span>(<span class="string">'2020-1-7'</span>,<span class="string">'YYYY-MM-DD'</span>) <span class="keyword">FROM</span> dual; <span class="comment">--07-1月 -20</span></span><br></pre></td></tr></table></figure>
+
+<h5 id="数字➡️字符：TO-CHAR-number-fmt"><a href="#数字➡️字符：TO-CHAR-number-fmt" class="headerlink" title="数字➡️字符：TO_CHAR(number, [fmt])"></a>数字➡️字符：<code>TO_CHAR(number, [fmt])</code></h5><ul>
+<li>9：显示数字并忽略前面的0</li>
+<li>0：显示数字，位数不足，用0补齐</li>
+<li>.或D：显示小数点</li>
+<li>,或G：显示千位符</li>
+<li>$：美元符号</li>
+<li>S：加正负号（前后都可以）</li>
+</ul>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> TO_CHAR(<span class="number">12345.678</span>,<span class="string">'$99,999.999'</span>) <span class="keyword">FROM</span> dual; <span class="comment">--$12,345.678</span></span><br></pre></td></tr></table></figure>
+
+<h5 id="字符➡️数字：TO-NUMBER-char-fmt"><a href="#字符➡️数字：TO-NUMBER-char-fmt" class="headerlink" title="字符➡️数字：TO_NUMBER(char, [fmt])"></a>字符➡️数字：<code>TO_NUMBER(char, [fmt])</code></h5><figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> TO_NUMBER(<span class="string">'$12345.678'</span>,<span class="string">'$99999.999'</span>) <span class="keyword">FROM</span> dual; <span class="comment">--12345.678</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="6-5-NULL函数"><a href="#6-5-NULL函数" class="headerlink" title="6.5 NULL函数"></a>6.5 NULL函数</h4><h5 id="排除指定条件函数：LNNVL-condition"><a href="#排除指定条件函数：LNNVL-condition" class="headerlink" title="排除指定条件函数：LNNVL(condition)"></a>排除指定条件函数：<code>LNNVL(condition)</code></h5><p>该函数可以得到除了condition要求条件之外的数据（包括NULL），通常用在WHERE条件中。</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="comment">--奖金低于300的员工，NULL表示没有奖金</span></span><br><span class="line"><span class="keyword">SELECT</span> ename,comm <span class="keyword">FROM</span> emp <span class="keyword">WHERE</span> LNNVL(comm&gt;=<span class="number">300</span>);</span><br></pre></td></tr></table></figure>
+
+<img src="/images/Oracle-%E5%9F%BA%E6%9C%ACSQL/image-20200107135626364.png" alt="image-20200107135626364" style="zoom:50%;">
+
+<h5 id="替换NULL值"><a href="#替换NULL值" class="headerlink" title="替换NULL值"></a>替换NULL值</h5><p><code>NVL(x, value)</code>：如果x为NULL，则返回value；否则返回x</p>
+<p><code>NVL2(x, value1, value2)</code>：如果x为NULL，则返回value1；否则返回value2</p>
+<h4 id="6-6-集合函数"><a href="#6-6-集合函数" class="headerlink" title="6.6 集合函数"></a>6.6 集合函数</h4><p>集合函数通常配合GROUP BY或HAVING使用，除了COUNT函数其它都会忽略列值为NULL的数据。</p>
+<h5 id="求平均值：AVG-DISTINCT-field"><a href="#求平均值：AVG-DISTINCT-field" class="headerlink" title="求平均值：AVG([DISTINCT] field)"></a>求平均值：AVG([DISTINCT] field)</h5><figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="comment">--求每个部门的平均基本工资</span></span><br><span class="line"><span class="keyword">SELECT</span> <span class="keyword">AVG</span>(sal),deptno <span class="keyword">FROM</span> emp <span class="keyword">GROUP</span> <span class="keyword">BY</span> deptno;</span><br></pre></td></tr></table></figure>
+
+<h5 id="记录数量：COUNT-DISTINCT-field"><a href="#记录数量：COUNT-DISTINCT-field" class="headerlink" title="记录数量：COUNT(* | [DISTINCT] field)"></a>记录数量：<code>COUNT(* | [DISTINCT] field)</code></h5><h5 id="最大-最小值：MAX-DISTINCT-field-MIN-DISTINCT-field"><a href="#最大-最小值：MAX-DISTINCT-field-MIN-DISTINCT-field" class="headerlink" title="最大/最小值：MAX([DISTINCT] field)/MIN([DISTINCT] field)"></a>最大/最小值：<code>MAX([DISTINCT] field)</code>/<code>MIN([DISTINCT] field)</code></h5><h5 id="求和：SUM-DISTINCT-field"><a href="#求和：SUM-DISTINCT-field" class="headerlink" title="求和：SUM([DISTINCT] field)"></a>求和：<code>SUM([DISTINCT] field)</code></h5><h4 id="6-7-分析函数"><a href="#6-7-分析函数" class="headerlink" title="6.7 分析函数"></a>6.7 分析函数</h4><h5 id="排序：RANK-和DENSE-RANK"><a href="#排序：RANK-和DENSE-RANK" class="headerlink" title="排序：RANK()和DENSE_RANK()"></a>排序：RANK()和DENSE_RANK()</h5><p>区别：</p>
+<ul>
+<li><p>RANK()是跳跃排序，有两个第二名时接下来就是第四名，1,2,2,4</p>
+</li>
+<li><p>DENSE_RANK()是连续排序，有两个第二名时后面仍然为第三名，1,2,2,3</p>
+</li>
+</ul>
+<p>语法：<code>RANK() OVER(PARTITION BY field1 ORDER BY field2 [DESC])</code></p>
+<h5 id="顺序：ROW-NUMBER"><a href="#顺序：ROW-NUMBER" class="headerlink" title="顺序：ROW_NUMBER()"></a>顺序：ROW_NUMBER()</h5><p>语法：<code>ROW_NUMBER() OVER (PARTITION BY field1 ORDER BY field2 [DESC])</code></p>
+<h4 id="6-8-其它函数"><a href="#6-8-其它函数" class="headerlink" title="6.8 其它函数"></a>6.8 其它函数</h4><h5 id="数据所在表中的行号：ROWNUM"><a href="#数据所在表中的行号：ROWNUM" class="headerlink" title="数据所在表中的行号：ROWNUM"></a>数据所在表中的行号：ROWNUM</h5><h5 id="行转列函数：WM-CONCAT"><a href="#行转列函数：WM-CONCAT" class="headerlink" title="行转列函数：WM_CONCAT()"></a>行转列函数：WM_CONCAT()</h5><p>该函数可以把列值以<code>,</code>割开来，并显示成一行：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">SELECT job,WM_CONCAT(ename) name FROM emp GROUP BY job;</span><br></pre></td></tr></table></figure>
+
+<img src="/images/Oracle-%E5%9F%BA%E6%9C%ACSQL/image-20200117102653835.png" alt="image-20200117102653835" style="zoom:50%;">
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Oracle/" rel="tag"># Oracle</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-next post-nav-item">
+                <a href="/2020/01/02/CentOS-7%E5%AE%89%E8%A3%85Oracle-11g/" rel="next" title="CentOS 7安装Oracle 11g">
+                  <i class="fa fa-chevron-left"></i> CentOS 7安装Oracle 11g
+                </a>
+            </div>
+
+            <span class="post-nav-divider"></span>
+
+            <div class="post-nav-prev post-nav-item">
+                <a href="/2020/01/08/Oracle-PL-SQL/" rel="prev" title="Oracle PL/SQL">
+                  Oracle PL/SQL <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-常用数据类型"><span class="nav-number">1.</span> <span class="nav-text">1. 常用数据类型</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-1-字符型"><span class="nav-number">1.1.</span> <span class="nav-text">1.1 字符型</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#1-2-数字型"><span class="nav-number">1.2.</span> <span class="nav-text">1.2 数字型</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#1-3-日期类型"><span class="nav-number">1.3.</span> <span class="nav-text">1.3 日期类型</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#1-4-其它类型"><span class="nav-number">1.4.</span> <span class="nav-text">1.4 其它类型</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-DDL"><span class="nav-number">2.</span> <span class="nav-text">2. DDL</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#2-1-创建表——CREATE-TABLE"><span class="nav-number">2.1.</span> <span class="nav-text">2.1 创建表——CREATE TABLE</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-2-修改表——ALTER-TABLE"><span class="nav-number">2.2.</span> <span class="nav-text">2.2 修改表——ALTER TABLE</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-3-删除表——TRUNCATE-DROP-TABLE"><span class="nav-number">2.3.</span> <span class="nav-text">2.3 删除表——TRUNCATE|DROP TABLE</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-约束"><span class="nav-number">3.</span> <span class="nav-text">3. 约束</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#3-1-非空约束——NOT-NULL"><span class="nav-number">3.1.</span> <span class="nav-text">3.1 非空约束——NOT NULL</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#创建表时添加非空约束"><span class="nav-number">3.1.1.</span> <span class="nav-text">创建表时添加非空约束</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#事后添加非空约束"><span class="nav-number">3.1.2.</span> <span class="nav-text">事后添加非空约束</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#事后删除非空约束"><span class="nav-number">3.1.3.</span> <span class="nav-text">事后删除非空约束</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-2-主键约束——PRIMARY-KEY"><span class="nav-number">3.2.</span> <span class="nav-text">3.2 主键约束——PRIMARY KEY</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#创建表时添加主键约束"><span class="nav-number">3.2.1.</span> <span class="nav-text">创建表时添加主键约束</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#事后添加主键约束"><span class="nav-number">3.2.2.</span> <span class="nav-text">事后添加主键约束</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#删除主键约束，分两步"><span class="nav-number">3.2.3.</span> <span class="nav-text">删除主键约束，分两步</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-3-外键约束——REFERENCES"><span class="nav-number">3.3.</span> <span class="nav-text">3.3 外键约束——REFERENCES</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#创建表时添加外键约束"><span class="nav-number">3.3.1.</span> <span class="nav-text">创建表时添加外键约束</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#事后添加外键约束"><span class="nav-number">3.3.2.</span> <span class="nav-text">事后添加外键约束</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#删除外键约束，和主键约束一样也分两步"><span class="nav-number">3.3.3.</span> <span class="nav-text">删除外键约束，和主键约束一样也分两步</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-4-唯一约束——UNIQUE"><span class="nav-number">3.4.</span> <span class="nav-text">3.4 唯一约束——UNIQUE</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#创建表时添加唯一约束"><span class="nav-number">3.4.1.</span> <span class="nav-text">创建表时添加唯一约束</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#事后添加唯一约束"><span class="nav-number">3.4.2.</span> <span class="nav-text">事后添加唯一约束</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#删除唯一约束，和主键约束-外键约束一样也分两步"><span class="nav-number">3.4.3.</span> <span class="nav-text">删除唯一约束，和主键约束/外键约束一样也分两步</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-5-检查约束——CHECK"><span class="nav-number">3.5.</span> <span class="nav-text">3.5 检查约束——CHECK</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#创建表时添加检查约束"><span class="nav-number">3.5.1.</span> <span class="nav-text">创建表时添加检查约束</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#事后添加检查约束"><span class="nav-number">3.5.2.</span> <span class="nav-text">事后添加检查约束</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#删除检查约束，和主键约束-外键约束-唯一约束一样也分两步"><span class="nav-number">3.5.3.</span> <span class="nav-text">删除检查约束，和主键约束/外键约束/唯一约束一样也分两步</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-结合DDL-约束，创建表"><span class="nav-number">4.</span> <span class="nav-text">4. 结合DDL+约束，创建表</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#员工表"><span class="nav-number">4.1.</span> <span class="nav-text">员工表</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#部门表"><span class="nav-number">4.2.</span> <span class="nav-text">部门表</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#工资等级表"><span class="nav-number">4.3.</span> <span class="nav-text">工资等级表</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-DML"><span class="nav-number">5.</span> <span class="nav-text">5. DML</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#5-1-添加数据——INSERT"><span class="nav-number">5.1.</span> <span class="nav-text">5.1 添加数据——INSERT</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#手动直接添加"><span class="nav-number">5.1.1.</span> <span class="nav-text">手动直接添加</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#通过外表添加"><span class="nav-number">5.1.2.</span> <span class="nav-text">通过外表添加</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#5-2-修改数据——UPDATE"><span class="nav-number">5.2.</span> <span class="nav-text">5.2 修改数据——UPDATE</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#5-3-添加-修改数据——MERGE"><span class="nav-number">5.3.</span> <span class="nav-text">5.3 添加/修改数据——MERGE</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#5-4-删除数据——DELETE"><span class="nav-number">5.4.</span> <span class="nav-text">5.4 删除数据——DELETE</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#5-5-查询数据——SELECT"><span class="nav-number">5.5.</span> <span class="nav-text">5.5 查询数据——SELECT</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#NULL值的各种处理"><span class="nav-number">5.5.1.</span> <span class="nav-text">NULL值的各种处理</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#模糊查询——LIKE"><span class="nav-number">5.5.2.</span> <span class="nav-text">模糊查询——LIKE</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#范围查询"><span class="nav-number">5.5.3.</span> <span class="nav-text">范围查询</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#GROUP-BY和HAVING"><span class="nav-number">5.5.4.</span> <span class="nav-text">GROUP BY和HAVING</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#CASE…WHEN…"><span class="nav-number">5.5.5.</span> <span class="nav-text">CASE…WHEN…</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#DECODE，类似于CASE-WHEN"><span class="nav-number">5.5.6.</span> <span class="nav-text">DECODE，类似于CASE-WHEN</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6-函数"><span class="nav-number">6.</span> <span class="nav-text">6. 函数</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#6-1-数值型函数"><span class="nav-number">6.1.</span> <span class="nav-text">6.1 数值型函数</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#6-2-字符型函数"><span class="nav-number">6.2.</span> <span class="nav-text">6.2 字符型函数</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#ASCII码与字符串转换"><span class="nav-number">6.2.1.</span> <span class="nav-text">ASCII码与字符串转换</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#拼接两个字符串——CONCAT-c1-c2-或"><span class="nav-number">6.2.2.</span> <span class="nav-text">拼接两个字符串——CONCAT(c1, c2)或||</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#搜索字符的位置——INSTR-c1-c2-i-j-和INSTB-c1-c2-i-j"><span class="nav-number">6.2.3.</span> <span class="nav-text">搜索字符的位置——INSTR(c1, c2, [i], [j])和INSTB(c1, c2, [i], [j])</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#字符串长度"><span class="nav-number">6.2.4.</span> <span class="nav-text">字符串长度</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#替换字符串——REPLACE-c1-c2-c3"><span class="nav-number">6.2.5.</span> <span class="nav-text">替换字符串——REPLACE(c1, c2, [c3])</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#截取字符串——SUBSTR-c1-n1-n2"><span class="nav-number">6.2.6.</span> <span class="nav-text">截取字符串——SUBSTR(c1, n1, [n2])</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#首尾去除字符串"><span class="nav-number">6.2.7.</span> <span class="nav-text">首尾去除字符串</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#字母大小写转换"><span class="nav-number">6.2.8.</span> <span class="nav-text">字母大小写转换</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#6-3-日期型函数"><span class="nav-number">6.3.</span> <span class="nav-text">6.3 日期型函数</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#系统的日期时间"><span class="nav-number">6.3.1.</span> <span class="nav-text">系统的日期时间</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#系统的时区"><span class="nav-number">6.3.2.</span> <span class="nav-text">系统的时区</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#当前会话的时区、日期、时间"><span class="nav-number">6.3.3.</span> <span class="nav-text">当前会话的时区、日期、时间</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#日期操作"><span class="nav-number">6.3.4.</span> <span class="nav-text">日期操作</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#6-4-转换函数"><span class="nav-number">6.4.</span> <span class="nav-text">6.4 转换函数</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#日期➡️字符串：TO-CHAR-date-fmt-params"><span class="nav-number">6.4.1.</span> <span class="nav-text">日期➡️字符串：TO_CHAR(date, [fmt], [params])</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#字符串➡️日期：TO-DATE-char-fmt-params"><span class="nav-number">6.4.2.</span> <span class="nav-text">字符串➡️日期：TO_DATE(char, [fmt], [params])</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#数字➡️字符：TO-CHAR-number-fmt"><span class="nav-number">6.4.3.</span> <span class="nav-text">数字➡️字符：TO_CHAR(number, [fmt])</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#字符➡️数字：TO-NUMBER-char-fmt"><span class="nav-number">6.4.4.</span> <span class="nav-text">字符➡️数字：TO_NUMBER(char, [fmt])</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#6-5-NULL函数"><span class="nav-number">6.5.</span> <span class="nav-text">6.5 NULL函数</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#排除指定条件函数：LNNVL-condition"><span class="nav-number">6.5.1.</span> <span class="nav-text">排除指定条件函数：LNNVL(condition)</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#替换NULL值"><span class="nav-number">6.5.2.</span> <span class="nav-text">替换NULL值</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#6-6-集合函数"><span class="nav-number">6.6.</span> <span class="nav-text">6.6 集合函数</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#求平均值：AVG-DISTINCT-field"><span class="nav-number">6.6.1.</span> <span class="nav-text">求平均值：AVG([DISTINCT] field)</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#记录数量：COUNT-DISTINCT-field"><span class="nav-number">6.6.2.</span> <span class="nav-text">记录数量：COUNT(* | [DISTINCT] field)</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#最大-最小值：MAX-DISTINCT-field-MIN-DISTINCT-field"><span class="nav-number">6.6.3.</span> <span class="nav-text">最大/最小值：MAX([DISTINCT] field)/MIN([DISTINCT] field)</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#求和：SUM-DISTINCT-field"><span class="nav-number">6.6.4.</span> <span class="nav-text">求和：SUM([DISTINCT] field)</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#6-7-分析函数"><span class="nav-number">6.7.</span> <span class="nav-text">6.7 分析函数</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#排序：RANK-和DENSE-RANK"><span class="nav-number">6.7.1.</span> <span class="nav-text">排序：RANK()和DENSE_RANK()</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#顺序：ROW-NUMBER"><span class="nav-number">6.7.2.</span> <span class="nav-text">顺序：ROW_NUMBER()</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#6-8-其它函数"><span class="nav-number">6.8.</span> <span class="nav-text">6.8 其它函数</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#数据所在表中的行号：ROWNUM"><span class="nav-number">6.8.1.</span> <span class="nav-text">数据所在表中的行号：ROWNUM</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#行转列函数：WM-CONCAT"><span class="nav-number">6.8.2.</span> <span class="nav-text">行转列函数：WM_CONCAT()</span></a></li></ol></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <img class="site-author-image" itemprop="image" alt="MIN MIN"
+    src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">MIN MIN</p>
+  <div class="site-description" itemprop="description">即使最后没有人为你鼓掌，也要优雅地谢幕，感谢自己的认真付出。</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">54</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">13</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+        <span class="site-state-item-count">32</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/ashermin" title="GitHub &amp;rarr; https:&#x2F;&#x2F;github.com&#x2F;ashermin" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+<div class="copyright">
+  
+  &copy; 2019 – 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user-circle"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">MIN MIN</span>
+</div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+<script src="/js/utils.js"></script>
+<script src="/js/schemes/pisces.js"></script>
+<script src="/js/next-boot.js"></script>
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+</body>
+</html>

@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.0.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/avatar.jpg">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/avatar.jpg">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/avatar.jpg">
+  <link rel="mask-icon" href="/images/avatar.jpg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+
+
+<script id="hexo-configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '7.4.2',
+    exturl: false,
+    sidebar: {"position":"left","width":260,"display":"post","offset":12,"onmobile":false},
+    copycode: {"enable":true,"show_result":true,"style":"default"},
+    back2top: {"enable":true,"sidebar":false,"scrollpercent":true},
+    bookmark: {"enable":false,"color":"#222","save":"auto"},
+    fancybox: false,
+    mediumzoom: false,
+    lazyload: false,
+    pangu: false,
+    algolia: {
+      appID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    localsearch: {"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},
+    path: '',
+    motion: {"enable":false,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    translation: {
+      copy_button: '复制',
+      copy_success: '复制成功',
+      copy_failure: '复制失败'
+    },
+    sidebarPadding: 40
+  };
+</script>
+
+  <meta name="description" content="1. HDFS单节点搭建 搭建过程基本按照官方文档上进行的，由于之前学过HDFS，所以这里主要是对它进行一次温故。 Hadoop版本我使用的是Hadoop-2.6.0-cdh5.7.6；Linux版本为CentOS 7.3 1.1 搭建前环境的准备（1）HDFS是由Java写的，所以需要在Linux中配置JDK，这里我配置的是Java8：">
+<meta name="keywords" content="Hadoop,HDFS">
+<meta property="og:type" content="article">
+<meta property="og:title" content="HDFS基础">
+<meta property="og:url" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2019&#x2F;11&#x2F;27&#x2F;HDFS%E5%9F%BA%E7%A1%80&#x2F;index.html">
+<meta property="og:site_name" content="MIN MIN">
+<meta property="og:description" content="1. HDFS单节点搭建 搭建过程基本按照官方文档上进行的，由于之前学过HDFS，所以这里主要是对它进行一次温故。 Hadoop版本我使用的是Hadoop-2.6.0-cdh5.7.6；Linux版本为CentOS 7.3 1.1 搭建前环境的准备（1）HDFS是由Java写的，所以需要在Linux中配置JDK，这里我配置的是Java8：">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;images&#x2F;HDFS%E5%9F%BA%E7%A1%80&#x2F;image-20191129102928585.png">
+<meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;images&#x2F;HDFS%E5%9F%BA%E7%A1%80&#x2F;image-20191128101653298.png">
+<meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;images&#x2F;HDFS%E5%9F%BA%E7%A1%80&#x2F;image-20191128101943998.png">
+<meta property="og:updated_time" content="2019-11-29T11:37:19.781Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;images&#x2F;HDFS%E5%9F%BA%E7%A1%80&#x2F;image-20191129102928585.png">
+
+<link rel="canonical" href="http://yoursite.com/2019/11/27/HDFS%E5%9F%BA%E7%A1%80/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true,
+    isPage: false,
+    isArchive: false
+  };
+</script>
+
+  <title>HDFS基础 | MIN MIN</title>
+  
+
+
+  <script>
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?cad2a7930afd095772e571e6eab3628f";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+  <!--  -->
+<link href='//fonts.googleapis.com/css?family=Kaushan+Script' rel='stylesheet' type='text/css'>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">MIN MIN</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+        <p class="site-subtitle">BLOG</p>
+  </div>
+
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档</a>
+
+  </li>
+  </ul>
+
+</nav>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/11/27/HDFS%E5%9F%BA%E7%A1%80/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="MIN MIN">
+      <meta itemprop="description" content="即使最后没有人为你鼓掌，也要优雅地谢幕，感谢自己的认真付出。">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="MIN MIN">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          HDFS基础
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2019-11-27 21:38:56" itemprop="dateCreated datePublished" datetime="2019-11-27T21:38:56+08:00">2019-11-27</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2019-11-29 19:37:19" itemprop="dateModified" datetime="2019-11-29T19:37:19+08:00">2019-11-29</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Hadoop/" itemprop="url" rel="index">
+                    <span itemprop="name">Hadoop</span>
+                  </a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h3 id="1-HDFS单节点搭建"><a href="#1-HDFS单节点搭建" class="headerlink" title="1. HDFS单节点搭建"></a>1. HDFS单节点搭建</h3><blockquote>
+<p>搭建过程基本按照<a href="http://archive.cloudera.com/cdh5/cdh/5/hadoop-2.6.0-cdh5.7.6/hadoop-project-dist/hadoop-common/SingleCluster.html" target="_blank" rel="noopener">官方文档</a>上进行的，由于之前学过HDFS，所以这里主要是对它进行一次温故。</p>
+<p>Hadoop版本我使用的是Hadoop-2.6.0-cdh5.7.6；Linux版本为CentOS 7.3</p>
+</blockquote><h4 id="1-1-搭建前环境的准备"><a href="#1-1-搭建前环境的准备" class="headerlink" title="1.1 搭建前环境的准备"></a>1.1 搭建前环境的准备</h4><p>（1）HDFS是由Java写的，所以需要在Linux中配置JDK，这里我配置的是Java8：</p><a id="more"></a>
+
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> java -version</span></span><br><span class="line">java version "1.8.0_121"</span><br><span class="line">Java(TM) SE Runtime Environment (build 1.8.0_121-b13)</span><br><span class="line">Java HotSpot(TM) 64-Bit Server VM (build 25.121-b13, mixed mode)</span><br></pre></td></tr></table></figure>
+
+<p>（2）ssh免密码登录</p>
+<p>a. 执行<code>ssh-keygen</code>，一路回车。其中<code>-t</code>是指定加密类型，<code>rsa</code>是加密类型的一种</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> ssh-keygen -t rsa</span></span><br></pre></td></tr></table></figure>
+
+<p>b. 执行<code>ssh-keygen</code>后在<code>~/.ssh</code>目录下会生成两个文件：</p>
+<ul>
+<li><code>id_rsa</code>：私钥</li>
+<li><code>id_rsa.pub</code>：公钥</li>
+</ul>
+<p>c. 将公钥的内容拷贝至<code>authorized_keys</code>中，并赋予其<code>600</code>的权限</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> cat id_rsa.pub &gt;&gt; authorized_keys</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> chmod 600 authorized_keys</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="1-2-配置HDFS"><a href="#1-2-配置HDFS" class="headerlink" title="1.2 配置HDFS"></a>1.2 配置HDFS</h4><p>（0）把Hadoop添加到用户环境变量中</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> vi ~/.bashrc</span></span><br><span class="line">export HADOOP_HOME=/opt/applications/hadoop-2.6.0-cdh5.7.6</span><br><span class="line">export PATH=$HADOOP_HOME/bin:$PATH</span><br><span class="line"><span class="meta">$</span><span class="bash"> <span class="built_in">source</span> ~/.bashrc</span></span><br></pre></td></tr></table></figure>
+
+<p>（1）<code>etc/hadoop/hadoop-env.sh</code>，指定本机的<code>JAVA_HOME</code></p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">export JAVA_HOME=/opt/applications/jdk1.8.0_121</span><br></pre></td></tr></table></figure>
+
+<p>（2）<code>etc/hadoop/core-site.xml</code>，指定默认文件系统的访问入口，也是<code>namenode</code>主节点所在机器的位置和端口</p>
+<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">property</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">name</span>&gt;</span>fs.defaultFS<span class="tag">&lt;/<span class="name">name</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">value</span>&gt;</span>hdfs://min01:8020<span class="tag">&lt;/<span class="name">value</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">property</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>（3）<code>etc/hadoop/hdfs-site.xml</code>，Hadoop默认副本系数为3，由于这里是单节点，所以要修改为1；再指定下Hadoop系统生成文件的临时地址目录，防止重启系统就没有了</p>
+<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">property</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">name</span>&gt;</span>dfs.replication<span class="tag">&lt;/<span class="name">name</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">value</span>&gt;</span>1<span class="tag">&lt;/<span class="name">value</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">property</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">property</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">name</span>&gt;</span>hadoop.tmp.dir<span class="tag">&lt;/<span class="name">name</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">value</span>&gt;</span>/opt/applications/hadoop-2.6.0-cdh5.7.6/tmp<span class="tag">&lt;/<span class="name">value</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">property</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>（4）<code>etc/hadoop/slaves</code>，配置<code>DataNode</code>所在机器的主机名</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">min01</span><br></pre></td></tr></table></figure>
+
+<h4 id="1-3-启动HDFS"><a href="#1-3-启动HDFS" class="headerlink" title="1.3 启动HDFS"></a>1.3 启动HDFS</h4><blockquote>
+<p>⚠️注意：第一次执行前要格式化文件系统：</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> bin/hdfs namenode -format</span></span><br></pre></td></tr></table></figure>
+
+<p>格式化成功后在上面指定的文件临时地址目录<code>tmp</code>下会有文件生成（如需重新格式化，需要把<code>tmp</code>目录下的文件删除）</p>
+</blockquote>
+<p>（1）启动所有HDFS进程（一般sbin目录下就是启动进程的），发现启动了三个进程</p>
+<p>可以通过浏览器访问HDFS页面=&gt;<code>min01:50070</code></p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> sbin/start-dfs.sh</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> jps</span></span><br><span class="line">26875 DataNode</span><br><span class="line">27147 Jps</span><br><span class="line">26750 NameNode</span><br><span class="line">27038 SecondaryNameNode</span><br></pre></td></tr></table></figure>
+
+<p>（2）单个进程启动，可以将<code>start-dfs.sh</code>分解为下面三个</p>
+<p>a. 启动<code>NameNode</code></p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> sbin/hadoop-daemon.sh start namenode</span></span><br></pre></td></tr></table></figure>
+
+<p>b. 启动<code>DataNode</code></p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> sbin/hadoop-daemon.sh start datanode</span></span><br></pre></td></tr></table></figure>
+
+<p>c. 启动<code>SecondaryNameNode</code></p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> sbin/hadoop-daemon.sh start secondarynamenode</span></span><br></pre></td></tr></table></figure>
+
+<hr>
+<h3 id="2-NameNode元数据"><a href="#2-NameNode元数据" class="headerlink" title="2. NameNode元数据"></a>2. NameNode元数据</h3><blockquote>
+<p>NameNode的所有操作及整个集群的状态都存储在<em>元数据</em>中。NN的元数据存储是由<code>fsimage</code>和<code>edits</code>文件组成。<code>fsimage</code>存放上次<code>checkpoint</code>生成的文件系统元数据，<code>Edits</code>存放文件系统<em>操作日志</em>。<code>checkpoint</code>的过程，就是合并<code>fsimage</code>和<code>Edits</code>文件，然后生成最新的<code>fsimage</code>的过程。</p>
+</blockquote>
+<p>NameNode的主要作用是：</p>
+<ol>
+<li>负责管理文件系统的命名空间、集群配置信息和存储块的复制；</li>
+<li>维护着整个文件系统的文件目录树和文件根目录的元信息和每个文件对应的数据块列表；</li>
+<li>接收用户的操作请求；</li>
+<li>管理文件与block之间的关系，block与DataNode之间的关系。</li>
+</ol>
+<h4 id="2-1-NameNode启动流程"><a href="#2-1-NameNode启动流程" class="headerlink" title="2.1 NameNode启动流程"></a>2.1 NameNode启动流程</h4><ol>
+<li>Loading fsimage：从fsimage file中读取最新的文件系统的元数据快照(最近生成的fsimage_xx)</li>
+<li>Loading edits：读取包含fsimage_xx之后的所有tx的edit logs并将edit logs中的操作从新操作一遍更新到元数据中，则此时NN更新到上次停止时的状态。</li>
+<li>checkpoint：将当前状态写入新的checkpoint中，即产生一个新的fsimage_xx文件</li>
+<li>Safe mode：等待各个<em>datanodes report</em>各自的block信息，形成blockMap，然后退出安全模式。</li>
+</ol>
+<p>此时NN启动结束，等待接受用户的操作请求，并把各种操作写入新的edit log中，定期进行checkpoint，对元数据进行快照。</p>
+<h4 id="2-2-元数据在磁盘中的目录结构"><a href="#2-2-元数据在磁盘中的目录结构" class="headerlink" title="2.2 元数据在磁盘中的目录结构"></a>2.2 元数据在磁盘中的目录结构</h4><p>在搭建Hadoop时配置的<code>hdfs-site.xml</code>中，修改了临时文件存放地址：</p>
+<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">property</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">name</span>&gt;</span>hadoop.tmp.dir<span class="tag">&lt;/<span class="name">name</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">value</span>&gt;</span>/opt/applications/hadoop-2.6.0-cdh5.7.6/tmp<span class="tag">&lt;/<span class="name">value</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">property</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>该地址下的<code>dfs/name/current</code>下就是存放了元数据信息的文件：</p>
+<img src="/images/HDFS%E5%9F%BA%E7%A1%80/image-20191129102928585.png" alt="image-20191129102928585" style="zoom:50%;">
+
+<h4 id="2-3-fsimage与editlog作用"><a href="#2-3-fsimage与editlog作用" class="headerlink" title="2.3 fsimage与editlog作用"></a>2.3 fsimage与editlog作用</h4><p><code>fsimage</code>保存了最新的元数据检查点，包含了整个HDFS文件系统的所有目录和文件的信息。对于文件来说包括了数据块描述信息、修改时间、访问时间等；对于目录来说包括修改时间、访问权限控制信息(目录所属用户，所在组)等。</p>
+<p><code>editlog</code>主要是在NameNode已经启动情况下对HDFS进行的各种更新操作进行记录，HDFS客户端执行所有的写操作都会被记录到<code>editlog</code>中。</p>
+<p><code>fsimage</code>就是在某一时刻，整个hdfs 的快照，就是这个时刻hdfs上所有的文件块和目录，分别的状态，位于哪些个datanode，各自的权限，各自的副本个数；然后客户端对HDFS所有的更新操作，比如说移动数据，或者删除数据，都会记录在<code>editlog</code>中。</p>
+<h4 id="2-4-Checkpoint"><a href="#2-4-Checkpoint" class="headerlink" title="2.4 Checkpoint"></a>2.4 Checkpoint</h4><blockquote>
+<p>每个写操作都会写入Edit log中，随着时间的积累edit log会变的很大，极端情况下不仅会占满整个磁盘，而且在NN启动的时候会延长启动时间，因为NN需要将edits log中的操作重新执行一遍。这就需要checkpoint定期对元数据进行合并。</p>
+</blockquote>
+<p>Checkpoint主要是将fsimage和edit log的内容进行合并生成一个新的fsimage。这样在NN启动的时候就不用将巨大的edits里的事务再次执行一遍了，而是直接加载合并之后的新fsimage，然后重新执行未被合并的edits文件就可以了。</p>
+<p><em>创建新fsimage的过程需要大量的I/O、内存等资源，而且namesystem在Checkpoint的时候会限制用户的访问。则NN将Checkpoint过程放在SecondaryNameNode或者StandbyNameNode中。</em></p>
+<p>Checkpoint的触发条件有两个，满足其中一个即可：</p>
+<ol>
+<li>两次checkpoint的时间间隔达到阈值，由属性<code>dfs.namenode.checkpoint.period</code>控制，默认是3600s</li>
+<li>新生成的edit log中积累的事务数量达到了阈值，由属性<code>dfs.namenode.checkpoint.txns</code>控制，默认1000000</li>
+</ol>
+<p>SecondaryNameNode或者StandbyNameNode周期性的去检查是否符合触发Checkpoint的条件，间隔周期是由<code>dfs.namenode.checkpoint.check.period</code>控制的，默认是60s</p>
+<hr>
+<h3 id="3-HDFS文件底层block分解合并的实现"><a href="#3-HDFS文件底层block分解合并的实现" class="headerlink" title="3. HDFS文件底层block分解合并的实现"></a>3. HDFS文件底层block分解合并的实现</h3><p>HDFS默认是把超过<code>128M</code>大小的文件拆分成若干个<code>block</code>来存储，这里我将175M的jdk文件上传到HDFS：</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">-rw-rw-r--. 1 minmin minmin 175M 11月 22 13:27 jdk-8u121-linux-x64.tar.gz</span><br><span class="line"><span class="meta">$</span><span class="bash"> hdfs dfs -put jdk-8u121-linux-x64.tar.gz /data/</span></span><br></pre></td></tr></table></figure>
+
+<p>通过50070的web端口可以看到HDFS将<code>175M</code>大小的文件拆成了<code>128M</code>和<code>45M</code>大小的两个<code>block</code>，它们的<code>Block ID</code>分别为：<code>1073741825</code>和<code>1073741826</code></p>
+<img src="/images/HDFS%E5%9F%BA%E7%A1%80/image-20191128101653298.png" alt="image-20191128101653298" style="zoom:50%;">
+
+<img src="/images/HDFS%E5%9F%BA%E7%A1%80/image-20191128101943998.png" alt="image-20191128101943998" style="zoom:50%;">
+
+<p>既然这两个<code>block</code>是存在<code>DataNode</code>上的，那当然可以在本地文件中看到它们：</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> <span class="built_in">cd</span> /opt/applications/hadoop-2.6.0-cdh5.7.6/tmp/dfs/data/current/BP-1085016052-192.168.1.188-1574866601751/current/finalized/subdir0/subdir0</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> ls -lh</span></span><br><span class="line">总用量 177M</span><br><span class="line">-rw-rw-r--. 1 minmin minmin 128M 11月 28 10:00 blk_1073741825</span><br><span class="line">-rw-rw-r--. 1 minmin minmin 1.1M 11月 28 10:00 blk_1073741825_1001.meta</span><br><span class="line">-rw-rw-r--. 1 minmin minmin  47M 11月 28 10:00 blk_1073741826</span><br><span class="line">-rw-rw-r--. 1 minmin minmin 375K 11月 28 10:00 blk_1073741826_1002.meta</span><br></pre></td></tr></table></figure>
+
+<p>这里我将这两个<code>block</code>文件合并到<code>jdk.tar.gz</code>，来看下合并后的jdk文件是否是完好的：</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> cat blk_1073741825 &gt;&gt; /opt/data/jdk.tar.gz</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> cat blk_1073741826 &gt;&gt; /opt/data/jdk.tar.gz</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> ls -lh /opt/data/</span></span><br><span class="line">-rw-rw-r--. 1 minmin minmin 175M 11月 28 10:06 jdk.tar.gz</span><br></pre></td></tr></table></figure>
+
+<p>经过解压后，发现文件完好，和之前上传到HDFS的jdk文件一模一样：</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> tar -zxf jdk.tar.gz -C .</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> ls -lh /opt/data/</span></span><br><span class="line">drwxr-xr-x. 8 minmin minmin 4.0K 12月 13 2016 jdk1.8.0_121</span><br></pre></td></tr></table></figure>
+
+<p>这里就实现了HDFS将文件以<code>block</code>为单位拆分，再合并的操作。</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Hadoop/" rel="tag"># Hadoop</a>
+              <a href="/tags/HDFS/" rel="tag"># HDFS</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-next post-nav-item">
+                <a href="/2019/11/26/Flume%E5%9F%BA%E7%A1%80/" rel="next" title="Flume基础">
+                  <i class="fa fa-chevron-left"></i> Flume基础
+                </a>
+            </div>
+
+            <span class="post-nav-divider"></span>
+
+            <div class="post-nav-prev post-nav-item">
+                <a href="/2019/11/28/HDFS-API%E7%BC%96%E7%A8%8B/" rel="prev" title="HDFS API编程">
+                  HDFS API编程 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-HDFS单节点搭建"><span class="nav-number">1.</span> <span class="nav-text">1. HDFS单节点搭建</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-1-搭建前环境的准备"><span class="nav-number">1.1.</span> <span class="nav-text">1.1 搭建前环境的准备</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#1-2-配置HDFS"><span class="nav-number">1.2.</span> <span class="nav-text">1.2 配置HDFS</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#1-3-启动HDFS"><span class="nav-number">1.3.</span> <span class="nav-text">1.3 启动HDFS</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-NameNode元数据"><span class="nav-number">2.</span> <span class="nav-text">2. NameNode元数据</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#2-1-NameNode启动流程"><span class="nav-number">2.1.</span> <span class="nav-text">2.1 NameNode启动流程</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-2-元数据在磁盘中的目录结构"><span class="nav-number">2.2.</span> <span class="nav-text">2.2 元数据在磁盘中的目录结构</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-3-fsimage与editlog作用"><span class="nav-number">2.3.</span> <span class="nav-text">2.3 fsimage与editlog作用</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-4-Checkpoint"><span class="nav-number">2.4.</span> <span class="nav-text">2.4 Checkpoint</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-HDFS文件底层block分解合并的实现"><span class="nav-number">3.</span> <span class="nav-text">3. HDFS文件底层block分解合并的实现</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <img class="site-author-image" itemprop="image" alt="MIN MIN"
+    src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">MIN MIN</p>
+  <div class="site-description" itemprop="description">即使最后没有人为你鼓掌，也要优雅地谢幕，感谢自己的认真付出。</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">54</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">13</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+        <span class="site-state-item-count">32</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/ashermin" title="GitHub &amp;rarr; https:&#x2F;&#x2F;github.com&#x2F;ashermin" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+<div class="copyright">
+  
+  &copy; 2019 – 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user-circle"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">MIN MIN</span>
+</div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+<script src="/js/utils.js"></script>
+<script src="/js/schemes/pisces.js"></script>
+<script src="/js/next-boot.js"></script>
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+</body>
+</html>

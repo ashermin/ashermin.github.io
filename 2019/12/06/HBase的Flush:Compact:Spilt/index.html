@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.0.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/avatar.jpg">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/avatar.jpg">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/avatar.jpg">
+  <link rel="mask-icon" href="/images/avatar.jpg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+
+
+<script id="hexo-configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '7.4.2',
+    exturl: false,
+    sidebar: {"position":"left","width":260,"display":"post","offset":12,"onmobile":false},
+    copycode: {"enable":true,"show_result":true,"style":"default"},
+    back2top: {"enable":true,"sidebar":false,"scrollpercent":true},
+    bookmark: {"enable":false,"color":"#222","save":"auto"},
+    fancybox: false,
+    mediumzoom: false,
+    lazyload: false,
+    pangu: false,
+    algolia: {
+      appID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    localsearch: {"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},
+    path: '',
+    motion: {"enable":false,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    translation: {
+      copy_button: '复制',
+      copy_success: '复制成功',
+      copy_failure: '复制失败'
+    },
+    sidebarPadding: 40
+  };
+</script>
+
+  <meta name="description" content="1. MemStore FlushMemStore内存数据刷写到HDFS磁盘的触发时机由下面四个参数所控制，超过任意一个的值，便会触发Flush操作。1.1 RegionServer全局级别1.1.1 hbase.regionserver.global.memstore.size作用：当RegionServer所有的MemStore大小总和超过RegionServer服务最大堆内存的40%，就会阻">
+<meta name="keywords" content="HBase">
+<meta property="og:type" content="article">
+<meta property="og:title" content="HBase的Flush&#x2F;Compact&#x2F;Spilt">
+<meta property="og:url" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2019&#x2F;12&#x2F;06&#x2F;HBase%E7%9A%84Flush:Compact:Spilt&#x2F;index.html">
+<meta property="og:site_name" content="MIN MIN">
+<meta property="og:description" content="1. MemStore FlushMemStore内存数据刷写到HDFS磁盘的触发时机由下面四个参数所控制，超过任意一个的值，便会触发Flush操作。1.1 RegionServer全局级别1.1.1 hbase.regionserver.global.memstore.size作用：当RegionServer所有的MemStore大小总和超过RegionServer服务最大堆内存的40%，就会阻">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;images&#x2F;HBase%E9%AB%98%E7%BA%A7&#x2F;image-20191208132316131.png">
+<meta property="og:updated_time" content="2019-12-08T06:37:50.575Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;images&#x2F;HBase%E9%AB%98%E7%BA%A7&#x2F;image-20191208132316131.png">
+
+<link rel="canonical" href="http://yoursite.com/2019/12/06/HBase%E7%9A%84Flush:Compact:Spilt/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true,
+    isPage: false,
+    isArchive: false
+  };
+</script>
+
+  <title>HBase的Flush/Compact/Spilt | MIN MIN</title>
+  
+
+
+  <script>
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?cad2a7930afd095772e571e6eab3628f";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+  <!--  -->
+<link href='//fonts.googleapis.com/css?family=Kaushan+Script' rel='stylesheet' type='text/css'>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">MIN MIN</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+        <p class="site-subtitle">BLOG</p>
+  </div>
+
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档</a>
+
+  </li>
+  </ul>
+
+</nav>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/12/06/HBase%E7%9A%84Flush:Compact:Spilt/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="MIN MIN">
+      <meta itemprop="description" content="即使最后没有人为你鼓掌，也要优雅地谢幕，感谢自己的认真付出。">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="MIN MIN">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          HBase的Flush/Compact/Spilt
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2019-12-06 20:57:54" itemprop="dateCreated datePublished" datetime="2019-12-06T20:57:54+08:00">2019-12-06</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2019-12-08 14:37:50" itemprop="dateModified" datetime="2019-12-08T14:37:50+08:00">2019-12-08</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/HBase/" itemprop="url" rel="index">
+                    <span itemprop="name">HBase</span>
+                  </a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h3 id="1-MemStore-Flush"><a href="#1-MemStore-Flush" class="headerlink" title="1. MemStore Flush"></a>1. MemStore Flush</h3><p>MemStore内存数据刷写到HDFS磁盘的触发时机由下面四个参数所控制，超过任意一个的值，便会触发Flush操作。</p><h4 id="1-1-RegionServer全局级别"><a href="#1-1-RegionServer全局级别" class="headerlink" title="1.1 RegionServer全局级别"></a>1.1 RegionServer全局级别</h4><h5 id="1-1-1-hbase-regionserver-global-memstore-size"><a href="#1-1-1-hbase-regionserver-global-memstore-size" class="headerlink" title="1.1.1 hbase.regionserver.global.memstore.size"></a>1.1.1 hbase.regionserver.global.memstore.size</h5><p>作用：当<code>RegionServer</code>所有的<code>MemStore</code>大小总和超过<code>RegionServer</code>服务最大堆内存的<code>40%</code>，就会阻塞客户端的读写，并且触发Flush。</p><a id="more"></a>
+
+<p>比如<code>RegionServer</code>设置内存为2G，那当<code>MemStore</code>达到800MB时，就会触发Flush，并且该Flush会阻塞客户端读写。</p>
+<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">property</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">name</span>&gt;</span>hbase.regionserver.global.memstore.size<span class="tag">&lt;/<span class="name">name</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">value</span>&gt;</span><span class="tag">&lt;/<span class="name">value</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">description</span>&gt;</span>Maximum size of all memstores in a region server before new updates are blocked and flushes are forced. Defaults to 40% of heap (0.4).</span><br><span class="line">    Updates are blocked and flushes are forced until size of all memstores in a region server hits hbase.regionserver.global.memstore.size.lower.limit.</span><br><span class="line">    The default value in this configuration has been intentionally left emtpy in order to honor the old hbase.regionserver.global.memstore.upperLimit property if present.<span class="tag">&lt;/<span class="name">description</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">property</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h5 id="1-1-2-hbase-regionserver-global-memstore-size-lower-limit"><a href="#1-1-2-hbase-regionserver-global-memstore-size-lower-limit" class="headerlink" title="1.1.2 hbase.regionserver.global.memstore.size.lower.limit"></a>1.1.2 hbase.regionserver.global.memstore.size.lower.limit</h5><p>作用：当<code>RegionServer</code>的<code>MemStore</code>大小达到了默认值（堆大小 * 0.4 * 0.95），就会启动Flush。这里的Flush并不会阻塞客户端的读写，客户端照样可以正常读写。</p>
+<p>不过有时候集群“写负载”一直超过Flush的量，当<code>MemStore</code>达到上面第一个参数的值时，读写操作会被阻塞，直到<code>MemStore</code>恢复到默认值（堆大小 * 0.4 * 0.95）以下。</p>
+<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">property</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">name</span>&gt;</span>hbase.regionserver.global.memstore.size.lower.limit<span class="tag">&lt;/<span class="name">name</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">value</span>&gt;</span><span class="tag">&lt;/<span class="name">value</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">description</span>&gt;</span>Maximum size of all memstores in a region server before flushes are forced.</span><br><span class="line">    Defaults to 95% of hbase.regionserver.global.memstore.size (0.95).</span><br><span class="line">    A 100% value for this value causes the minimum possible flushing to occur when updates are blocked due to memstore limiting.</span><br><span class="line">    The default value in this configuration has been intentionally left emtpy in order to honor the old hbase.regionserver.global.memstore.lowerLimit property if present.<span class="tag">&lt;/<span class="name">description</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">property</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h5 id="1-1-3-hbase-regionserver-optionalcacheflushinterval"><a href="#1-1-3-hbase-regionserver-optionalcacheflushinterval" class="headerlink" title="1.1.3 hbase.regionserver.optionalcacheflushinterval"></a>1.1.3 hbase.regionserver.optionalcacheflushinterval</h5><p>作用：<code>MemStore</code>中的文件在自动Flush前存活的最长时间，默认1小时。</p>
+<p>如果设置为0，那就是关闭了自动Flush，只能手动Flush。</p>
+<p>需要注意的是这里的1小时指的是如果1小时没有写数据话，就会Flush。并不是指某数据12点写进去了，13点就会Flush；而是指1小时没有数据写入时，才能Flush。</p>
+<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">property</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">name</span>&gt;</span>hbase.regionserver.optionalcacheflushinterval<span class="tag">&lt;/<span class="name">name</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">value</span>&gt;</span>3600000<span class="tag">&lt;/<span class="name">value</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">description</span>&gt;</span>Maximum amount of time an edit lives in memory before being automatically flushed.</span><br><span class="line">    Default 1 hour. Set it to 0 to disable automatic flushing.<span class="tag">&lt;/<span class="name">description</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">property</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="1-2-Region级别"><a href="#1-2-Region级别" class="headerlink" title="1.2 Region级别"></a>1.2 Region级别</h4><h5 id="1-2-1-hbase-hregion-memstore-flush-size"><a href="#1-2-1-hbase-hregion-memstore-flush-size" class="headerlink" title="1.2.1 hbase.hregion.memstore.flush.size"></a>1.2.1 hbase.hregion.memstore.flush.size</h5><p>作用：单个<code>Region</code>中<code>MemStore</code>的缓存大小（默认128M），超过则该<code>Region</code>会Flush。</p>
+<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">property</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">name</span>&gt;</span>hbase.hregion.memstore.flush.size<span class="tag">&lt;/<span class="name">name</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">value</span>&gt;</span>134217728<span class="tag">&lt;/<span class="name">value</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">description</span>&gt;</span></span><br><span class="line">    Memstore will be flushed to disk if size of the memstore exceeds this number of bytes. Value is checked by a thread that runs every hbase.server.thread.wakefrequency.<span class="tag">&lt;/<span class="name">description</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">property</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<hr>
+<h3 id="2-StoreFile-Compaction"><a href="#2-StoreFile-Compaction" class="headerlink" title="2. StoreFile Compaction"></a>2. StoreFile Compaction</h3><p>由于<code>Memstore</code>每次Flush都会生成一个新的<code>HFile</code>，且同一个字段的不同版本（TimeStamp）和不同类型（Put或Delete）有可能会分布在不同的<code>HFile</code>中，因此查询时需要遍历所有的<code>HFile</code>。为了减少<code>HFile</code>的个数，以及清理掉过期和删除的数据，会进行<code>StoreFile Compaction</code>。</p>
+<p>Compaction分两种：</p>
+<ul>
+<li><code>Minor Compaction</code>：只选取一些小的、相邻的<code>HFile</code>，合并成一个更大的<code>HFile</code>，但<strong>不会清理过期和标记删除的数据</strong></li>
+<li><code>Major Compaction</code>：将一个<code>Store</code>下的所有<code>HFile</code>合并成一个大<code>HFile</code>，并<strong>会清理过期和标记删除的数据</strong></li>
+</ul>
+<img src="/images/HBase%E9%AB%98%E7%BA%A7/image-20191208132316131.png" alt="image-20191208132316131" style="zoom:50%;">
+
+<p>触发Compaction的级别有两种，<code>Region</code>和<code>Store</code>：</p>
+<h4 id="2-1-Region级别"><a href="#2-1-Region级别" class="headerlink" title="2.1 Region级别"></a>2.1 Region级别</h4><p><code>Major Compaction</code>是Region级别的，默认是<code>7天</code>，Region中的所有<code>HFile</code>都会合成一个<code>HFile</code>文件。不过由于其非常耗费资源，一般生产上会关闭，即设置为<code>0</code>，在应用空闲时间手动触发<code>hbase(main)&gt; major_compact &#39;ns1:t1&#39;</code>。</p>
+<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">property</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">name</span>&gt;</span>hbase.hregion.majorcompaction<span class="tag">&lt;/<span class="name">name</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">value</span>&gt;</span>604800000<span class="tag">&lt;/<span class="name">value</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">description</span>&gt;</span>The time (in miliseconds) between 'major' compactions of all HStoreFiles in a region. Default: Set to 7 days.</span><br><span class="line">    Major compactions tend to happen exactly when you need them least so enable them such that they run at off-peak for your deploy; or, since this setting is on a periodicity that is unlikely to match your loading, run the compactions via an external invocation out of a cron job or some such.<span class="tag">&lt;/<span class="name">description</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">property</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="2-2-Store级别"><a href="#2-2-Store级别" class="headerlink" title="2.2 Store级别"></a>2.2 Store级别</h4><p><code>Minor Compaction</code>是Store级别的，默认是<code>Store</code>中的<code>HFile</code>数大于等于某个值（默认为3个）时，就会触发合并操作。也可以手动触发：<code>hbase(main)&gt; compact &#39;ns1:t1&#39;</code></p>
+<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">property</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">name</span>&gt;</span>hbase.hstore.compactionThreshold<span class="tag">&lt;/<span class="name">name</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">value</span>&gt;</span>3<span class="tag">&lt;/<span class="name">value</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">description</span>&gt;</span>If more than(&gt;=) this number of HStoreFiles in any one HStore (one HStoreFile is written per flush of memstore) then a compaction is run to rewrite all HStoreFiles files as one.  Larger numbers put off compaction but when it runs, it takes longer to complete.<span class="tag">&lt;/<span class="name">description</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">property</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<hr>
+<h3 id="3-Region-Spilt"><a href="#3-Region-Spilt" class="headerlink" title="3. Region Spilt"></a>3. Region Spilt</h3><p>默认情况下，每个Table起初只有一个<code>Region</code>，随着数据的不断写入，<code>Region</code>会自动进行拆分。刚拆分时，两个<code>子Region</code>都位于当前的<code>RegionServer</code>，但处于负载均衡的考虑，<code>HMaster</code>有可能会将某个<code>Region</code>转移给其它的<code>RegionServer</code>。</p>
+<p>触发Region Spilt的时机有新老版本的差别：</p>
+<h4 id="3-1-0-94版本之前"><a href="#3-1-0-94版本之前" class="headerlink" title="3.1 0.94版本之前"></a>3.1 0.94版本之前</h4><p>当一个<code>Region</code>中的某个<code>Store</code>下所有<code>StoreFile</code>的总大小超过某个值（默认<code>10G</code>）时，该<code>Region</code>就会拆分为两个。</p>
+<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">property</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">name</span>&gt;</span>hbase.hregion.max.filesize<span class="tag">&lt;/<span class="name">name</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">value</span>&gt;</span>10737418240<span class="tag">&lt;/<span class="name">value</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">description</span>&gt;</span>Maximum HStoreFile size. If any one of a column families' HStoreFiles has grown to exceed this value, the hosting HRegion is split in two.<span class="tag">&lt;/<span class="name">description</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">property</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="3-2-0-94版本之后"><a href="#3-2-0-94版本之后" class="headerlink" title="3.2 0.94版本之后"></a>3.2 0.94版本之后</h4><p>当一个<code>Region</code>中的某个<code>Store</code>下所有<code>StoreFile</code>的总大小超过<code>Min(R^2 * &quot;hbase.hregion.memstore.flush.size&quot;,hbase.hregion.max.filesize&quot;)</code>，该<code>Region</code>就会进行拆分，其中<code>R</code>为当前<code>RegionServer</code>中<code>Region</code>的个数。</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/HBase/" rel="tag"># HBase</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-next post-nav-item">
+                <a href="/2019/12/06/HBase%E4%BC%AA%E5%88%86%E5%B8%83%E5%BC%8F%E7%8E%AF%E5%A2%83%E9%83%A8%E7%BD%B2/" rel="next" title="HBase伪分布式环境部署">
+                  <i class="fa fa-chevron-left"></i> HBase伪分布式环境部署
+                </a>
+            </div>
+
+            <span class="post-nav-divider"></span>
+
+            <div class="post-nav-prev post-nav-item">
+                <a href="/2019/12/08/%E4%B8%BA%E4%BB%80%E4%B9%88%E4%B8%8D%E5%BB%BA%E8%AE%AE%E5%9C%A8HBase%E4%B8%AD%E4%BD%BF%E7%94%A8%E8%BF%87%E5%A4%9A%E7%9A%84%E5%88%97%E7%B0%87/" rel="prev" title="为什么不建议在HBase中使用过多的列簇">
+                  为什么不建议在HBase中使用过多的列簇 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-MemStore-Flush"><span class="nav-number">1.</span> <span class="nav-text">1. MemStore Flush</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-1-RegionServer全局级别"><span class="nav-number">1.1.</span> <span class="nav-text">1.1 RegionServer全局级别</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#1-1-1-hbase-regionserver-global-memstore-size"><span class="nav-number">1.1.1.</span> <span class="nav-text">1.1.1 hbase.regionserver.global.memstore.size</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#1-1-2-hbase-regionserver-global-memstore-size-lower-limit"><span class="nav-number">1.1.2.</span> <span class="nav-text">1.1.2 hbase.regionserver.global.memstore.size.lower.limit</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#1-1-3-hbase-regionserver-optionalcacheflushinterval"><span class="nav-number">1.1.3.</span> <span class="nav-text">1.1.3 hbase.regionserver.optionalcacheflushinterval</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#1-2-Region级别"><span class="nav-number">1.2.</span> <span class="nav-text">1.2 Region级别</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#1-2-1-hbase-hregion-memstore-flush-size"><span class="nav-number">1.2.1.</span> <span class="nav-text">1.2.1 hbase.hregion.memstore.flush.size</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-StoreFile-Compaction"><span class="nav-number">2.</span> <span class="nav-text">2. StoreFile Compaction</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#2-1-Region级别"><span class="nav-number">2.1.</span> <span class="nav-text">2.1 Region级别</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-2-Store级别"><span class="nav-number">2.2.</span> <span class="nav-text">2.2 Store级别</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-Region-Spilt"><span class="nav-number">3.</span> <span class="nav-text">3. Region Spilt</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#3-1-0-94版本之前"><span class="nav-number">3.1.</span> <span class="nav-text">3.1 0.94版本之前</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-2-0-94版本之后"><span class="nav-number">3.2.</span> <span class="nav-text">3.2 0.94版本之后</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <img class="site-author-image" itemprop="image" alt="MIN MIN"
+    src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">MIN MIN</p>
+  <div class="site-description" itemprop="description">即使最后没有人为你鼓掌，也要优雅地谢幕，感谢自己的认真付出。</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">54</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">13</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+        <span class="site-state-item-count">32</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/ashermin" title="GitHub &amp;rarr; https:&#x2F;&#x2F;github.com&#x2F;ashermin" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+<div class="copyright">
+  
+  &copy; 2019 – 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user-circle"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">MIN MIN</span>
+</div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+<script src="/js/utils.js"></script>
+<script src="/js/schemes/pisces.js"></script>
+<script src="/js/next-boot.js"></script>
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+</body>
+</html>

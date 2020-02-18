@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.0.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/avatar.jpg">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/avatar.jpg">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/avatar.jpg">
+  <link rel="mask-icon" href="/images/avatar.jpg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+
+
+<script id="hexo-configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '7.4.2',
+    exturl: false,
+    sidebar: {"position":"left","width":260,"display":"post","offset":12,"onmobile":false},
+    copycode: {"enable":true,"show_result":true,"style":"default"},
+    back2top: {"enable":true,"sidebar":false,"scrollpercent":true},
+    bookmark: {"enable":false,"color":"#222","save":"auto"},
+    fancybox: false,
+    mediumzoom: false,
+    lazyload: false,
+    pangu: false,
+    algolia: {
+      appID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    localsearch: {"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},
+    path: '',
+    motion: {"enable":false,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    translation: {
+      copy_button: '复制',
+      copy_success: '复制成功',
+      copy_failure: '复制失败'
+    },
+    sidebarPadding: 40
+  };
+</script>
+
+  <meta name="description" content="触发器可以看做一种“特殊”的存储过程，由“触发事件”触发。所谓的“触发事件”是指能够引起触发器运行的操作，包括： 执行DML语句（使用INSERT、UPDATE、DELETE语句对表或视图执行数据处理操作）  执行DDL语句（使用CREATE、ALTER、DROP语句在数据库中创建、修改、删除模式对象）  引发数据库系统事件（如系统启动或退出、产生异常错误等）  引发用户事件（如登录或退出数据库操">
+<meta name="keywords" content="Oracle">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Oracle 触发器">
+<meta property="og:url" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2020&#x2F;01&#x2F;15&#x2F;Oracle-%E8%A7%A6%E5%8F%91%E5%99%A8&#x2F;index.html">
+<meta property="og:site_name" content="MIN MIN">
+<meta property="og:description" content="触发器可以看做一种“特殊”的存储过程，由“触发事件”触发。所谓的“触发事件”是指能够引起触发器运行的操作，包括： 执行DML语句（使用INSERT、UPDATE、DELETE语句对表或视图执行数据处理操作）  执行DDL语句（使用CREATE、ALTER、DROP语句在数据库中创建、修改、删除模式对象）  引发数据库系统事件（如系统启动或退出、产生异常错误等）  引发用户事件（如登录或退出数据库操">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;images&#x2F;Oracle-%E8%A7%A6%E5%8F%91%E5%99%A8&#x2F;image-20200115223447591.png">
+<meta property="og:updated_time" content="2020-01-16T04:01:19.648Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;images&#x2F;Oracle-%E8%A7%A6%E5%8F%91%E5%99%A8&#x2F;image-20200115223447591.png">
+
+<link rel="canonical" href="http://yoursite.com/2020/01/15/Oracle-%E8%A7%A6%E5%8F%91%E5%99%A8/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true,
+    isPage: false,
+    isArchive: false
+  };
+</script>
+
+  <title>Oracle 触发器 | MIN MIN</title>
+  
+
+
+  <script>
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?cad2a7930afd095772e571e6eab3628f";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+  <!--  -->
+<link href='//fonts.googleapis.com/css?family=Kaushan+Script' rel='stylesheet' type='text/css'>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">MIN MIN</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+        <p class="site-subtitle">BLOG</p>
+  </div>
+
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档</a>
+
+  </li>
+  </ul>
+
+</nav>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/01/15/Oracle-%E8%A7%A6%E5%8F%91%E5%99%A8/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="MIN MIN">
+      <meta itemprop="description" content="即使最后没有人为你鼓掌，也要优雅地谢幕，感谢自己的认真付出。">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="MIN MIN">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Oracle 触发器
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-01-15 11:02:40" itemprop="dateCreated datePublished" datetime="2020-01-15T11:02:40+08:00">2020-01-15</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-01-16 12:01:19" itemprop="dateModified" datetime="2020-01-16T12:01:19+08:00">2020-01-16</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Oracle/" itemprop="url" rel="index">
+                    <span itemprop="name">Oracle</span>
+                  </a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>触发器可以看做一种“特殊”的存储过程，由“触发事件”触发。所谓的“触发事件”是指能够引起触发器运行的操作，包括：</p><ul>
+<li><p>执行DML语句（使用INSERT、UPDATE、DELETE语句对表或视图执行数据处理操作）</p>
+</li>
+<li><p>执行DDL语句（使用CREATE、ALTER、DROP语句在数据库中创建、修改、删除模式对象）</p>
+</li>
+<li><p>引发数据库系统事件（如系统启动或退出、产生异常错误等）</p>
+</li>
+<li><p>引发用户事件（如登录或退出数据库操作）</p>
+</li>
+</ul><a id="more"></a>
+
+<blockquote>
+<p>触发器是自动执行的代码块，和存储过程的区别在于：用户可以直接调用存储过程，而不能直接调用触发器。</p>
+</blockquote>
+<h3 id="1-触发器的分类"><a href="#1-触发器的分类" class="headerlink" title="1. 触发器的分类"></a>1. 触发器的分类</h3><h4 id="1-1-行级触发器-和-语句级触发器"><a href="#1-1-行级触发器-和-语句级触发器" class="headerlink" title="1.1 行级触发器 和 语句级触发器"></a>1.1 行级触发器 和 语句级触发器</h4><p><strong>行级触发器</strong>：触发机制基于行。当表中数据改变时，将触发行级触发器。改变一行数据，触发一次；改变N行数据，就会触发N次。在行级触发器中使用<code>:OLD</code>和<code>:NEW</code>来操作该行之前/后的值，识别值的状态。（具体应用可以参见“2.1 创建行级触发器”）</p>
+<p><strong>语句级触发器</strong>：触发机制基于SQL语句。当一条SQL语句改变数据时，无论这条SQL语句影响多少条记录，语句级触发器都只触发一次。SQL语句每执行一次，语句级触发器就被触发一次。</p>
+<h4 id="1-2-BEFORE-和-AFTER-触发器"><a href="#1-2-BEFORE-和-AFTER-触发器" class="headerlink" title="1.2 BEFORE 和 AFTER 触发器"></a>1.2 BEFORE 和 AFTER 触发器</h4><p><strong>BEFORE 触发器</strong>：在触发语句运行前先运行“触发动作”</p>
+<p><strong>AFTER 触发器</strong>：触发语句运行之后才运行“触发动作”</p>
+<blockquote>
+<p>BEFORE和AFTER适用于<em>行级触发器</em>和<em>语句级触发器</em>。</p>
+</blockquote>
+<h4 id="1-3-复合触发器"><a href="#1-3-复合触发器" class="headerlink" title="1.3 复合触发器"></a>1.3 复合触发器</h4><p>复合触发器是表上的触发器，它有4个时间点，可以针对不同的时间点指定不同的处理动作。</p>
+<p>这四个时间点分别如下：</p>
+<ul>
+<li>在触发语句执行前（BEFORE STATEMENT）</li>
+<li>在触发语句执行后（AFTER STATEMENT）</li>
+<li>在每行记录被修改之前（BEFORE EACH ROW）</li>
+<li>在每行记录被修改之后（AFTER EACH ROW）</li>
+</ul>
+<p>触发语句必须是DML。如果触发语句没有影响任何一行数据，并且也没有指定BEFORE STATEMENT和AFTER STATEMENT两个时间点，则触发器也不会被触发。</p>
+<h4 id="1-4-INSTEAD-OF-触发器"><a href="#1-4-INSTEAD-OF-触发器" class="headerlink" title="1.4 INSTEAD OF 触发器"></a>1.4 INSTEAD OF 触发器</h4><p>有的视图不能直接对其进行更新操作，但是可以在这种视图上建立触发器，利用触发器对视图的源表进行更新操作，这种类型的触发器就叫做“INSTEAD OF 触发器”。</p>
+<h4 id="1-5-用户与系统事件触发器"><a href="#1-5-用户与系统事件触发器" class="headerlink" title="1.5 用户与系统事件触发器"></a>1.5 用户与系统事件触发器</h4><p>系统事件包括数据库启动、关闭、服务器错误、数据库角色改变等。</p>
+<p>用户事件包括用户登录数据库、用户退出数据库、用户执行DDL/DML语句等。</p>
+<hr>
+<h3 id="2-创建触发器"><a href="#2-创建触发器" class="headerlink" title="2. 创建触发器"></a>2. 创建触发器</h3><p>语法：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">CREATE [OR REPLACE] TRIGGER 触发器名</span><br><span class="line">&#123;BEFORE|AFTER&#125; --触发时间</span><br><span class="line">&#123;DELETE|INSERT|UPDATE [OF 列名]&#125; --触发事件（对于UPDATE操作可以指定列名）</span><br><span class="line">ON 表名</span><br><span class="line">[FOR EACH ROW [WHEN(条件)]] --行级触发器，不加默认为语句级触发器</span><br><span class="line">DECLARE</span><br><span class="line">	...</span><br><span class="line">BEGIN</span><br><span class="line">	...</span><br><span class="line">END;</span><br></pre></td></tr></table></figure>
+
+<h4 id="2-1-创建行级触发器"><a href="#2-1-创建行级触发器" class="headerlink" title="2.1 创建行级触发器"></a>2.1 创建行级触发器</h4><p>案例1：涨后的工资不能少于涨前的工资</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">CREATE OR REPLACE TRIGGER tgr_update_emp</span><br><span class="line">BEFORE UPDATE  --在更新工资之前就进行判断</span><br><span class="line">ON emp</span><br><span class="line">FOR EACH ROW</span><br><span class="line">BEGIN</span><br><span class="line">	IF(:NEW.sal&lt;:OLD.sal) THEN  --改行前后的值进行对比</span><br><span class="line">		RAISE_APPLICATION_ERROR(-20777,&apos;涨后的工资不能少于原来工资&apos;);</span><br><span class="line">	END IF;</span><br><span class="line">END;</span><br></pre></td></tr></table></figure>
+
+<p>然后更新一条数据至emp表，原来7934号员工的工资为1900：</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">UPDATE</span> emp <span class="keyword">SET</span> sal=<span class="number">1000</span> <span class="keyword">WHERE</span> empno=<span class="number">7934</span>;</span><br><span class="line"><span class="comment">------</span></span><br><span class="line">错误报告 -</span><br><span class="line">ORA-20777: 涨后的工资不能少于原来工资</span><br><span class="line">ORA-06512: 在 "SCOTT.TGR_UPDATE_EMP", line 3</span><br><span class="line">ORA-04088: 触发器 'SCOTT.TGR_UPDATE_EMP' 执行过程中出错</span><br></pre></td></tr></table></figure>
+
+<p>案例2：基于值的审计。当涨后的工资大于6000元时，将该员工的信息插入审计表</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">--创建审计表</span><br><span class="line">CREATE TABLE audit_emp(info VARCHAR2(100));</span><br><span class="line">--创建行级触发器</span><br><span class="line">CREATE OR REPLACE TRIGGER trg_audit_emp_sal</span><br><span class="line">AFTER UPDATE  --在更新工资之后插入审计表</span><br><span class="line">ON emp</span><br><span class="line">FOR EACH ROW</span><br><span class="line">BEGIN</span><br><span class="line">	IF(:NEW.sal&gt;6000) THEN</span><br><span class="line">		INSERT INTO audit_emp VALUES(:NEW.empno||&apos;,&apos;||:NEW.ename||&apos;,&apos;||:NEW.sal);</span><br><span class="line">	END IF;</span><br><span class="line">END;</span><br></pre></td></tr></table></figure>
+
+<p>这时在emp中更新员工的工资都加3000后，再看审计表audit_emp就有数据了：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">UPDATE emp SET sal=sal+3000;</span><br></pre></td></tr></table></figure>
+
+<img src="/images/Oracle-%E8%A7%A6%E5%8F%91%E5%99%A8/image-20200115223447591.png" alt="image-20200115223447591" style="zoom:50%;">
+
+<h4 id="2-2-创建语句级触发器"><a href="#2-2-创建语句级触发器" class="headerlink" title="2.2 创建语句级触发器"></a>2.2 创建语句级触发器</h4><p>案例：禁止在非工作时间往emp表插入数据：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">CREATE OR REPLACE TRIGGER tgr_insert_emp</span><br><span class="line">BEFORE INSERT</span><br><span class="line">ON emp</span><br><span class="line">BEGIN</span><br><span class="line">	IF(TO_CHAR(SYSDATE,&apos;DAY&apos;) IN(&apos;星期六&apos;,&apos;星期天&apos;) OR </span><br><span class="line">    TO_NUMBER(TO_CHAR(SYSDATE,&apos;HH24&apos;)) NOT BETWEEN 9 AND 17) THEN</span><br><span class="line">        RAISE_APPLICATION_ERROR(-20888,&apos;非工作时间，禁止插入数据！&apos;);</span><br><span class="line">    END IF;</span><br><span class="line">END;</span><br></pre></td></tr></table></figure>
+
+<p>然后插入一条数据至emp表：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">INSERT INTO emp VALUES(&apos;9999&apos;, &apos;MINMIN&apos;, &apos;BOSS&apos;, &apos;9999&apos;, SYSDATE, &apos;19999&apos;, &apos;99999&apos;, &apos;10&apos;);</span><br><span class="line">------</span><br><span class="line">错误报告 -</span><br><span class="line">ORA-20888: 非工作时间，禁止插入数据！</span><br><span class="line">ORA-06512: 在 &quot;SCOTT.TGR_INSERT_EMP&quot;, line 4</span><br><span class="line">ORA-04088: 触发器 &apos;SCOTT.TGR_INSERT_EMP&apos; 执行过程中出错</span><br></pre></td></tr></table></figure>
+
+<h4 id="2-3-创建复合型触发器"><a href="#2-3-创建复合型触发器" class="headerlink" title="2.3 创建复合型触发器"></a>2.3 创建复合型触发器</h4><p>普通触发器通常不能对变异表（正在被DML操作修改的表）进行操作，会报ORA-04091错误；而复合型触发器可以解决这个问题。</p>
+<p>案例：对员工薪资进行提高时，如果增加工资高于工资在3000以下员工的平均工资的30%，就发出提示异常</p>
+<p>（1）普通类型触发器</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">CREATE OR REPLACE TRIGGER trg_normal</span><br><span class="line">BEFORE UPDATE</span><br><span class="line">ON emp</span><br><span class="line">FOR EACH ROW</span><br><span class="line">DECLARE</span><br><span class="line">    avg_sal NUMBER(10,2):=0.0;</span><br><span class="line">BEGIN</span><br><span class="line">    SELECT AVG(sal) INTO avg_sal FROM emp WHERE sal&lt;3000;  --这种SELECT...INTO形式的语句会把触发表变为变异表</span><br><span class="line">    IF(:NEW.sal-:OLD.sal &gt; avg_sal) THEN</span><br><span class="line">        RAISE_APPLICATION_ERROR(-20001, &apos;你这加薪脱离群众了！&apos;);</span><br><span class="line">    END IF;</span><br><span class="line">END;</span><br></pre></td></tr></table></figure>
+
+<p>然后给全体员工加薪5000元，会报ORA-04091错误：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">UPDATE emp SET sal=sal+5000;</span><br><span class="line">------</span><br><span class="line">错误报告 -</span><br><span class="line">ORA-04091: 表 SCOTT.EMP 发生了变化, 触发器/函数不能读它</span><br><span class="line">ORA-06512: 在 &quot;SCOTT.TRG_NORMAL&quot;, line 4</span><br><span class="line">ORA-04088: 触发器 &apos;SCOTT.TRG_NORMAL&apos; 执行过程中出错</span><br></pre></td></tr></table></figure>
+
+<p>（2）符合类型触发器，解决ORA-04091错误</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">CREATE OR REPLACE TRIGGER trg_compound</span><br><span class="line">FOR UPDATE ON emp COMPOUND TRIGGER</span><br><span class="line"></span><br><span class="line">    avg_sal NUMBER(10,2):=0.0;</span><br><span class="line">    </span><br><span class="line">BEFORE STATEMENT IS</span><br><span class="line">BEGIN</span><br><span class="line">    SELECT AVG(sal) INTO avg_sal FROM emp WHERE sal&lt;3000;</span><br><span class="line">END BEFORE STATEMENT;</span><br><span class="line"></span><br><span class="line">AFTER EACH ROW IS</span><br><span class="line">BEGIN</span><br><span class="line">    IF(:NEW.sal-:OLD.sal &gt; avg_sal) THEN</span><br><span class="line">        RAISE_APPLICATION_ERROR(-20001, &apos;你这加薪脱离群众了！&apos;);</span><br><span class="line">    END IF;</span><br><span class="line">END AFTER EACH ROW;</span><br><span class="line">END;</span><br></pre></td></tr></table></figure>
+
+<p>这次给全体员工加薪后，只会报触发器中定义的异常：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">UPDATE emp SET sal=sal+5000;</span><br><span class="line">------</span><br><span class="line">错误报告 -</span><br><span class="line">ORA-20001: 你这加薪脱离群众了！</span><br><span class="line">ORA-06512: 在 &quot;SCOTT.TRG_COMPOUND&quot;, line 13</span><br><span class="line">ORA-04088: 触发器 &apos;SCOTT.TRG_COMPOUND&apos; 执行过程中出错</span><br></pre></td></tr></table></figure>
+
+<h4 id="2-4-DDL触发器"><a href="#2-4-DDL触发器" class="headerlink" title="2.4 DDL触发器"></a>2.4 DDL触发器</h4><p>因DDL操作（见附录“DDL事件列表”）而激发的触发器，可以限制对数据结构的修改，记录数据库中的更改事件，修改对象时做相应的动作等。</p>
+<p>案例：若对emp表进行RENAME操作，将报错</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">CREATE OR REPLACE TRIGGER trg_ddl</span><br><span class="line">BEFORE RENAME</span><br><span class="line">ON SCHEMA</span><br><span class="line">BEGIN</span><br><span class="line">    IF(SYSEVENT=&apos;RENAME&apos;) THEN</span><br><span class="line">        IF(SYS.DICTIONARY_OBJ_NAME=&apos;EMP&apos;) THEN</span><br><span class="line">            RAISE_APPLICATION_ERROR(-20000, &apos;你不能重命名EMP表！&apos;);</span><br><span class="line">        END IF;</span><br><span class="line">    END IF;</span><br><span class="line">END;</span><br></pre></td></tr></table></figure>
+
+<p>现在重命名emp表，将会报自定义的ORA-20000错误：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">RENAME emp TO emp_1;</span><br><span class="line">------</span><br><span class="line">错误报告 -</span><br><span class="line">ORA-00604: 递归 SQL 级别 1 出现错误</span><br><span class="line">ORA-20000: 你不能重命名EMP表！</span><br><span class="line">ORA-06512: 在 line 4</span><br><span class="line">00604. 00000 -  &quot;error occurred at recursive SQL level %s&quot;</span><br><span class="line">*Cause:    An error occurred while processing a recursive SQL statement</span><br><span class="line">           (a statement applying to internal dictionary tables).</span><br><span class="line">*Action:   If the situation described in the next error on the stack</span><br><span class="line">           can be corrected, do so; otherwise contact Oracle Support.</span><br></pre></td></tr></table></figure>
+
+<h4 id="2-5-用户与系统事件触发器"><a href="#2-5-用户与系统事件触发器" class="headerlink" title="2.5 用户与系统事件触发器"></a>2.5 用户与系统事件触发器</h4><p>案例：记录每个登录用户的时间，并把登陆时间放到新建的用户登录记录表</p>
+<p>（1）创建用户登录记录表</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">CREATE TABLE log_user(</span><br><span class="line">  logonName VARCHAR2(50), --登录用户名</span><br><span class="line">  logonTime DATE --登录时间</span><br><span class="line">);</span><br></pre></td></tr></table></figure>
+
+<p>（2）创建数据库级触发器，记录每个用户的登录时间</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">CREATE OR REPLACE TRIGGER trg_logon</span><br><span class="line">AFTER LOGON</span><br><span class="line">ON DATABASE</span><br><span class="line">BEGIN</span><br><span class="line">	INSERT INTO log_user VALUES(SYS.LOGIN_USER,SYSDATE);</span><br><span class="line">END;</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h3 id="3-管理触发器"><a href="#3-管理触发器" class="headerlink" title="3. 管理触发器"></a>3. 管理触发器</h3><p>禁用触发器：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">ALTER TRIGGER trigger_name DISABLE;</span><br></pre></td></tr></table></figure>
+
+<p>启用触发器：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">ALTER TRIGGER trigger_name ENABLE;</span><br></pre></td></tr></table></figure>
+
+<p>删除触发器：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">DROP TRIGGER trigger_name;</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h3 id="附录"><a href="#附录" class="headerlink" title="附录"></a>附录</h3><h4 id="DDL事件列表"><a href="#DDL事件列表" class="headerlink" title="DDL事件列表"></a>DDL事件列表</h4><table>
+<thead>
+<tr>
+<th>DDL事件</th>
+<th>简介</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>ALTER</td>
+<td>修改对象，例如修改约束啥的</td>
+</tr>
+<tr>
+<td>ANALYSE</td>
+<td>分析统计信息</td>
+</tr>
+<tr>
+<td>AUDIT/NOAUDIT</td>
+<td>启用/取消审计</td>
+</tr>
+<tr>
+<td>COMMENT</td>
+<td>注解列或表的含义</td>
+</tr>
+<tr>
+<td>CREATE</td>
+<td>创建对象</td>
+</tr>
+<tr>
+<td>DROP</td>
+<td>删除对象</td>
+</tr>
+<tr>
+<td>GRANT</td>
+<td>授权操作</td>
+</tr>
+<tr>
+<td>RENAME</td>
+<td>修改对象名称</td>
+</tr>
+<tr>
+<td>REVOKE</td>
+<td>取消权限</td>
+</tr>
+<tr>
+<td>TRUNCATE</td>
+<td>删除行记录</td>
+</tr>
+</tbody></table>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Oracle/" rel="tag"># Oracle</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-next post-nav-item">
+                <a href="/2020/01/14/Oracle-%E5%AD%98%E5%82%A8%E8%BF%87%E7%A8%8B%E4%B8%8E%E5%AD%98%E5%82%A8%E5%87%BD%E6%95%B0/" rel="next" title="Oracle 存储过程与存储函数">
+                  <i class="fa fa-chevron-left"></i> Oracle 存储过程与存储函数
+                </a>
+            </div>
+
+            <span class="post-nav-divider"></span>
+
+            <div class="post-nav-prev post-nav-item">
+                <a href="/2020/01/17/Oracle-%E8%A1%A8%E7%A9%BA%E9%97%B4/" rel="prev" title="Oracle 表空间">
+                  Oracle 表空间 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-触发器的分类"><span class="nav-number">1.</span> <span class="nav-text">1. 触发器的分类</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-1-行级触发器-和-语句级触发器"><span class="nav-number">1.1.</span> <span class="nav-text">1.1 行级触发器 和 语句级触发器</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#1-2-BEFORE-和-AFTER-触发器"><span class="nav-number">1.2.</span> <span class="nav-text">1.2 BEFORE 和 AFTER 触发器</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#1-3-复合触发器"><span class="nav-number">1.3.</span> <span class="nav-text">1.3 复合触发器</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#1-4-INSTEAD-OF-触发器"><span class="nav-number">1.4.</span> <span class="nav-text">1.4 INSTEAD OF 触发器</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#1-5-用户与系统事件触发器"><span class="nav-number">1.5.</span> <span class="nav-text">1.5 用户与系统事件触发器</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-创建触发器"><span class="nav-number">2.</span> <span class="nav-text">2. 创建触发器</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#2-1-创建行级触发器"><span class="nav-number">2.1.</span> <span class="nav-text">2.1 创建行级触发器</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-2-创建语句级触发器"><span class="nav-number">2.2.</span> <span class="nav-text">2.2 创建语句级触发器</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-3-创建复合型触发器"><span class="nav-number">2.3.</span> <span class="nav-text">2.3 创建复合型触发器</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-4-DDL触发器"><span class="nav-number">2.4.</span> <span class="nav-text">2.4 DDL触发器</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-5-用户与系统事件触发器"><span class="nav-number">2.5.</span> <span class="nav-text">2.5 用户与系统事件触发器</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-管理触发器"><span class="nav-number">3.</span> <span class="nav-text">3. 管理触发器</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#附录"><span class="nav-number">4.</span> <span class="nav-text">附录</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#DDL事件列表"><span class="nav-number">4.1.</span> <span class="nav-text">DDL事件列表</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <img class="site-author-image" itemprop="image" alt="MIN MIN"
+    src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">MIN MIN</p>
+  <div class="site-description" itemprop="description">即使最后没有人为你鼓掌，也要优雅地谢幕，感谢自己的认真付出。</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">54</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">13</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+        <span class="site-state-item-count">32</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/ashermin" title="GitHub &amp;rarr; https:&#x2F;&#x2F;github.com&#x2F;ashermin" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+<div class="copyright">
+  
+  &copy; 2019 – 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user-circle"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">MIN MIN</span>
+</div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+<script src="/js/utils.js"></script>
+<script src="/js/schemes/pisces.js"></script>
+<script src="/js/next-boot.js"></script>
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+</body>
+</html>

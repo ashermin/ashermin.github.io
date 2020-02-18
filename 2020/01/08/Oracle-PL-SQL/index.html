@@ -1,0 +1,722 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.0.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/avatar.jpg">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/avatar.jpg">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/avatar.jpg">
+  <link rel="mask-icon" href="/images/avatar.jpg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+
+
+<script id="hexo-configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '7.4.2',
+    exturl: false,
+    sidebar: {"position":"left","width":260,"display":"post","offset":12,"onmobile":false},
+    copycode: {"enable":true,"show_result":true,"style":"default"},
+    back2top: {"enable":true,"sidebar":false,"scrollpercent":true},
+    bookmark: {"enable":false,"color":"#222","save":"auto"},
+    fancybox: false,
+    mediumzoom: false,
+    lazyload: false,
+    pangu: false,
+    algolia: {
+      appID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    localsearch: {"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},
+    path: '',
+    motion: {"enable":false,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    translation: {
+      copy_button: '复制',
+      copy_success: '复制成功',
+      copy_failure: '复制失败'
+    },
+    sidebarPadding: 40
+  };
+</script>
+
+  <meta name="description" content="1. PL&#x2F;SQL结构和符号1.1 基本结构[DECLARE] --声明BEGIN --执行[EXCEPTION] --异常处理END; --结束声明部分：变量和常量的定义。该部分可选执行部分：执行部分是 PL&#x2F;SQL 块的指令部分，由关键字BEGIN开始，关键字END结尾。所有的可执行 PL&#x2F;SQL 语句都放在这一部分，该部分执行命令并操作变量。其它的 PL&#x2F;SQL 块可以作为子块嵌套在该部分。">
+<meta name="keywords" content="Oracle">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Oracle PL&#x2F;SQL">
+<meta property="og:url" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2020&#x2F;01&#x2F;08&#x2F;Oracle-PL-SQL&#x2F;index.html">
+<meta property="og:site_name" content="MIN MIN">
+<meta property="og:description" content="1. PL&#x2F;SQL结构和符号1.1 基本结构[DECLARE] --声明BEGIN --执行[EXCEPTION] --异常处理END; --结束声明部分：变量和常量的定义。该部分可选执行部分：执行部分是 PL&#x2F;SQL 块的指令部分，由关键字BEGIN开始，关键字END结尾。所有的可执行 PL&#x2F;SQL 语句都放在这一部分，该部分执行命令并操作变量。其它的 PL&#x2F;SQL 块可以作为子块嵌套在该部分。">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;images&#x2F;Oracle-PL-SQL&#x2F;1043CC07-9375-46B5-96AD-559BAAFEAC8D.png">
+<meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;images&#x2F;Oracle-PL-SQL&#x2F;908F1A54-52DB-4B02-A50A-95439D9E9469.png">
+<meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;images&#x2F;Oracle-PL-SQL&#x2F;E57E1364-B2C0-4219-9CA8-781BAF00B8CB.png">
+<meta property="og:updated_time" content="2020-01-10T15:36:55.266Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;images&#x2F;Oracle-PL-SQL&#x2F;1043CC07-9375-46B5-96AD-559BAAFEAC8D.png">
+
+<link rel="canonical" href="http://yoursite.com/2020/01/08/Oracle-PL-SQL/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true,
+    isPage: false,
+    isArchive: false
+  };
+</script>
+
+  <title>Oracle PL/SQL | MIN MIN</title>
+  
+
+
+  <script>
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?cad2a7930afd095772e571e6eab3628f";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+  <!--  -->
+<link href='//fonts.googleapis.com/css?family=Kaushan+Script' rel='stylesheet' type='text/css'>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">MIN MIN</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+        <p class="site-subtitle">BLOG</p>
+  </div>
+
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档</a>
+
+  </li>
+  </ul>
+
+</nav>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/01/08/Oracle-PL-SQL/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="MIN MIN">
+      <meta itemprop="description" content="即使最后没有人为你鼓掌，也要优雅地谢幕，感谢自己的认真付出。">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="MIN MIN">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Oracle PL/SQL
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-01-08 13:54:08" itemprop="dateCreated datePublished" datetime="2020-01-08T13:54:08+08:00">2020-01-08</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-01-10 23:36:55" itemprop="dateModified" datetime="2020-01-10T23:36:55+08:00">2020-01-10</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Oracle/" itemprop="url" rel="index">
+                    <span itemprop="name">Oracle</span>
+                  </a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h3 id="1-PL-SQL结构和符号"><a href="#1-PL-SQL结构和符号" class="headerlink" title="1. PL/SQL结构和符号"></a>1. PL/SQL结构和符号</h3><h4 id="1-1-基本结构"><a href="#1-1-基本结构" class="headerlink" title="1.1 基本结构"></a>1.1 基本结构</h4><figure class="highlight sql"><table><tr><td class="code"><pre><span class="line">[<span class="keyword">DECLARE</span>] <span class="comment">--声明</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">BEGIN</span> <span class="comment">--执行</span></span><br><span class="line"></span><br><span class="line">[<span class="keyword">EXCEPTION</span>] <span class="comment">--异常处理</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">END</span>; <span class="comment">--结束</span></span><br></pre></td></tr></table></figure><p>声明部分：变量和常量的定义。该部分可选</p><p>执行部分：执行部分是 PL/SQL 块的指令部分，由关键字<code>BEGIN</code>开始，关键字<code>END</code>结尾。所有的可执行 PL/SQL 语句都放在这一部分，该部分执行命令并操作变量。其它的 PL/SQL 块可以作为子块嵌套在该部分。该部分是必选的。</p><a id="more"></a>
+
+
+
+<p>异常处理部分：该部分用<code>EXCEPTION</code>关键字把可执行部分分成两个小部分，之前的程序是正常运行的程序，一旦出现异常就跳转到异常部分执行。该部分是可选的</p>
+<h4 id="1-2-符号"><a href="#1-2-符号" class="headerlink" title="1.2 符号"></a>1.2 符号</h4><p><img src="/images/Oracle-PL-SQL/1043CC07-9375-46B5-96AD-559BAAFEAC8D.png" alt="1043CC07-9375-46B5-96AD-559BAAFEAC8D"></p>
+<hr>
+<h3 id="2-PL-SQL的变-常量和数据类型"><a href="#2-PL-SQL的变-常量和数据类型" class="headerlink" title="2. PL/SQL的变/常量和数据类型"></a>2. PL/SQL的变/常量和数据类型</h3><h4 id="2-1-常量和变量的声明"><a href="#2-1-常量和变量的声明" class="headerlink" title="2.1 常量和变量的声明"></a>2.1 常量和变量的声明</h4><h5 id="2-1-1-常量声明"><a href="#2-1-1-常量声明" class="headerlink" title="2.1.1 常量声明"></a>2.1.1 常量声明</h5><p>常量在声明时赋予初值，并且在运行时不允许重新赋值。使用<code>CONSTANT</code>关键字声明常量，使用<code>:=</code>或<code>DEFAULT</code>赋值</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">DECLARE</span></span><br><span class="line">  <span class="keyword">PI</span> <span class="keyword">CONSTANT</span> <span class="built_in">number</span> := <span class="number">3.1415926</span>;  <span class="comment">--圆周率</span></span><br><span class="line">  r NUMBER DEFAULT 10;  <span class="comment">--半径</span></span><br><span class="line">  area NUMBER;  <span class="comment">--面积</span></span><br><span class="line"><span class="keyword">BEGIN</span></span><br><span class="line">  area := <span class="keyword">PI</span> * r * r;  <span class="comment">--计算面积</span></span><br><span class="line">  dbms_output.put_line(area);  <span class="comment">--输出圆面积</span></span><br><span class="line"><span class="keyword">END</span>;</span><br><span class="line"><span class="comment">------</span></span><br><span class="line">314.15926</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>打开控制台的输出显示功能：<code>SET SERVEROUTPUT ON;</code></p>
+</blockquote>
+<p>在 SQL<em>Plus 中还可以声明 Session（会话，也就是一个客户端从连接到退出的过程称为当前用户的会话。）全局级变量，该变量在整个会话过程中均起作用，类似的这种变量称为*</em>宿主变量**。宿主变量在 PL/SQL 引用时要用<code>:变量名</code>引用</p>
+<figure class="highlight"><table><tr><td class="code"><pre><span class="line">SQL&gt; var emp_name varchar(30);  --用 var 声明宿主变量</span><br><span class="line">SQL&gt; BEGIN</span><br><span class="line"><span class="keyword">SELECT</span> ename <span class="keyword">INTO</span> :emp_name <span class="keyword">FROM</span> emp <span class="keyword">WHERE</span> empno=<span class="number">7499</span>;  <span class="comment">--PL/SQL 中访问宿主变量时要在变量前加“:”</span></span><br><span class="line"><span class="keyword">END</span>;</span><br><span class="line">SQL&gt; print emp_name;  --在 SQL*Plus 中，使用 print 可以输出变量中的结果</span><br></pre></td></tr></table></figure>
+
+<h5 id="2-1-2-变量声明"><a href="#2-1-2-变量声明" class="headerlink" title="2.1.2 变量声明"></a>2.1.2 变量声明</h5><p>语法：<code>变量名 数据类型[:=初始值]</code></p>
+<p>变量的值可以直接给一个定值，也可以从表中字段获取。</p>
+<p>例1：直接给定一个值</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">DECLARE</span></span><br><span class="line">    salary <span class="built_in">NUMBER</span>(<span class="number">9</span>,<span class="number">2</span>); <span class="comment">--也可以直接赋值 salary NUMBER(9,2) := 12345.67;</span></span><br><span class="line"><span class="keyword">BEGIN</span></span><br><span class="line">    salary := <span class="number">12345.67</span>;</span><br><span class="line">    dbms_output.put_line('工资为：'||salary);</span><br><span class="line"><span class="keyword">END</span>;</span><br></pre></td></tr></table></figure>
+
+<p>例2：从表中获取值，并对值做异常处理，输出到终端</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">DECLARE</span></span><br><span class="line">    v_ename VARCHAR2(<span class="number">10</span>);</span><br><span class="line"><span class="keyword">BEGIN</span></span><br><span class="line">    <span class="keyword">SELECT</span> ename</span><br><span class="line">    <span class="keyword">INTO</span> v_ename <span class="comment">--在此处赋值</span></span><br><span class="line">    <span class="keyword">FROM</span> emp</span><br><span class="line">    <span class="keyword">WHERE</span> sal&gt;<span class="number">3000</span>;</span><br><span class="line">    DBMS_OUTPUT.put_line('工资高于3000的员工：'||v_ename);</span><br><span class="line">EXCEPTION</span><br><span class="line">    WHEN NO_DATA_FOUND THEN</span><br><span class="line">        DBMS_OUTPUT.PUT_LINE('没有人');</span><br><span class="line">    WHEN TOO_MANY_ROWS THEN</span><br><span class="line">        DBMS_OUTPUT.PUT_LINE('人太多啦');</span><br><span class="line"><span class="keyword">END</span>;</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p><code>SELECT...INTO...</code>是PL/SQL特有的语法，作用：把SELECT查询出来的值一一对应存储到INTO后的变量名中。每次只能接受返回1条记录，超过1条或没有返回记录会引发异常。</p>
+</blockquote>
+<h4 id="2-2-数据类型"><a href="#2-2-数据类型" class="headerlink" title="2.2 数据类型"></a>2.2 数据类型</h4><h5 id="2-2-1-标量数据类型"><a href="#2-2-1-标量数据类型" class="headerlink" title="2.2.1 标量数据类型"></a>2.2.1 标量数据类型</h5><p>标量数据类型的变量只有一个值，且内部没有分量。标量数据类型包括数字型，字符型，日期型和布尔型。这些类型有的是 Oracle SQL 中定义的数据类型，有的是 PL/SQL 自身附加的数据类型。字符型和数字型又有子类型，子类型只与限定的范围有关，比如 NUMBER 类型可以表示整数，也可以表示小数，而其子类型 POSITIVE 只表示正整数。</p>
+<p><img src="/images/Oracle-PL-SQL/908F1A54-52DB-4B02-A50A-95439D9E9469.png" alt="908F1A54-52DB-4B02-A50A-95439D9E9469"></p>
+<p><img src="/images/Oracle-PL-SQL/E57E1364-B2C0-4219-9CA8-781BAF00B8CB.png" alt="E57E1364-B2C0-4219-9CA8-781BAF00B8CB"></p>
+<h5 id="2-2-2-属性数据类型"><a href="#2-2-2-属性数据类型" class="headerlink" title="2.2.2 属性数据类型"></a>2.2.2 属性数据类型</h5><p>当声明一个变量的值是数据库中的一行或者是数据库中某列时，可以直接使用属性类型来声明。Oracle中存在两种属性类型：<code>%ROWTYPE</code>和<code>%TYPE</code></p>
+<p>（1）<code>%ROWTYPE</code>：以数据库表中的<strong>一行</strong>作为数据类型，可以使用<code>.</code>来访问记录中的属性</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">DECLARE</span></span><br><span class="line">  myemp Emp%ROWTYPE;  <span class="comment">--声明一个myemp对象，该对象表示EMP表中的一行</span></span><br><span class="line"><span class="keyword">BEGIN</span></span><br><span class="line">  <span class="keyword">SELECT</span> * <span class="keyword">INTO</span> myemp <span class="keyword">FROM</span> Emp <span class="keyword">WHERE</span> empno=<span class="number">7934</span>;  <span class="comment">--从EMP表中查询一条记录放入myemp对象中</span></span><br><span class="line">  dbms_output.put_line(myemp.ename);  <span class="comment">--访问该对象的属性可以使用“.”</span></span><br><span class="line"><span class="keyword">END</span>;</span><br><span class="line"><span class="comment">------</span></span><br><span class="line">MILLER</span><br></pre></td></tr></table></figure>
+
+<p>（2）<code>%TYPE</code>：引用某个变量或者数据库的<strong>列</strong>的类型作为某变量的数据类型</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">DECLARE</span></span><br><span class="line">  sal emp.sal%<span class="keyword">TYPE</span>;  <span class="comment">--定义变量sal为EMP表中sal列的类型</span></span><br><span class="line">  mysal number(4):=3000;</span><br><span class="line">  totalsal mysal%TYPE;  <span class="comment">--定义totalsal是变量mysal的类型</span></span><br><span class="line"><span class="keyword">BEGIN</span></span><br><span class="line">  <span class="keyword">SELECT</span> SAL <span class="keyword">INTO</span> sal <span class="keyword">FROM</span> emp <span class="keyword">WHERE</span> empno=<span class="number">7934</span>;</span><br><span class="line">  totalsal:=sal+mysal;</span><br><span class="line">  dbms_output.put_line(totalsal);</span><br><span class="line"><span class="keyword">END</span>;</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h3 id="3-PL-SQL控制语句"><a href="#3-PL-SQL控制语句" class="headerlink" title="3. PL/SQL控制语句"></a>3. PL/SQL控制语句</h3><h4 id="3-1-顺序控制"><a href="#3-1-顺序控制" class="headerlink" title="3.1 顺序控制"></a>3.1 顺序控制</h4><p>实现顺序控制主要是靠<code>GOTO</code>和<code>NULL</code>这两个语句：</p>
+<ul>
+<li><strong>GOTO语句将无条件的跳转到标签指定的语句去执行</strong>。标签是用双尖括号括起来的标示符<code>&lt;&lt;XXX&gt;&gt;</code>，在 PL/SQL 块中必须具有唯一的名称，标签后必须紧跟可执行语句或者 PL/SQL 块</li>
+</ul>
+<p>⚠️注意：GOTO 不能跳转到 IF 语句、CASE 语句、LOOP 语句、或者子块中。</p>
+<ul>
+<li>NULL语句什么都不做，只是将控制权转到下一行语句。NULL 语句是可执行语句。NULL语句在 IF 或者其他语句语法要求至少需要一条可执行语句，但又不需要具体操作的地方。比如 GOTO 的目标地方不需要执行任何语句时</li>
+</ul>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">DECLARE</span></span><br><span class="line">  sum_sal Emp.sal%<span class="keyword">TYPE</span>;</span><br><span class="line"><span class="keyword">BEGIN</span></span><br><span class="line">  <span class="keyword">SELECT</span> <span class="keyword">SUM</span>(sal) <span class="keyword">INTO</span> sum_sal <span class="keyword">FROM</span> Emp;</span><br><span class="line">  IF sum_sal&gt;20000 THEN</span><br><span class="line">    GOTO first_level;  <span class="comment">--跳转到程序first_level位置</span></span><br><span class="line">  ELSE</span><br><span class="line">    GOTO second_level;</span><br><span class="line">  <span class="keyword">END</span> <span class="keyword">IF</span>;</span><br><span class="line">  &lt;&lt;first_level&gt;&gt;  --一个标签，用两个尖括号包含</span><br><span class="line">  dbms_output.put_line('Above 20000:'||sum_sal);</span><br><span class="line">  &lt;&lt;second_level&gt;&gt;</span><br><span class="line">  NULL;  <span class="comment">--不执行任何内容</span></span><br><span class="line"><span class="keyword">END</span>;</span><br></pre></td></tr></table></figure>
+
+<h4 id="3-2-条件控制"><a href="#3-2-条件控制" class="headerlink" title="3.2 条件控制"></a>3.2 条件控制</h4><p> PL/SQL 中关于条件控制的关键字有 IF-THEN、IF-THEN-ELSE、IF-THEN-ELSIF 和多分枝条件 CASE。</p>
+<h5 id="3-2-1-IF-THEN"><a href="#3-2-1-IF-THEN" class="headerlink" title="3.2.1 IF-THEN"></a>3.2.1 IF-THEN</h5><figure class="highlight sql"><table><tr><td class="code"><pre><span class="line">IF 条件 THEN</span><br><span class="line">  <span class="comment">--条件结构体</span></span><br><span class="line"><span class="keyword">END</span> <span class="keyword">IF</span>;</span><br></pre></td></tr></table></figure>
+
+<p>例：查询 JAMES 的工资，如果大于 900 元，则发奖金 800 元</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">DECLARE</span></span><br><span class="line">    james_sal emp.sal%<span class="keyword">TYPE</span>;</span><br><span class="line"><span class="keyword">BEGIN</span></span><br><span class="line">    <span class="keyword">SELECT</span> sal <span class="keyword">INTO</span> james_sal <span class="keyword">FROM</span> emp <span class="keyword">WHERE</span> ename=<span class="string">'JAMES'</span>;</span><br><span class="line">    IF(james_sal&gt;900) THEN</span><br><span class="line">        <span class="keyword">UPDATE</span> emp <span class="keyword">SET</span> comm=NVL(comm,<span class="number">0</span>)+<span class="number">800</span> <span class="keyword">WHERE</span> ename=<span class="string">'JAMES'</span>;</span><br><span class="line">    <span class="keyword">END</span> <span class="keyword">IF</span>;</span><br><span class="line">    <span class="keyword">COMMIT</span>; <span class="comment">--DML操作要提交事务</span></span><br><span class="line"><span class="keyword">END</span>;</span><br></pre></td></tr></table></figure>
+
+<h5 id="3-2-2-IF-THEN-ELSE和IF-THEN-ELSIF"><a href="#3-2-2-IF-THEN-ELSE和IF-THEN-ELSIF" class="headerlink" title="3.2.2 IF-THEN-ELSE和IF-THEN-ELSIF"></a>3.2.2 IF-THEN-ELSE和IF-THEN-ELSIF</h5><figure class="highlight sql"><table><tr><td class="code"><pre><span class="line">IF 条件 THEN</span><br><span class="line">  <span class="comment">--条件成立结构体</span></span><br><span class="line">ELSE</span><br><span class="line">  <span class="comment">--条件不成立结构体</span></span><br><span class="line"><span class="keyword">END</span> <span class="keyword">IF</span>;</span><br><span class="line"><span class="comment">------------------</span></span><br><span class="line">IF 条件1 THEN</span><br><span class="line">  <span class="comment">--条件1成立结构体</span></span><br><span class="line">ELSIF 条件2 THEN</span><br><span class="line">  <span class="comment">--条件2成立结构体</span></span><br><span class="line">ELSE</span><br><span class="line">  <span class="comment">--以上条件都不成立结构体</span></span><br><span class="line"><span class="keyword">END</span> <span class="keyword">IF</span>;</span><br></pre></td></tr></table></figure>
+
+<p>例：查询 JAMES 的工资，如果大于 1500 元，则发放奖金 100 元，如果工作大于900元，则发奖金 800 元，否则发奖金 400 元</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">DECLARE</span></span><br><span class="line">    james_sal emp.sal%<span class="keyword">TYPE</span>;</span><br><span class="line"><span class="keyword">BEGIN</span></span><br><span class="line">    <span class="keyword">SELECT</span> sal <span class="keyword">INTO</span> james_sal <span class="keyword">FROM</span> emp <span class="keyword">WHERE</span> ename=<span class="string">'JAMES'</span>;</span><br><span class="line">    IF(james_sal&gt;1500) THEN</span><br><span class="line">        <span class="keyword">UPDATE</span> emp <span class="keyword">SET</span> comm=NVL(comm,<span class="number">0</span>)+<span class="number">100</span> <span class="keyword">WHERE</span> ename=<span class="string">'JAMES'</span>;</span><br><span class="line">    ELSIF(james_sal&gt;900) THEN</span><br><span class="line">        <span class="keyword">UPDATE</span> emp <span class="keyword">SET</span> comm=NVL(comm,<span class="number">0</span>)+<span class="number">800</span> <span class="keyword">WHERE</span> ename=<span class="string">'JAMES'</span>;</span><br><span class="line">    ELSE</span><br><span class="line">        <span class="keyword">UPDATE</span> emp <span class="keyword">SET</span> comm=NVL(comm,<span class="number">0</span>)+<span class="number">400</span> <span class="keyword">WHERE</span> ename=<span class="string">'JAMES'</span>;</span><br><span class="line">    <span class="keyword">END</span> <span class="keyword">IF</span>;</span><br><span class="line">    <span class="keyword">COMMIT</span>; <span class="comment">--DML操作要提交事务</span></span><br><span class="line"><span class="keyword">END</span>;</span><br></pre></td></tr></table></figure>
+
+<h5 id="3-2-3-CASE"><a href="#3-2-3-CASE" class="headerlink" title="3.2.3 CASE"></a>3.2.3 CASE</h5><figure class="highlight sql"><table><tr><td class="code"><pre><span class="line">CASE [selector]  <span class="comment">--参与CASE的对象</span></span><br><span class="line">  WHEN 表达式1 THEN 语句序列1;</span><br><span class="line">  WHEN 表达式2 THEN 语句序列2;</span><br><span class="line">  WHEN 表达式3 THEN 语句序列4;</span><br><span class="line">  ...</span><br><span class="line">  [ELSE 语句序列N];</span><br><span class="line"><span class="keyword">END</span> <span class="keyword">CASE</span>;</span><br></pre></td></tr></table></figure>
+
+<p>例：键盘输入一个字母 ，如果是A、B、C 就输出对应的级别信息；如果不是就打出GG</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">DECLARE</span></span><br><span class="line">    v_grade <span class="built_in">CHAR</span>(<span class="number">1</span>):=<span class="keyword">UPPER</span>(<span class="string">'&amp;p_grade'</span>);</span><br><span class="line"><span class="keyword">BEGIN</span></span><br><span class="line">    <span class="keyword">CASE</span> v_grade</span><br><span class="line">        <span class="keyword">WHEN</span> <span class="string">'A'</span> <span class="keyword">THEN</span> dbms_output.put_line(<span class="string">'Very Hard'</span>);</span><br><span class="line">        WHEN 'B' THEN dbms_output.put_line('Hard');</span><br><span class="line">        WHEN 'C' THEN dbms_output.put_line('Normal');</span><br><span class="line">        ELSE dbms_output.put_line('Easy');</span><br><span class="line">    <span class="keyword">END</span> <span class="keyword">CASE</span>;</span><br><span class="line"><span class="keyword">END</span>;</span><br></pre></td></tr></table></figure>
+
+<h4 id="3-3-循环控制"><a href="#3-3-循环控制" class="headerlink" title="3.3 循环控制"></a>3.3 循环控制</h4><ul>
+<li>LOOP无条件循环</li>
+<li>WHILE循环</li>
+<li>FOR循环</li>
+</ul>
+<p>上面的三类循环中<code>EXIT</code>用来强制结束循环，相当于 break。</p>
+<h5 id="3-3-1-LOOP无条件循环"><a href="#3-3-1-LOOP无条件循环" class="headerlink" title="3.3.1 LOOP无条件循环"></a>3.3.1 LOOP无条件循环</h5><p>在 LOOP 循环中可以使用<code>EXIT</code>或者<code>EXIT WHEN 条件</code>的形式终止循环。否则该循环就是死循环</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line">LOOP</span><br><span class="line">  <span class="comment">--循环体</span></span><br><span class="line"><span class="keyword">END</span> <span class="keyword">LOOP</span>;</span><br></pre></td></tr></table></figure>
+
+<p>例：求1+2+3+…+99+100的值</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">DECLARE</span></span><br><span class="line">    counter <span class="built_in">INTEGER</span>:=<span class="number">1</span>;</span><br><span class="line">    counterSum INTEGER:=0;</span><br><span class="line"><span class="keyword">BEGIN</span></span><br><span class="line">    <span class="keyword">LOOP</span></span><br><span class="line">        <span class="keyword">IF</span> counter &lt;= <span class="number">100</span> <span class="keyword">THEN</span></span><br><span class="line">            countersum := countersum+counter;</span><br><span class="line">            counter := counter+1;</span><br><span class="line">        ELSE</span><br><span class="line">            EXIT;</span><br><span class="line">        <span class="keyword">END</span> <span class="keyword">IF</span>;</span><br><span class="line">    <span class="keyword">END</span> <span class="keyword">LOOP</span>;</span><br><span class="line">    DBMS_OUTPUT.PUT_LINE('1+2+3+...+99+100='||counterSum);</span><br><span class="line"><span class="keyword">END</span>;</span><br><span class="line"><span class="comment">------</span></span><br><span class="line">1+2+3+...+99+100=5050</span><br></pre></td></tr></table></figure>
+
+<h5 id="3-3-2-WHILE循环"><a href="#3-3-2-WHILE循环" class="headerlink" title="3.3.2 WHILE循环"></a>3.3.2 WHILE循环</h5><p>其实<em>WHILE循环</em>就是在<em>LOOP无条件循环</em>前面加个了WHILE条件</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line">WHILE 条件 LOOP</span><br><span class="line">  <span class="comment">--循环体</span></span><br><span class="line"><span class="keyword">END</span> <span class="keyword">LOOP</span>;</span><br></pre></td></tr></table></figure>
+
+<p>例：求1+2+3+…+99+100的值</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">DECLARE</span></span><br><span class="line">    counter <span class="built_in">INTEGER</span>:=<span class="number">1</span>;</span><br><span class="line">    counterSum INTEGER:=0;</span><br><span class="line"><span class="keyword">BEGIN</span></span><br><span class="line">    <span class="keyword">WHILE</span>(counter&lt;=<span class="number">100</span>) <span class="keyword">LOOP</span></span><br><span class="line">        countersum:=countersum+counter;</span><br><span class="line">        counter:=counter+1;</span><br><span class="line">    <span class="keyword">END</span> <span class="keyword">LOOP</span>;</span><br><span class="line">    DBMS_OUTPUT.put_line('1+2+3+...+99+100='||counterSum);</span><br><span class="line"><span class="keyword">END</span>;</span><br><span class="line"><span class="comment">------</span></span><br><span class="line">1+2+3+...+99+100=5050</span><br></pre></td></tr></table></figure>
+
+<h5 id="3-3-3-FOR循环"><a href="#3-3-3-FOR循环" class="headerlink" title="3.3.3 FOR循环"></a>3.3.3 FOR循环</h5><p>其实<em>FOR循环</em>就是在<em>LOOP无条件循环</em>前面加个了FOR条件</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line">FOR 循环变量 IN [REVERSE] 循环下限..循环上限 LOOP</span><br><span class="line">  <span class="comment">--循环体</span></span><br><span class="line"><span class="keyword">END</span> <span class="keyword">LOOP</span>;</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p><code>REVERSE</code>：让循环方式与默认的相反，加了就从<em>循环上限</em>➡️<em>循环下限</em>。</p>
+<p>⚠️注意：循环计数器增量（或减量）必须为<code>1</code>。</p>
+</blockquote>
+<p>例：求1+2+3+…+99+100的值</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">DECLARE</span></span><br><span class="line">    counter <span class="built_in">INTEGER</span>:=<span class="number">1</span>;</span><br><span class="line">    counterSum INTEGER:=0;</span><br><span class="line"><span class="keyword">BEGIN</span></span><br><span class="line">    <span class="keyword">FOR</span> counter <span class="keyword">IN</span> <span class="number">1.</span><span class="number">.100</span> <span class="keyword">LOOP</span></span><br><span class="line">        countersum:=countersum+counter;</span><br><span class="line">    <span class="keyword">END</span> <span class="keyword">LOOP</span>;</span><br><span class="line">    DBMS_OUTPUT.put_line('1+2+3+...+99+100='||counterSum);</span><br><span class="line"><span class="keyword">END</span>;</span><br><span class="line"><span class="comment">------</span></span><br><span class="line">1+2+3+...+99+100=5050</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h3 id="4-PL-SQL的DML和DDL"><a href="#4-PL-SQL的DML和DDL" class="headerlink" title="4. PL/SQL的DML和DDL"></a>4. PL/SQL的DML和DDL</h3><p>DML语句在PL/SQL中的使用和单独执行DML操作没有区别；而SELECT和DDL的使用都有点区别。</p>
+<h4 id="4-1-DML的SELECT"><a href="#4-1-DML的SELECT" class="headerlink" title="4.1 DML的SELECT"></a>4.1 DML的SELECT</h4><p>对于SELECT的区别其实就是PL/SQL特有的<code>SELECT...INTO...</code>，案例可以参考<strong>“2.1.2 变量声明”的例2</strong>。</p>
+<h4 id="4-2-DDL"><a href="#4-2-DDL" class="headerlink" title="4.2 DDL"></a>4.2 DDL</h4><p>DDL要在PL/SQL中使用需要执行<code>EXECUTE IMMEDIATE</code>命令。</p>
+<p>例：动态创建表Emp_test</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">DECLARE</span></span><br><span class="line">    createEmptest VARCHAR2(<span class="number">200</span>);</span><br><span class="line"><span class="keyword">BEGIN</span></span><br><span class="line">    createEmptest:=<span class="string">'CREATE TABLE Emptest(id NUMBER,ename VARCHAR2(20))'</span>;</span><br><span class="line">    <span class="keyword">EXECUTE</span> <span class="keyword">IMMEDIATE</span> createEmptest;</span><br><span class="line"><span class="keyword">END</span>;</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>⚠️注意：不建议在PL/SQL中使用DDL，通常是在<strong>存储过程</strong>中执行DDL语句。</p>
+</blockquote>
+<hr>
+<h3 id="5-PL-SQL异常"><a href="#5-PL-SQL异常" class="headerlink" title="5. PL/SQL异常"></a>5. PL/SQL异常</h3><p>ORACLE异常分为两种类型：系统异常、自定义异常。其中系统异常又分为：预定义异常和非预定义异常</p>
+<ul>
+<li>系统异常<ul>
+<li>预定义异常：Oracle预定义的异常情况大约有24个。对这种异常情况的处理，无需在程序中定义，由Oracle自动将其引发</li>
+<li>非预定义异常：即其它标准的Oracle错误。对这种异常情况的处理，需要用户在程序中定义，然后由Oracle自动将其引发</li>
+</ul>
+</li>
+<li>自定义异常：程序执行过程中，出现编程人员认为的非正常情况。对这种异常情况的处理，需要用户在程序中定义，然后显式地在程序中将其引发</li>
+</ul>
+<h4 id="5-1-预定义异常"><a href="#5-1-预定义异常" class="headerlink" title="5.1 预定义异常"></a>5.1 预定义异常</h4><p>对于Oracle常见的一些错误，已经定义好了它们的错误编号和异常名字。在对这种异常情况的处理时，只需在PL/SQL块的异常处理部分，直接引用相应的异常情况名，并对其完成相应的异常错误处理即可。具体有哪24个可以参见附录表1：预定义异常。</p>
+<p>语法：</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">BEGIN</span></span><br><span class="line">    <span class="comment">--可执行部分</span></span><br><span class="line"><span class="keyword">EXCEPTION</span> <span class="comment">-- 异常处理开始</span></span><br><span class="line">    <span class="keyword">WHEN</span> 异常名 <span class="number">1</span> <span class="keyword">THEN</span></span><br><span class="line">    <span class="comment">--对应异常处理</span></span><br><span class="line">    <span class="keyword">WHEN</span> 异常名 <span class="number">2</span> <span class="keyword">THEN</span></span><br><span class="line">    <span class="comment">--对应异常处理</span></span><br><span class="line">    ...</span><br><span class="line">    <span class="keyword">WHEN</span> OTHERS <span class="keyword">THEN</span></span><br><span class="line">    <span class="comment">--其他异常处理</span></span><br><span class="line"><span class="keyword">END</span>;</span><br></pre></td></tr></table></figure>
+
+<p>例：查询工资高于3000的员工，对NO_DATA_FOUND和TOO_MANY_ROWS异常进行处理</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">DECLARE</span></span><br><span class="line">    v_ename VARCHAR2(<span class="number">10</span>);</span><br><span class="line"><span class="keyword">BEGIN</span></span><br><span class="line">    <span class="keyword">SELECT</span> ename</span><br><span class="line">    <span class="keyword">INTO</span> v_ename <span class="comment">--在此处赋值</span></span><br><span class="line">    <span class="keyword">FROM</span> emp</span><br><span class="line">    <span class="keyword">WHERE</span> sal&gt;<span class="number">3000</span>;</span><br><span class="line">    DBMS_OUTPUT.put_line('工资高于3000的员工：'||v_ename);</span><br><span class="line">EXCEPTION</span><br><span class="line">    WHEN NO_DATA_FOUND THEN</span><br><span class="line">        DBMS_OUTPUT.PUT_LINE('没有人');</span><br><span class="line">    WHEN TOO_MANY_ROWS THEN</span><br><span class="line">        DBMS_OUTPUT.PUT_LINE('人太多啦');</span><br><span class="line"><span class="keyword">END</span>;</span><br></pre></td></tr></table></figure>
+
+<h4 id="5-2-非预定义异常"><a href="#5-2-非预定义异常" class="headerlink" title="5.2 非预定义异常"></a>5.2 非预定义异常</h4><p>除了24个预定义异常，其余的异常Oracle为其定义了错误编号和错误原因，但没有定义异常名字，因而不能直接进行异常处理。</p>
+<p>如果要处理未命名的内部异常，除了可以使用<code>OTHERS</code>异常处理器；也可以利用<code>PRAGMA EXCEPTION_INIT</code>把一个异常码与自定义的异常名绑定。</p>
+<p>语法：</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">DECLARE</span></span><br><span class="line">	exception_name <span class="keyword">EXCEPTION</span>; <span class="comment">--定义异常名称</span></span><br><span class="line">	<span class="keyword">PRAGMA</span> EXCEPTION_INIT (exception_name, error_code)</span><br><span class="line"><span class="keyword">BEGIN</span></span><br><span class="line">    <span class="comment">--可执行部分</span></span><br><span class="line"><span class="keyword">EXCEPTION</span></span><br><span class="line">    <span class="keyword">WHEN</span> exception_name <span class="keyword">THEN</span></span><br><span class="line">    <span class="comment">--对应异常处理</span></span><br><span class="line"><span class="keyword">END</span>;</span><br></pre></td></tr></table></figure>
+
+<p>例：往emp表插入一个已经存在的主键。（注意：<code>-0001</code>是预定义异常，我这里是为了举例^_^）</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">DECLARE</span></span><br><span class="line">    v_empno emp.empno%<span class="keyword">TYPE</span> := <span class="number">9999</span>;</span><br><span class="line">    v_empno_exception EXCEPTION; <span class="comment">--1.定义异常名字</span></span><br><span class="line">    <span class="keyword">PRAGMA</span> EXCEPTION_INIT (v_empno_exception, <span class="number">-0001</span>); <span class="comment">--2.将错误代码与自定义的异常名字进行绑定</span></span><br><span class="line"><span class="keyword">BEGIN</span></span><br><span class="line">    <span class="keyword">INSERT</span> <span class="keyword">INTO</span> emp(empno) <span class="keyword">VALUES</span>(v_empno);</span><br><span class="line">EXCEPTION</span><br><span class="line">    WHEN v_empno_exception THEN <span class="comment">--3.执行异常</span></span><br><span class="line">        DBMS_OUTPUT.PUT_LINE('已经存在这个empno了！');</span><br><span class="line">    WHEN OTHERS THEN</span><br><span class="line">        DBMS_OUTPUT.PUT_LINE('Other error.');</span><br><span class="line"><span class="keyword">END</span>;</span><br><span class="line"><span class="comment">------</span></span><br><span class="line">已经存在这个empno了！</span><br></pre></td></tr></table></figure>
+
+<h4 id="5-3-自定义异常"><a href="#5-3-自定义异常" class="headerlink" title="5.3 自定义异常"></a>5.3 自定义异常</h4><p>用户定义的异常是通过<code>RAISE</code>语句来触发。当触发一个异常时，控制就转向到EXCEPTION部分，执行错误处理代码。</p>
+<p>语法：</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">DECLARE</span></span><br><span class="line">	exception_name <span class="keyword">EXCEPTION</span>; <span class="comment">--定义异常名称</span></span><br><span class="line"><span class="keyword">BEGIN</span></span><br><span class="line">    <span class="keyword">RAISE</span> exception_name;<span class="comment">--触发异常</span></span><br><span class="line">EXCEPTION</span><br><span class="line">    WHEN exception_name THEN</span><br><span class="line">    <span class="comment">--对应异常处理</span></span><br><span class="line"><span class="keyword">END</span>;</span><br></pre></td></tr></table></figure>
+
+<p>例：如果员工工资低于5000，就触发异常</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">DECLARE</span></span><br><span class="line">  mysal Emp.sal%<span class="keyword">TYPE</span>;</span><br><span class="line">  myexception EXCEPTION; <span class="comment">--定义异常</span></span><br><span class="line"><span class="keyword">BEGIN</span></span><br><span class="line">  <span class="keyword">SELECT</span> sal <span class="keyword">INTO</span> mysal <span class="keyword">FROM</span> Emp <span class="keyword">WHERE</span> ename=<span class="string">'JAMES'</span>;</span><br><span class="line">  IF mysal&lt;5000 THEN</span><br><span class="line">    RAISE myexception; <span class="comment">--触发异常</span></span><br><span class="line">  <span class="keyword">END</span> <span class="keyword">IF</span>;</span><br><span class="line">EXCEPTION</span><br><span class="line">  WHEN NO_DATA_FOUND THEN</span><br><span class="line">    dbms_output.put_line('NO RECORDSET FIND!'); <span class="comment">--执行异常</span></span><br><span class="line">  WHEN MYEXCEPTION THEN</span><br><span class="line">    <span class="comment">--dbms_output.put_line('SAL IS TOO LESS!');</span></span><br><span class="line">    RAISE_APPLICATION_ERROR(-20001,'SAL IS TOO LESS!');  <span class="comment">--为自定义的异常指定一个异常码</span></span><br><span class="line"><span class="keyword">END</span>;</span><br><span class="line"><span class="comment">----------------</span></span><br><span class="line">错误报告 -</span><br><span class="line">ORA-20001: SAL IS TOO LESS!</span><br><span class="line">ORA-06512: 在 line 14</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p><code>RAISE_APPLICATION_ERROR</code>：用户自定义的异常也可以指定一个异常码和异常信息，Oracle系统为用户预留了自定义异常码，其范围介于 -20000 到 -20999 之间的负整数。</p>
+</blockquote>
+<hr>
+<h3 id="6-PL-SQL函数"><a href="#6-PL-SQL函数" class="headerlink" title="6. PL/SQL函数"></a>6. PL/SQL函数</h3><h4 id="6-1-创建函数"><a href="#6-1-创建函数" class="headerlink" title="6.1 创建函数"></a>6.1 创建函数</h4><p>语法：</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">CREATE</span> [<span class="keyword">OR</span> <span class="keyword">REPLACE</span>] <span class="keyword">FUNCTION</span> function_name(</span><br><span class="line">  parameter_name [<span class="keyword">IN</span> | <span class="keyword">OUT</span> | <span class="keyword">IN</span> <span class="keyword">OUT</span>] dataType,</span><br><span class="line">  ......</span><br><span class="line">)<span class="keyword">RETURN</span> return_dataType &#123;<span class="keyword">IS</span> | <span class="keyword">AS</span>&#125; &lt;变量的声明部分&gt;</span><br><span class="line"><span class="keyword">BEGIN</span></span><br><span class="line">    &lt;function_body&gt;</span><br><span class="line"><span class="keyword">END</span> [function_name];</span><br></pre></td></tr></table></figure>
+
+<p>参数说明：</p>
+<ul>
+<li><p><code>[OR REPLACE]</code>：覆盖同名函数。一般只有确认function_name函数是新函数或是要更新的函数时，才使用OR REPALCE关键字，否则容易删除有用的函数</p>
+</li>
+<li><p><code>IN | OUT | IN OUT</code>：形参的模式。若省略，则为IN模式</p>
+<ul>
+<li>IN：形参只能将实参传递给形参，进入函数内部，但只能读不能写，函数返回时实参的值不变</li>
+<li>OUT：形参会忽略调用时的实参值（或说该形参的初始值总是NULL），但在函数内部可以被读或写，函数返回时形参的值会赋予给实参</li>
+<li>IN OUT：具有前两种模式的特性。即调用时，实参的值总是传递给形参；结束时，形参的值传递给实参</li>
+</ul>
+<blockquote>
+<p>⚠️注意：调用时，对于IN模式的实参可以是常量或变量；但对于OUT和IN OUT模式的实参必须是变量。</p>
+</blockquote>
+</li>
+<li><p><code>{IS | AS}</code>：二选一。该项后面是PL/SQL块</p>
+</li>
+</ul>
+<p>例：创建一个类似MAX(x, y)的函数。如果之前该函数已存在，则添加OR REPLACE关键字</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">CREATE</span> <span class="keyword">OR</span> <span class="keyword">REPLACE</span> <span class="keyword">FUNCTION</span> findMax(x <span class="keyword">IN</span> <span class="built_in">NUMBER</span>, y <span class="keyword">IN</span> <span class="built_in">NUMBER</span>) </span><br><span class="line"><span class="keyword">RETURN</span> <span class="built_in">NUMBER</span></span><br><span class="line"><span class="keyword">IS</span></span><br><span class="line">    z <span class="built_in">NUMBER</span>;</span><br><span class="line"><span class="keyword">BEGIN</span></span><br><span class="line">   <span class="keyword">IF</span> x &gt; y <span class="keyword">THEN</span></span><br><span class="line">      z:= x;</span><br><span class="line">   ELSE</span><br><span class="line">      Z:= y;</span><br><span class="line">   <span class="keyword">END</span> <span class="keyword">IF</span>;</span><br><span class="line"></span><br><span class="line">   RETURN z;</span><br><span class="line"><span class="keyword">END</span>; </span><br><span class="line"><span class="comment">------</span></span><br><span class="line">Function FINDMAX 已编译</span><br></pre></td></tr></table></figure>
+
+<h4 id="6-2-调用函数"><a href="#6-2-调用函数" class="headerlink" title="6.2 调用函数"></a>6.2 调用函数</h4><figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">DECLARE</span></span><br><span class="line">   a <span class="built_in">NUMBER</span>;</span><br><span class="line">   b NUMBER;</span><br><span class="line">   c NUMBER;</span><br><span class="line"><span class="keyword">BEGIN</span></span><br><span class="line">   a:= <span class="number">23</span>;</span><br><span class="line">   b:= 45;</span><br><span class="line">   c:= findMax(a, b); <span class="comment">--调用上门创建的函数</span></span><br><span class="line">   dbms_output.put_line(' Maximum of (23,45): ' || c);</span><br><span class="line"><span class="keyword">END</span>;</span><br><span class="line"><span class="comment">------</span></span><br><span class="line">Maximum of (23,45): 45</span><br></pre></td></tr></table></figure>
+
+<h4 id="6-3-删除函数"><a href="#6-3-删除函数" class="headerlink" title="6.3 删除函数"></a>6.3 删除函数</h4><p>语法：</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">DROP</span> <span class="keyword">FUNCTION</span> [schema.]function_name;</span><br></pre></td></tr></table></figure>
+
+<p>例：删除上面创建的findMax函数</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">DROP</span> <span class="keyword">FUNCTION</span> findMax;</span><br><span class="line"><span class="comment">-----</span></span><br><span class="line">Function FINDMAX已删除。</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h3 id="附录"><a href="#附录" class="headerlink" title="附录"></a>附录</h3><h4 id="表1：预定义异常"><a href="#表1：预定义异常" class="headerlink" title="表1：预定义异常"></a>表1：预定义异常</h4><p>条件名不区分大小写。</p>
+<table>
+<thead>
+<tr>
+<th align="left">错误号</th>
+<th align="center">异常错误信息名称</th>
+<th align="left">说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">ORA-0001</td>
+<td align="center">Dup_val_on_index</td>
+<td align="left">试图破坏一个唯一性限制</td>
+</tr>
+<tr>
+<td align="left">ORA-0051</td>
+<td align="center">Timeout-on-resource</td>
+<td align="left">在等待资源时发生超时</td>
+</tr>
+<tr>
+<td align="left">ORA-0061</td>
+<td align="center">Transaction-backed-out</td>
+<td align="left">由于发生死锁事务被撤消</td>
+</tr>
+<tr>
+<td align="left">ORA-1001</td>
+<td align="center">Invalid-CURSOR</td>
+<td align="left">试图使用一个无效的游标</td>
+</tr>
+<tr>
+<td align="left">ORA-1012</td>
+<td align="center">Not-logged-on</td>
+<td align="left">没有连接到Oracle</td>
+</tr>
+<tr>
+<td align="left">ORA-1017</td>
+<td align="center">Login-denied</td>
+<td align="left">无效的用户名/口令</td>
+</tr>
+<tr>
+<td align="left">ORA-1403</td>
+<td align="center">No_data_found</td>
+<td align="left"><code>SELECT...INTO</code>没有找到数据</td>
+</tr>
+<tr>
+<td align="left">ORA-1422</td>
+<td align="center">Too_many_rows</td>
+<td align="left"><code>SELECT...INTO</code>返回多行</td>
+</tr>
+<tr>
+<td align="left">ORA-1476</td>
+<td align="center">Zero-divide</td>
+<td align="left">0被当作除数</td>
+</tr>
+<tr>
+<td align="left">ORA-1722</td>
+<td align="center">Invalid-NUMBER</td>
+<td align="left">转换一个数字失败</td>
+</tr>
+<tr>
+<td align="left">ORA-6500</td>
+<td align="center">Storage-error</td>
+<td align="left">内存不够引发的内部错误</td>
+</tr>
+<tr>
+<td align="left">ORA-6501</td>
+<td align="center">Program-error</td>
+<td align="left">内部错误</td>
+</tr>
+<tr>
+<td align="left">ORA-6502</td>
+<td align="center">Value-error</td>
+<td align="left">转换或截断错误</td>
+</tr>
+<tr>
+<td align="left">ORA-6504</td>
+<td align="center">Rowtype-mismatch</td>
+<td align="left">宿主游标变量与PL/SQL变量有不兼容行类型</td>
+</tr>
+<tr>
+<td align="left">ORA-6511</td>
+<td align="center">CURSOR-already-OPEN</td>
+<td align="left">试图打开一个已存在的游标</td>
+</tr>
+<tr>
+<td align="left">ORA-6530</td>
+<td align="center">Access-INTO-null</td>
+<td align="left">试图为NULL对象的属性赋值</td>
+</tr>
+<tr>
+<td align="left">ORA-6531</td>
+<td align="center">Collection-is-null</td>
+<td align="left">试图将Exists以外的集合( collection)方法应用于一个NULL PL/SQL表上或varray上</td>
+</tr>
+<tr>
+<td align="left">ORA-6532</td>
+<td align="center">Subscript-outside-limit</td>
+<td align="left">对嵌套或varray索引得引用超出声明范围以外</td>
+</tr>
+<tr>
+<td align="left">ORA-6533</td>
+<td align="center">Subscript-beyond-count</td>
+<td align="left">对嵌套或varray索引得引用大于集合中元素的个数</td>
+</tr>
+</tbody></table>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Oracle/" rel="tag"># Oracle</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-next post-nav-item">
+                <a href="/2020/01/02/Oracle-%E5%9F%BA%E6%9C%ACSQL/" rel="next" title="Oracle 基本SQL">
+                  <i class="fa fa-chevron-left"></i> Oracle 基本SQL
+                </a>
+            </div>
+
+            <span class="post-nav-divider"></span>
+
+            <div class="post-nav-prev post-nav-item">
+                <a href="/2020/01/12/Oracle-%E6%B8%B8%E6%A0%87/" rel="prev" title="Oracle 游标">
+                  Oracle 游标 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-PL-SQL结构和符号"><span class="nav-number">1.</span> <span class="nav-text">1. PL/SQL结构和符号</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-1-基本结构"><span class="nav-number">1.1.</span> <span class="nav-text">1.1 基本结构</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#1-2-符号"><span class="nav-number">1.2.</span> <span class="nav-text">1.2 符号</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-PL-SQL的变-常量和数据类型"><span class="nav-number">2.</span> <span class="nav-text">2. PL/SQL的变/常量和数据类型</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#2-1-常量和变量的声明"><span class="nav-number">2.1.</span> <span class="nav-text">2.1 常量和变量的声明</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#2-1-1-常量声明"><span class="nav-number">2.1.1.</span> <span class="nav-text">2.1.1 常量声明</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#2-1-2-变量声明"><span class="nav-number">2.1.2.</span> <span class="nav-text">2.1.2 变量声明</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-2-数据类型"><span class="nav-number">2.2.</span> <span class="nav-text">2.2 数据类型</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#2-2-1-标量数据类型"><span class="nav-number">2.2.1.</span> <span class="nav-text">2.2.1 标量数据类型</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#2-2-2-属性数据类型"><span class="nav-number">2.2.2.</span> <span class="nav-text">2.2.2 属性数据类型</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-PL-SQL控制语句"><span class="nav-number">3.</span> <span class="nav-text">3. PL/SQL控制语句</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#3-1-顺序控制"><span class="nav-number">3.1.</span> <span class="nav-text">3.1 顺序控制</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-2-条件控制"><span class="nav-number">3.2.</span> <span class="nav-text">3.2 条件控制</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#3-2-1-IF-THEN"><span class="nav-number">3.2.1.</span> <span class="nav-text">3.2.1 IF-THEN</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#3-2-2-IF-THEN-ELSE和IF-THEN-ELSIF"><span class="nav-number">3.2.2.</span> <span class="nav-text">3.2.2 IF-THEN-ELSE和IF-THEN-ELSIF</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#3-2-3-CASE"><span class="nav-number">3.2.3.</span> <span class="nav-text">3.2.3 CASE</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-3-循环控制"><span class="nav-number">3.3.</span> <span class="nav-text">3.3 循环控制</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#3-3-1-LOOP无条件循环"><span class="nav-number">3.3.1.</span> <span class="nav-text">3.3.1 LOOP无条件循环</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#3-3-2-WHILE循环"><span class="nav-number">3.3.2.</span> <span class="nav-text">3.3.2 WHILE循环</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#3-3-3-FOR循环"><span class="nav-number">3.3.3.</span> <span class="nav-text">3.3.3 FOR循环</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-PL-SQL的DML和DDL"><span class="nav-number">4.</span> <span class="nav-text">4. PL/SQL的DML和DDL</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#4-1-DML的SELECT"><span class="nav-number">4.1.</span> <span class="nav-text">4.1 DML的SELECT</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#4-2-DDL"><span class="nav-number">4.2.</span> <span class="nav-text">4.2 DDL</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-PL-SQL异常"><span class="nav-number">5.</span> <span class="nav-text">5. PL/SQL异常</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#5-1-预定义异常"><span class="nav-number">5.1.</span> <span class="nav-text">5.1 预定义异常</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#5-2-非预定义异常"><span class="nav-number">5.2.</span> <span class="nav-text">5.2 非预定义异常</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#5-3-自定义异常"><span class="nav-number">5.3.</span> <span class="nav-text">5.3 自定义异常</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6-PL-SQL函数"><span class="nav-number">6.</span> <span class="nav-text">6. PL/SQL函数</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#6-1-创建函数"><span class="nav-number">6.1.</span> <span class="nav-text">6.1 创建函数</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#6-2-调用函数"><span class="nav-number">6.2.</span> <span class="nav-text">6.2 调用函数</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#6-3-删除函数"><span class="nav-number">6.3.</span> <span class="nav-text">6.3 删除函数</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#附录"><span class="nav-number">7.</span> <span class="nav-text">附录</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#表1：预定义异常"><span class="nav-number">7.1.</span> <span class="nav-text">表1：预定义异常</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <img class="site-author-image" itemprop="image" alt="MIN MIN"
+    src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">MIN MIN</p>
+  <div class="site-description" itemprop="description">即使最后没有人为你鼓掌，也要优雅地谢幕，感谢自己的认真付出。</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">54</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">13</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+        <span class="site-state-item-count">32</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/ashermin" title="GitHub &amp;rarr; https:&#x2F;&#x2F;github.com&#x2F;ashermin" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+<div class="copyright">
+  
+  &copy; 2019 – 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user-circle"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">MIN MIN</span>
+</div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+<script src="/js/utils.js"></script>
+<script src="/js/schemes/pisces.js"></script>
+<script src="/js/next-boot.js"></script>
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+</body>
+</html>

@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.0.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/avatar.jpg">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/avatar.jpg">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/avatar.jpg">
+  <link rel="mask-icon" href="/images/avatar.jpg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+
+
+<script id="hexo-configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '7.4.2',
+    exturl: false,
+    sidebar: {"position":"left","width":260,"display":"post","offset":12,"onmobile":false},
+    copycode: {"enable":true,"show_result":true,"style":"default"},
+    back2top: {"enable":true,"sidebar":false,"scrollpercent":true},
+    bookmark: {"enable":false,"color":"#222","save":"auto"},
+    fancybox: false,
+    mediumzoom: false,
+    lazyload: false,
+    pangu: false,
+    algolia: {
+      appID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    localsearch: {"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},
+    path: '',
+    motion: {"enable":false,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    translation: {
+      copy_button: '复制',
+      copy_success: '复制成功',
+      copy_failure: '复制失败'
+    },
+    sidebarPadding: 40
+  };
+</script>
+
+  <meta name="description" content="1. 从Oracle使用sqluldr2抽取数据Oracle数据导出工具sqluldr2可以将数据以csv、txt等格式导出，适用于大批量数据的导出，导出速度非常快。在使用sqluldr2工具之前需要安装Oracle客户端，因为sqluldr2需要使用libclntsh.so等共享库。1.1 安装Oracle客户端">
+<meta name="keywords" content="Greenplum,Oracle">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Oracle迁移数据至Greenplum">
+<meta property="og:url" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2019&#x2F;12&#x2F;23&#x2F;Oracle%E8%BF%81%E7%A7%BB%E6%95%B0%E6%8D%AE%E8%87%B3Greenplum&#x2F;index.html">
+<meta property="og:site_name" content="MIN MIN">
+<meta property="og:description" content="1. 从Oracle使用sqluldr2抽取数据Oracle数据导出工具sqluldr2可以将数据以csv、txt等格式导出，适用于大批量数据的导出，导出速度非常快。在使用sqluldr2工具之前需要安装Oracle客户端，因为sqluldr2需要使用libclntsh.so等共享库。1.1 安装Oracle客户端">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;images&#x2F;Oracle%E8%BF%81%E7%A7%BB%E6%95%B0%E6%8D%AE%E8%87%B3Greenplum&#x2F;image-20191223163714475.png">
+<meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;images&#x2F;Oracle%E8%BF%81%E7%A7%BB%E6%95%B0%E6%8D%AE%E8%87%B3Greenplum&#x2F;image-20191223224017278.png">
+<meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;images&#x2F;Oracle%E8%BF%81%E7%A7%BB%E6%95%B0%E6%8D%AE%E8%87%B3Greenplum&#x2F;image-20191223224402079.png">
+<meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;images&#x2F;Oracle%E8%BF%81%E7%A7%BB%E6%95%B0%E6%8D%AE%E8%87%B3Greenplum&#x2F;image-20191224213915541.png">
+<meta property="og:updated_time" content="2019-12-24T14:49:15.607Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;images&#x2F;Oracle%E8%BF%81%E7%A7%BB%E6%95%B0%E6%8D%AE%E8%87%B3Greenplum&#x2F;image-20191223163714475.png">
+
+<link rel="canonical" href="http://yoursite.com/2019/12/23/Oracle%E8%BF%81%E7%A7%BB%E6%95%B0%E6%8D%AE%E8%87%B3Greenplum/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true,
+    isPage: false,
+    isArchive: false
+  };
+</script>
+
+  <title>Oracle迁移数据至Greenplum | MIN MIN</title>
+  
+
+
+  <script>
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?cad2a7930afd095772e571e6eab3628f";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+  <!--  -->
+<link href='//fonts.googleapis.com/css?family=Kaushan+Script' rel='stylesheet' type='text/css'>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">MIN MIN</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+        <p class="site-subtitle">BLOG</p>
+  </div>
+
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档</a>
+
+  </li>
+  </ul>
+
+</nav>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/12/23/Oracle%E8%BF%81%E7%A7%BB%E6%95%B0%E6%8D%AE%E8%87%B3Greenplum/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="MIN MIN">
+      <meta itemprop="description" content="即使最后没有人为你鼓掌，也要优雅地谢幕，感谢自己的认真付出。">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="MIN MIN">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Oracle迁移数据至Greenplum
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2019-12-23 10:51:05" itemprop="dateCreated datePublished" datetime="2019-12-23T10:51:05+08:00">2019-12-23</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2019-12-24 22:49:15" itemprop="dateModified" datetime="2019-12-24T22:49:15+08:00">2019-12-24</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Greenplum/" itemprop="url" rel="index">
+                    <span itemprop="name">Greenplum</span>
+                  </a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h3 id="1-从Oracle使用sqluldr2抽取数据"><a href="#1-从Oracle使用sqluldr2抽取数据" class="headerlink" title="1. 从Oracle使用sqluldr2抽取数据"></a>1. 从Oracle使用sqluldr2抽取数据</h3><p>Oracle数据导出工具sqluldr2可以将数据以csv、txt等格式导出，适用于大批量数据的导出，导出速度非常快。</p><p>在使用sqluldr2工具之前需要安装Oracle客户端，因为sqluldr2需要使用libclntsh.so等共享库。</p><h4 id="1-1-安装Oracle客户端"><a href="#1-1-安装Oracle客户端" class="headerlink" title="1.1 安装Oracle客户端"></a>1.1 安装Oracle客户端</h4><a id="more"></a>
+
+<p>使用root用户安装RPM包，默认安装在<em>/usr/lib/oracle</em>目录：</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> rpm -ivh oracle-instantclient11.2-basic-11.2.0.4.0-1.x86_64.rpm</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> rpm -ivh oracle-instantclient11.2-sqlplus-11.2.0.4.0-1.x86_64.rpm</span></span><br></pre></td></tr></table></figure>
+
+<p>添加用户的环境变量：</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">export ORACLE_HOME=/usr/lib/oracle/11.2/client64</span><br><span class="line">export ORACLE_BASE=/usr/lib/oracle/11.2</span><br><span class="line">export TNS_ADMIN=$ORACLE_HOME/network/admin</span><br><span class="line">export LD_LIBRARY_PATH=$ORACLE_HOME/lib:/lib:/usr/lib</span><br><span class="line">export PATH=$ORACLE_HOME/bin:$PATH</span><br></pre></td></tr></table></figure>
+
+<p>创建还不存在的目录：</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> mkdir -p <span class="variable">$ORACLE_HOME</span>/network/admin</span></span><br></pre></td></tr></table></figure>
+
+<p>创建监听文件：</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> vi <span class="variable">$ORACLE_HOME</span>/network/admin/tnsnames.ora</span></span><br><span class="line">181oracledb =</span><br><span class="line">(DESCRIPTION =</span><br><span class="line">    (ADDRESS_LIST =</span><br><span class="line">      (ADDRESS = (PROTOCOL = TCP)(HOST = 192.168.1.181)(PORT = 1521))</span><br><span class="line">    )</span><br><span class="line">    (CONNECT_DATA =</span><br><span class="line">      (SERVER=DEDICATED)</span><br><span class="line">　　　 (SERVICE_NAME = orcl)</span><br><span class="line">    )</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+
+<p>连接数据库测试：</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> sqlplus SCOTT/SCOTT@192.168.1.181:1521/orcl</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="1-2-配置sqluldr2"><a href="#1-2-配置sqluldr2" class="headerlink" title="1.2 配置sqluldr2"></a>1.2 配置sqluldr2</h4><p>复制<em>sqluldr2_linux64_10204.bin</em>到Oracle的<em>bin</em>目录，并重命名为sqluldr2</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> cp sqluldr2_linux64_10204.bin <span class="variable">$ORACLE_HOME</span>/bin</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> mv sqluldr2_linux64_10204.bin sqluldr2</span></span><br></pre></td></tr></table></figure>
+
+<p>配置用户环境变量：</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">export LD_LIBRARY_PATH=$ORACLE_HOME/lib:/lib:/usr/lib</span><br></pre></td></tr></table></figure>
+
+<p>测试是否配置成功：</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> sqluldr2</span></span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p><strong>遇到的坑</strong></p>
+<p>报错：sqluldr2: error while loading shared libraries: libclntsh.so.10.1: cannot open shared object file: No such file or director</p>
+<p>原因：在<em>$ORACLE_HOME/lib</em>目录下我的是<code>libclntsh.so.11.1</code>，版本和它不一样</p>
+<p>解决：建立一个软连接就可以了</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> ln -s libclntsh.so.11.1 libclntsh.so.10.1</span></span><br></pre></td></tr></table></figure>
+</blockquote>
+<h4 id="1-3-使用sqluldr2"><a href="#1-3-使用sqluldr2" class="headerlink" title="1.3 使用sqluldr2"></a>1.3 使用sqluldr2</h4><ul>
+<li>注意Greenplum不支持GBK一般建立数据库默认使用UTF8，所以从源头抽取数据生成文件就使用UTF8</li>
+<li>Head=yes带表头</li>
+<li>charset=UTF8指定字符集</li>
+<li>field列分隔符：<code>0x01</code>代表ASCII <code>SOH</code>这个特殊字符。大多数情况够用，少数情况需要源头特定字段抽取时就替换了或者使用escape</li>
+<li>file生成文件路径</li>
+<li>log日志路径</li>
+</ul>
+<p>导出的文件地址为：<code>/opt/data/oracle/tables/emp</code>，生成的日志路径为：<code>/opt/data/oracle/logs/emp</code></p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> sqluldr2 user=SCOTT/SCOTT@192.168.1.181:1521/orcl query=<span class="string">"SELECT * FROM emp"</span> head=yes charset=UTF8 field=0x01 file=/opt/data/oracle/tables/emp <span class="built_in">log</span>=/opt/data/oracle/logs/emp</span></span><br></pre></td></tr></table></figure>
+
+<img src="/images/Oracle%E8%BF%81%E7%A7%BB%E6%95%B0%E6%8D%AE%E8%87%B3Greenplum/image-20191223163714475.png" alt="image-20191223163714475" style="zoom:50%;">
+
+<hr>
+<h3 id="2-使用gpload加载数据至Greenplum"><a href="#2-使用gpload加载数据至Greenplum" class="headerlink" title="2. 使用gpload加载数据至Greenplum"></a>2. 使用gpload加载数据至Greenplum</h3><p>gpload是Greenplum中提供的用来进行数据装载的工具，其可以看做是对gpfdist的封装，所以依赖gpfdist组件。<a href="https://gp-docs-cn.github.io/docs/utility_guide/admin_utilities/gpload.html" target="_blank" rel="noopener">官方文档</a></p>
+<p>使用gpload工具，需要编写gpload工具的YAML格式的控制文件，它指定Greenplum数据库连接信息、gpfdist的配置信息、外表选项和数据格式。</p>
+<p>创建压缩表，数据会导入该表：</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">CREATE</span> <span class="keyword">TABLE</span> minschema.emp (</span><br><span class="line">	EMPNO <span class="built_in">int</span>,</span><br><span class="line">	ENAME <span class="built_in">varchar</span>(<span class="number">10</span>),</span><br><span class="line">	JOB <span class="built_in">varchar</span>(<span class="number">9</span>),</span><br><span class="line">	MGR <span class="built_in">int</span>,</span><br><span class="line">	HIREDATE <span class="built_in">timestamp</span>(<span class="number">0</span>) <span class="keyword">without</span> <span class="built_in">time</span> zone,</span><br><span class="line">	SAL <span class="built_in">numeric</span>(<span class="number">7</span>,<span class="number">2</span>),</span><br><span class="line">	COMM <span class="built_in">numeric</span>(<span class="number">7</span>,<span class="number">2</span>),</span><br><span class="line">	DEPTNO <span class="built_in">int</span></span><br><span class="line">)<span class="keyword">WITH</span> (appendoptimized=<span class="literal">true</span>, compresstype=zlib, compresslevel=<span class="number">5</span>, orientation=<span class="keyword">column</span>)</span><br><span class="line"><span class="keyword">DISTRIBUTED</span> <span class="keyword">BY</span> (EMPNO);</span><br></pre></td></tr></table></figure>
+
+<p>新建并编辑<em>gpload_emp.yml</em>文件：</p>
+<blockquote>
+<p>注：gpload控制文件参数说明可见<em>附录</em>。</p>
+</blockquote>
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="meta">---</span></span><br><span class="line"><span class="attr">VERSION:</span> <span class="number">1.0</span><span class="number">.0</span><span class="number">.1</span></span><br><span class="line"><span class="attr">DATABASE:</span> <span class="string">minmindb</span></span><br><span class="line"><span class="attr">USER:</span> <span class="string">gpadmin</span></span><br><span class="line"><span class="attr">HOST:</span> <span class="string">min01</span></span><br><span class="line"><span class="attr">PORT:</span> <span class="number">5432</span></span><br><span class="line"><span class="attr">GPLOAD:</span></span><br><span class="line"><span class="attr">   INPUT:</span></span><br><span class="line"><span class="attr">    - SOURCE:</span></span><br><span class="line"><span class="attr">         LOCAL_HOSTNAME:</span></span><br><span class="line"><span class="bullet">           -</span> <span class="string">min01</span></span><br><span class="line"><span class="attr">         FILE:</span> </span><br><span class="line"><span class="bullet">           -</span> <span class="string">/opt/data/oracle/tables/emp</span></span><br><span class="line"><span class="attr">    - COLUMNS:</span></span><br><span class="line"><span class="attr">           - EMPNO:</span></span><br><span class="line"><span class="attr">           - ENAME:</span></span><br><span class="line"><span class="attr">           - JOB:</span></span><br><span class="line"><span class="attr">           - MGR:</span></span><br><span class="line"><span class="attr">           - HIREDATE:</span></span><br><span class="line"><span class="attr">           - SAL:</span></span><br><span class="line"><span class="attr">           - COMM:</span></span><br><span class="line"><span class="attr">           - DEPTNO:</span></span><br><span class="line"><span class="attr">    - FORMAT:</span> <span class="string">text</span></span><br><span class="line"><span class="attr">    - DELIMITER:</span> <span class="string">'\u0001'</span></span><br><span class="line"><span class="attr">    - ESCAPE:</span> <span class="string">'OFF'</span></span><br><span class="line"><span class="attr">    - NULL_AS:</span> <span class="string">''</span></span><br><span class="line"><span class="attr">    - QUOTE:</span> <span class="string">''</span></span><br><span class="line"><span class="attr">    - HEADER:</span> <span class="literal">true</span></span><br><span class="line"><span class="attr">    - ENCODING:</span> <span class="string">UTF8</span></span><br><span class="line"><span class="attr">    - ERROR_LIMIT:</span> <span class="number">100</span></span><br><span class="line"><span class="attr">    - LOG_ERRORS:</span> <span class="literal">true</span></span><br><span class="line"><span class="attr">   OUTPUT:</span></span><br><span class="line"><span class="attr">    - TABLE:</span> <span class="string">minschema.emp</span></span><br><span class="line"><span class="attr">    - MODE:</span> <span class="string">insert</span></span><br><span class="line"><span class="attr">   PRELOAD:</span></span><br><span class="line"><span class="attr">    - REUSE_TABLES:</span> <span class="literal">true</span></span><br></pre></td></tr></table></figure>
+
+<p>运行gpload，传入该装载控制文件：</p>
+<blockquote>
+<p>日志文件默认是在<em>~/gpAdminLogs/gpload_YYYYMMDD</em>，也可以通过<code>-l log_file</code>来指定。</p>
+</blockquote>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> gpload -f gpload_emp.yml</span></span><br></pre></td></tr></table></figure>
+
+<img src="/images/Oracle%E8%BF%81%E7%A7%BB%E6%95%B0%E6%8D%AE%E8%87%B3Greenplum/image-20191223224017278.png" alt="image-20191223224017278" style="zoom:50%;">
+
+<p>检验数据是否成功导入至Greenplum数据库：</p>
+<img src="/images/Oracle%E8%BF%81%E7%A7%BB%E6%95%B0%E6%8D%AE%E8%87%B3Greenplum/image-20191223224402079.png" alt="image-20191223224402079" style="zoom:50%;">
+
+<hr>
+<h3 id="3-使用gpfdist与外部表加载数据至Greenplum"><a href="#3-使用gpfdist与外部表加载数据至Greenplum" class="headerlink" title="3. 使用gpfdist与外部表加载数据至Greenplum"></a>3. 使用gpfdist与外部表加载数据至Greenplum</h3><p>外部表就是在数据库中只有表定义，没有数据，数据都存在数据库之外的地方。Greenplum可以对一个外部表执行DML操作，读取数据时，数据库从文件中加载数据。外部表分为<strong>可读外部表</strong>和<strong>可写外部表</strong>，可读外部表可以执行<em>SELECT</em>操作，对可写外部表只能执行<em>INSERT</em>操作。这里选择创建可读外部表。</p>
+<h4 id="3-1-启动gpfdist"><a href="#3-1-启动gpfdist" class="headerlink" title="3.1 启动gpfdist"></a>3.1 启动gpfdist</h4><p>在端口8081的后台启动gpfdist文件服务器程序，从目录<em>/opt/data/oracle/tables</em>提供文件：</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> gpfdist -p 8081 -d /opt/data/oracle/tables -l /home/gpadmin/gpAdminLogs/gpfdist.log &amp;</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="3-2-创建可读外部表"><a href="#3-2-创建可读外部表" class="headerlink" title="3.2 创建可读外部表"></a>3.2 创建可读外部表</h4><figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">CREATE</span> <span class="keyword">EXTERNAL</span> <span class="keyword">TABLE</span> public.ext_emp2 (</span><br><span class="line">	EMPNO <span class="built_in">int</span>,</span><br><span class="line">	ENAME <span class="built_in">varchar</span>(<span class="number">10</span>),</span><br><span class="line">	JOB <span class="built_in">varchar</span>(<span class="number">9</span>),</span><br><span class="line">	MGR <span class="built_in">int</span>,</span><br><span class="line">	HIREDATE <span class="built_in">timestamp</span>(<span class="number">0</span>) <span class="keyword">without</span> <span class="built_in">time</span> zone,</span><br><span class="line">	SAL <span class="built_in">numeric</span>(<span class="number">7</span>,<span class="number">2</span>),</span><br><span class="line">	COMM <span class="built_in">numeric</span>(<span class="number">7</span>,<span class="number">2</span>),</span><br><span class="line">	DEPTNO <span class="built_in">int</span></span><br><span class="line">)LOCATION(<span class="string">'gpfdist://min01:8081//emp'</span>)</span><br><span class="line"><span class="keyword">ON</span> <span class="keyword">ALL</span></span><br><span class="line"><span class="keyword">FORMAT</span> <span class="string">'TEXT'</span> (HEADER DELIMITER E<span class="string">'\u0001'</span> ESCAPE <span class="string">'OFF'</span> <span class="literal">NULL</span> <span class="string">''</span>)</span><br><span class="line"><span class="keyword">ENCODING</span> <span class="string">'UTF8'</span></span><br><span class="line"><span class="keyword">LOG</span> <span class="keyword">ERRORS</span> <span class="keyword">SEGMENT</span> <span class="keyword">REJECT</span> <span class="keyword">LIMIT</span> <span class="number">100</span> <span class="keyword">ROWS</span>;</span><br></pre></td></tr></table></figure>
+
+<p>创建外部表的语法参考<a href="https://gp-docs-cn.github.io/docs/ref_guide/sql_commands/CREATE_EXTERNAL_TABLE.html" target="_blank" rel="noopener">官方文档</a>。</p>
+<p>如果遇到错误，可以查看错误日志表：</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> * <span class="keyword">FROM</span> gp_read_error_log(<span class="string">'public.ext_emp'</span>);</span><br></pre></td></tr></table></figure>
+
+<h4 id="3-3-通过外部表导入数据至Greenplum"><a href="#3-3-通过外部表导入数据至Greenplum" class="headerlink" title="3.3 通过外部表导入数据至Greenplum"></a>3.3 通过外部表导入数据至Greenplum</h4><p>清空之前的<em>minschema.emp</em>表：</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">TRUNCATE</span> <span class="keyword">TABLE</span> minschema.emp;</span><br></pre></td></tr></table></figure>
+
+<p>将外部表<em>public.ext_emp</em>的数据导入至<em>minschema.emp</em>表：</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">INSERT</span> <span class="keyword">INTO</span> minschema.emp <span class="keyword">SELECT</span> * <span class="keyword">FROM</span> public.ext_emp;</span><br></pre></td></tr></table></figure>
+
+<h4 id="3-4-关闭gpfdist"><a href="#3-4-关闭gpfdist" class="headerlink" title="3.4 关闭gpfdist"></a>3.4 关闭gpfdist</h4><p>首先找到它的进程ID：</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> ps ax | grep gpfdist</span></span><br></pre></td></tr></table></figure>
+
+<img src="/images/Oracle%E8%BF%81%E7%A7%BB%E6%95%B0%E6%8D%AE%E8%87%B3Greenplum/image-20191224213915541.png" alt="image-20191224213915541" style="zoom:50%;">
+
+<p>然后杀死该进程：</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> <span class="built_in">kill</span> 5809</span></span><br></pre></td></tr></table></figure>
+
+<hr>
+<h3 id="附录"><a href="#附录" class="headerlink" title="附录"></a>附录</h3><p>gpload控制文件参数说明：详细参数解释可见<a href="https://gp-docs-cn.github.io/docs/utility_guide/admin_utilities/gpload.html#topic1__section7" target="_blank" rel="noopener">官方文档</a></p>
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="meta">---</span></span><br><span class="line"><span class="attr">VERSION:</span> <span class="number">1.0</span><span class="number">.0</span><span class="number">.1</span>       <span class="comment">#自定义版本号</span></span><br><span class="line"><span class="attr">DATABASE:</span> <span class="string">db_name</span>      <span class="comment">#目标数据库名称</span></span><br><span class="line"><span class="attr">USER:</span> <span class="string">db_username</span>      <span class="comment">#目标数据库的用户名</span></span><br><span class="line"><span class="attr">HOST:</span> <span class="string">master_hostname</span>  <span class="comment">#master所在的节点</span></span><br><span class="line"><span class="attr">PORT:</span> <span class="string">master_port</span>      <span class="comment">#master的连接端口号，默认是5432</span></span><br><span class="line"><span class="attr">GPLOAD:</span></span><br><span class="line">    <span class="attr">INPUT:</span></span><br><span class="line">        <span class="bullet">-</span> <span class="attr">SOURCE:</span></span><br><span class="line">            <span class="attr">LOCAL_HOSTNAME:</span></span><br><span class="line">                <span class="bullet">-</span> <span class="string">hostname_or_ip</span>             <span class="comment">#文件所在的机器名称</span></span><br><span class="line">            <span class="attr">PORT:</span> <span class="string">http_port</span>                  <span class="comment">#gpfdist使用的端口（优先级高于下面PORT_RANGE范围）</span></span><br><span class="line">            <span class="string">| PORT_RANGE: [start_port_range, end_port_range]</span></span><br><span class="line"><span class="string">            FILE:</span></span><br><span class="line"><span class="string">                - /path/to/input_file        #文件所在路径</span></span><br><span class="line"><span class="string">        - COLUMNS:</span></span><br><span class="line"><span class="string">            - field_name: data_type</span></span><br><span class="line"><span class="string">        - FORMAT: text | csv                  #文件格式</span></span><br><span class="line"><span class="string">        - DELIMITER: 'delimiter_character'    #分割符（默认是|）</span></span><br><span class="line"><span class="string">        - ESCAPE: 'escape_character' | 'OFF'  #转义字符，可以关掉</span></span><br><span class="line"><span class="string">        - NULL_AS: 'null_string'              #替换NULL值</span></span><br><span class="line"><span class="string">        - FORCE_NOT_NULL: true | false        #csv格式中，用”“括起的空值是否认为是有值的</span></span><br><span class="line"><span class="string">        - QUOTE: 'csv_quote_character'        #csv的转义字符，默认是"</span></span><br><span class="line"><span class="string">        - HEADER: true | false                #是否跳过数据文件第一行，当做表头</span></span><br><span class="line"><span class="string">        - ENCODING: database_encoding         #数据源的字符集</span></span><br><span class="line"><span class="string">        - ERROR_LIMIT: integer                #不符合格式数据记录的上限，若超过上限，gpload停止装载，否则正确记录可以被装载，错误记录抛出写入错误表。但它仅支持数据格式错误，不支持违背约束的问题</span></span><br><span class="line"><span class="string">        - ERROR_TABLE: schema.table_name      #不符合格式要求记录的错误表。不存在则系统自动创建</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">    OUTPUT:</span></span><br><span class="line"><span class="string">        - TABLE: schema.table_name            #导入的目标表</span></span><br><span class="line"><span class="string">        - MODE: insert | update | merge       #操作模式（默认insert）merge不支持随机分布策略的表</span></span><br><span class="line"><span class="string">        - MATCH_COLUMNS:                      #为update操作和merge操作指定匹配条件</span></span><br><span class="line"><span class="string">            - target_column_name            </span></span><br><span class="line"><span class="string">        - UPDATE_COLUMNS:                     #为update操作和merge操作指定更新的列</span></span><br><span class="line"><span class="string">            - target_column_name</span></span><br><span class="line"><span class="string">        - UPDATE_CONDITION: 'boolean_condition' #指定where条件，目标表中只有满足条件的记录才能更改（merge情况下，只有满足条件的记录才能insert)</span></span><br><span class="line"><span class="string">        - MAPPING:                            #source列和目标列的映射关系</span></span><br><span class="line"><span class="string">            target_column_name: source_column_name | 'expression'</span></span><br><span class="line"><span class="string">    PRELOAD:                                  #load之前的操作</span></span><br><span class="line"><span class="string">        - TRUNCATE: true | false              #若设置成true，装载之前先删除目标表中所有记录，再装载</span></span><br><span class="line"><span class="string">        - REUSE_TABLES: true | false          #若设置成true，不会删除外部表对象或者中间表对象</span></span><br><span class="line"><span class="string">    SQL:</span></span><br><span class="line"><span class="string">        - BEFORE: "sql_command"               #装载操作开始前执行的SQL，比如写日志表</span></span><br><span class="line"><span class="string">        - AFTER: "sql_command"                #装载操作之后执行的SQL</span></span><br></pre></td></tr></table></figure>
+
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Greenplum/" rel="tag"># Greenplum</a>
+              <a href="/tags/Oracle/" rel="tag"># Oracle</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-next post-nav-item">
+                <a href="/2019/12/23/Greenplum%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4/" rel="next" title="Greenplum常用命令">
+                  <i class="fa fa-chevron-left"></i> Greenplum常用命令
+                </a>
+            </div>
+
+            <span class="post-nav-divider"></span>
+
+            <div class="post-nav-prev post-nav-item">
+                <a href="/2019/12/31/Kafka-Eagle%E5%AE%89%E8%A3%85%E9%83%A8%E7%BD%B2/" rel="prev" title="Kafka Eagle安装部署">
+                  Kafka Eagle安装部署 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-从Oracle使用sqluldr2抽取数据"><span class="nav-number">1.</span> <span class="nav-text">1. 从Oracle使用sqluldr2抽取数据</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-1-安装Oracle客户端"><span class="nav-number">1.1.</span> <span class="nav-text">1.1 安装Oracle客户端</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#1-2-配置sqluldr2"><span class="nav-number">1.2.</span> <span class="nav-text">1.2 配置sqluldr2</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#1-3-使用sqluldr2"><span class="nav-number">1.3.</span> <span class="nav-text">1.3 使用sqluldr2</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-使用gpload加载数据至Greenplum"><span class="nav-number">2.</span> <span class="nav-text">2. 使用gpload加载数据至Greenplum</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-使用gpfdist与外部表加载数据至Greenplum"><span class="nav-number">3.</span> <span class="nav-text">3. 使用gpfdist与外部表加载数据至Greenplum</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#3-1-启动gpfdist"><span class="nav-number">3.1.</span> <span class="nav-text">3.1 启动gpfdist</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-2-创建可读外部表"><span class="nav-number">3.2.</span> <span class="nav-text">3.2 创建可读外部表</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-3-通过外部表导入数据至Greenplum"><span class="nav-number">3.3.</span> <span class="nav-text">3.3 通过外部表导入数据至Greenplum</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-4-关闭gpfdist"><span class="nav-number">3.4.</span> <span class="nav-text">3.4 关闭gpfdist</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#附录"><span class="nav-number">4.</span> <span class="nav-text">附录</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <img class="site-author-image" itemprop="image" alt="MIN MIN"
+    src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">MIN MIN</p>
+  <div class="site-description" itemprop="description">即使最后没有人为你鼓掌，也要优雅地谢幕，感谢自己的认真付出。</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">54</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">13</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+        <span class="site-state-item-count">32</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/ashermin" title="GitHub &amp;rarr; https:&#x2F;&#x2F;github.com&#x2F;ashermin" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+<div class="copyright">
+  
+  &copy; 2019 – 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user-circle"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">MIN MIN</span>
+</div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+<script src="/js/utils.js"></script>
+<script src="/js/schemes/pisces.js"></script>
+<script src="/js/next-boot.js"></script>
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+</body>
+</html>

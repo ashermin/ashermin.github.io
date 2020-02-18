@@ -1,0 +1,628 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.0.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/avatar.jpg">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/avatar.jpg">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/avatar.jpg">
+  <link rel="mask-icon" href="/images/avatar.jpg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+
+
+<script id="hexo-configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '7.4.2',
+    exturl: false,
+    sidebar: {"position":"left","width":260,"display":"post","offset":12,"onmobile":false},
+    copycode: {"enable":true,"show_result":true,"style":"default"},
+    back2top: {"enable":true,"sidebar":false,"scrollpercent":true},
+    bookmark: {"enable":false,"color":"#222","save":"auto"},
+    fancybox: false,
+    mediumzoom: false,
+    lazyload: false,
+    pangu: false,
+    algolia: {
+      appID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    localsearch: {"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},
+    path: '',
+    motion: {"enable":false,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    translation: {
+      copy_button: '复制',
+      copy_success: '复制成功',
+      copy_failure: '复制失败'
+    },
+    sidebarPadding: 40
+  };
+</script>
+
+  <meta name="description" content="1. Kafka基本概念1.1 Kafka中的基本术语Producer消息生产者，往某个Topic上发布消息，也负责选择发布到Topic的哪一个分区。Consumer消息消费者，一个发布在Topic上的消息允许广播给多个消费者组，但是每个消费者组只能有一个消费者可消费该消息。BrokerKafka集群中的每个Kafka节点服务器。每一个Broker保存Topic的一个或多个Partitions">
+<meta name="keywords" content="Kafka">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Kafka基本使用">
+<meta property="og:url" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2019&#x2F;11&#x2F;21&#x2F;Kafka%E5%9F%BA%E6%9C%AC%E4%BD%BF%E7%94%A8&#x2F;index.html">
+<meta property="og:site_name" content="MIN MIN">
+<meta property="og:description" content="1. Kafka基本概念1.1 Kafka中的基本术语Producer消息生产者，往某个Topic上发布消息，也负责选择发布到Topic的哪一个分区。Consumer消息消费者，一个发布在Topic上的消息允许广播给多个消费者组，但是每个消费者组只能有一个消费者可消费该消息。BrokerKafka集群中的每个Kafka节点服务器。每一个Broker保存Topic的一个或多个Partitions">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;images&#x2F;Kafka%E5%9F%BA%E6%9C%AC%E4%BD%BF%E7%94%A8&#x2F;consumer-groups.png">
+<meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;images&#x2F;Kafka%E5%9F%BA%E6%9C%AC%E4%BD%BF%E7%94%A8&#x2F;image-20191230110902400.png">
+<meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;images&#x2F;Kafka%E5%9F%BA%E6%9C%AC%E4%BD%BF%E7%94%A8&#x2F;image-20191230111306402.png">
+<meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;images&#x2F;Kafka%E5%9F%BA%E6%9C%AC%E4%BD%BF%E7%94%A8&#x2F;image-20191230112025159.png">
+<meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;images&#x2F;Kafka%E5%9F%BA%E6%9C%AC%E4%BD%BF%E7%94%A8&#x2F;image-20191230113656908.png">
+<meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;images&#x2F;Kafka%E5%9F%BA%E6%9C%AC%E4%BD%BF%E7%94%A8&#x2F;image-20191226115506891.png">
+<meta property="og:updated_time" content="2020-01-01T06:52:52.440Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;images&#x2F;Kafka%E5%9F%BA%E6%9C%AC%E4%BD%BF%E7%94%A8&#x2F;consumer-groups.png">
+
+<link rel="canonical" href="http://yoursite.com/2019/11/21/Kafka%E5%9F%BA%E6%9C%AC%E4%BD%BF%E7%94%A8/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true,
+    isPage: false,
+    isArchive: false
+  };
+</script>
+
+  <title>Kafka基本使用 | MIN MIN</title>
+  
+
+
+  <script>
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?cad2a7930afd095772e571e6eab3628f";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+  <!--  -->
+<link href='//fonts.googleapis.com/css?family=Kaushan+Script' rel='stylesheet' type='text/css'>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">MIN MIN</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+        <p class="site-subtitle">BLOG</p>
+  </div>
+
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档</a>
+
+  </li>
+  </ul>
+
+</nav>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/11/21/Kafka%E5%9F%BA%E6%9C%AC%E4%BD%BF%E7%94%A8/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="MIN MIN">
+      <meta itemprop="description" content="即使最后没有人为你鼓掌，也要优雅地谢幕，感谢自己的认真付出。">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="MIN MIN">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Kafka基本使用
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2019-11-21 14:25:06" itemprop="dateCreated datePublished" datetime="2019-11-21T14:25:06+08:00">2019-11-21</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-01-01 14:52:52" itemprop="dateModified" datetime="2020-01-01T14:52:52+08:00">2020-01-01</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Kafka/" itemprop="url" rel="index">
+                    <span itemprop="name">Kafka</span>
+                  </a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h3 id="1-Kafka基本概念"><a href="#1-Kafka基本概念" class="headerlink" title="1. Kafka基本概念"></a>1. Kafka基本概念</h3><h4 id="1-1-Kafka中的基本术语"><a href="#1-1-Kafka中的基本术语" class="headerlink" title="1.1 Kafka中的基本术语"></a>1.1 Kafka中的基本术语</h4><p><strong>Producer</strong></p><p>消息生产者，往某个Topic上发布消息，也负责选择发布到Topic的哪一个分区。</p><p><strong>Consumer</strong></p><p>消息消费者，一个发布在Topic上的消息允许广播给多个消费者组，但是每个消费者组只能有一个消费者可消费该消息。</p><img src="/images/Kafka%E5%9F%BA%E6%9C%AC%E4%BD%BF%E7%94%A8/consumer-groups.png" alt="consumer-groups" style="zoom:70%;"><p><strong>Broker</strong></p><p>Kafka集群中的每个Kafka节点服务器。每一个Broker保存Topic的一个或多个Partitions</p><a id="more"></a>
+
+
+
+
+
+
+
+<p><strong>Topic</strong></p>
+<p>Kafka将消息进行分类，每一类的消息称之为一个Topic</p>
+<p><strong>Partition</strong></p>
+<p>Kafka下数据存储的基本单元，其提供了顺序保证和负载均衡。</p>
+<ul>
+<li>顺序保证：每个Partition仅被唯一一个消费者组中的一个消费者消费到，那么该消费者就是这个Partition的唯一消费者，并按顺序消费数据</li>
+<li>负载均衡：每个Topic有多个Partition，那就需要对多个消费者做负载均衡，注意Partiton数≥消费者数</li>
+</ul>
+<h4 id="1-2-Kafka基本架构"><a href="#1-2-Kafka基本架构" class="headerlink" title="1.2 Kafka基本架构"></a>1.2 Kafka基本架构</h4><p>Kafka是强依赖于Zookeeper的。Kafka将Broker信息、Topic的Partition分布情况、以及消费者的offset信息（0.9版本之前）等存储在Zookeeper上。不过生产者不依赖Zookeeper。</p>
+<p>进入Zookeeper查看Kafka的相关信息：</p>
+<h5 id="1-2-1-Broker"><a href="#1-2-1-Broker" class="headerlink" title="1.2.1 Broker"></a>1.2.1 Broker</h5><img src="/images/Kafka%E5%9F%BA%E6%9C%AC%E4%BD%BF%E7%94%A8/image-20191230110902400.png" alt="image-20191230110902400" style="zoom:50%;">
+
+<ul>
+<li><em>/brokers/ids/[0…N]</em>：Broker的id</li>
+</ul>
+<img src="/images/Kafka%E5%9F%BA%E6%9C%AC%E4%BD%BF%E7%94%A8/image-20191230111306402.png" alt="image-20191230111306402" style="zoom:50%;">
+
+<ul>
+<li><em>/brokers/topics/[topic]/partitions/[0…N]</em>（其中[0..N]表示partition索引号）：存储某个topic的partitions所有分配信息</li>
+</ul>
+<img src="/images/Kafka%E5%9F%BA%E6%9C%AC%E4%BD%BF%E7%94%A8/image-20191230112025159.png" alt="image-20191230112025159" style="zoom:50%;">
+
+<h5 id="1-2-2-Consumer（老版本）"><a href="#1-2-2-Consumer（老版本）" class="headerlink" title="1.2.2 Consumer（老版本）"></a>1.2.2 Consumer（老版本）</h5><p>老版本是把offset信息存储在Zookeeper的，比如在使用控制台发送消息时，指定的是<code>kafka-console-producer.sh --zookeeper</code>。现在新版本是<code>kafka-console-producer.sh --broker-list</code>，存储在Broker上了：</p>
+<img src="/images/Kafka%E5%9F%BA%E6%9C%AC%E4%BD%BF%E7%94%A8/image-20191230113656908.png" alt="image-20191230113656908" style="zoom:50%;">
+
+<h4 id="1-3-Kafka数据存储"><a href="#1-3-Kafka数据存储" class="headerlink" title="1.3 Kafka数据存储"></a>1.3 Kafka数据存储</h4><p>消息发送时都被送到一个Topic，其本质就是目录（地址由<em>server.properties</em>的<code>log.dirs</code>指定）；Topic是由指定数目的Partition Logs组成的（数目由<em>server.properties</em>的<code>num.partitions</code>指定），每个Partition Logs磁盘上对应一个文件夹，数据就存在<em>00000000000000000000.log</em>文件。</p>
+<hr>
+<h3 id="2-Kafka安装"><a href="#2-Kafka安装" class="headerlink" title="2. Kafka安装"></a>2. Kafka安装</h3><p>⚠️注意：Kafka是强依赖Zookeeper的，所以在安装Kafka前，先要安装Zookeeper！（也可以用Kafka自带的）</p>
+<h4 id="2-1-从Kafka官网下载kafka-2-11-2-2-1-tgz并解压"><a href="#2-1-从Kafka官网下载kafka-2-11-2-2-1-tgz并解压" class="headerlink" title="2.1 从Kafka官网下载kafka_2.11-2.2.1.tgz并解压"></a>2.1 从Kafka官网下载<em>kafka_2.11-2.2.1.tgz</em>并解压</h4><h4 id="2-2-添加Kafka的用户环境变量"><a href="#2-2-添加Kafka的用户环境变量" class="headerlink" title="2.2 添加Kafka的用户环境变量"></a>2.2 添加Kafka的用户环境变量</h4><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> vi ~/.bashrc</span></span><br><span class="line"><span class="meta">#</span><span class="bash"><span class="comment">#Kafka</span></span></span><br><span class="line">export KAFKA_HOME=/opt/applications/kafka_2.11-2.2.1</span><br><span class="line">export PATH=$KAFKA_HOME/bin:$PATH</span><br><span class="line"><span class="meta">$</span><span class="bash"> <span class="built_in">source</span> ~/.bashrc</span></span><br></pre></td></tr></table></figure>
+
+<hr>
+<h3 id="3-Kafka的部署和使用"><a href="#3-Kafka的部署和使用" class="headerlink" title="3. Kafka的部署和使用"></a>3. Kafka的部署和使用</h3><p>Kafka的部署模式有三种，这里就演示前两种单节点的：</p>
+<ul>
+<li>单节点单Broker☑️</li>
+<li>单节点多Broker☑️</li>
+<li>多节点多Broker</li>
+</ul>
+<h4 id="3-1-单节点单Broker"><a href="#3-1-单节点单Broker" class="headerlink" title="3.1 单节点单Broker"></a>3.1 单节点单Broker</h4><h5 id="3-1-1-部署"><a href="#3-1-1-部署" class="headerlink" title="3.1.1 部署"></a>3.1.1 部署</h5><p>（1）新建broker的日志存放地址</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> mkdir -p tmp/broker-logs</span></span><br></pre></td></tr></table></figure>
+
+<p>（2）修改<em>config</em>下的<em>server.properties</em>：</p>
+<figure class="highlight properties"><table><tr><td class="code"><pre><span class="line"><span class="comment"># Broker的全局唯一编号，不能重复</span></span><br><span class="line"><span class="meta">broker.id</span>=<span class="string">4</span></span><br><span class="line"><span class="comment"># 删除Topic功能使能</span></span><br><span class="line"><span class="meta">delete.topic.enable</span>=<span class="string">true</span></span><br><span class="line"><span class="comment"># 监听端口号</span></span><br><span class="line"><span class="attr">listeners</span>=<span class="string">PLAINTEXT://min01:9092</span></span><br><span class="line"><span class="comment"># 处理网络请求的线程数量</span></span><br><span class="line"><span class="meta">num.network.threads</span>=<span class="string">3</span></span><br><span class="line"><span class="comment"># 处理磁盘IO的线程数量</span></span><br><span class="line"><span class="meta">num.io.threads</span>=<span class="string">8</span></span><br><span class="line"><span class="comment"># 发送套接字的缓冲区大小</span></span><br><span class="line"><span class="meta">socket.send.buffer.bytes</span>=<span class="string">102400</span></span><br><span class="line"><span class="comment"># 接收套接字的缓冲大小</span></span><br><span class="line"><span class="meta">socket.receive.buffer.bytes</span>=<span class="string">102400</span></span><br><span class="line"><span class="comment"># 请求套接字的缓冲大小</span></span><br><span class="line"><span class="meta">socket.request.max.bytes</span>=<span class="string">104857600</span></span><br><span class="line"><span class="comment"># Broker数据存放地址</span></span><br><span class="line"><span class="meta">log.dirs</span>=<span class="string">/opt/applications/kafka_2.11-2.2.1/tmp/broker-logs</span></span><br><span class="line"><span class="comment"># Topic在当前Broker上的分区数</span></span><br><span class="line"><span class="meta">num.partitions</span>=<span class="string">1</span></span><br><span class="line"><span class="comment"># 用来恢复和清理data下数据的线程数量</span></span><br><span class="line"><span class="meta">num.recovery.threads.per.data.dir</span>=<span class="string">1</span></span><br><span class="line"><span class="meta">offsets.topic.replication.factor</span>=<span class="string">1</span></span><br><span class="line"><span class="meta">transaction.state.log.replication.factor</span>=<span class="string">1</span></span><br><span class="line"><span class="meta">transaction.state.log.min.isr</span>=<span class="string">1</span></span><br><span class="line"><span class="comment"># Segment数据保留的最长时间，超时将会被删除</span></span><br><span class="line"><span class="meta">log.retention.hours</span>=<span class="string">168</span></span><br><span class="line"><span class="comment"># 数据大小超过1G就会删除</span></span><br><span class="line"><span class="meta">log.segment.bytes</span>=<span class="string">1073741824</span></span><br><span class="line"><span class="meta">log.retention.check.interval.ms</span>=<span class="string">300000</span></span><br><span class="line"><span class="comment"># Zookeeper地址</span></span><br><span class="line"><span class="meta">zookeeper.connect</span>=<span class="string">min01:2181</span></span><br><span class="line"><span class="meta">zookeeper.connection.timeout.ms</span>=<span class="string">6000</span></span><br><span class="line"><span class="meta">group.initial.rebalance.delay.ms</span>=<span class="string">0</span></span><br></pre></td></tr></table></figure>
+
+<h5 id="3-1-2-使用"><a href="#3-1-2-使用" class="headerlink" title="3.1.2 使用"></a>3.1.2 使用</h5><p>（1）启动Zookeeper的server</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> bin/zkServer.sh start</span></span><br></pre></td></tr></table></figure>
+
+<p>（2）在后台启动Kafka的server</p>
+<p>⚠️注意：我这里是在<code>$KAFKA_HOME</code>下启动的，所以<code>server.properties</code>写的是相对路径，否则要写绝对路径</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> bin/kafka-server-start.sh -daemon config/server.properties &amp;</span></span><br></pre></td></tr></table></figure>
+
+<p>（3）创建一个名为“test”的Topic</p>
+<ul>
+<li>–zookeeper：指向Zookeeper的地址</li>
+<li>–replication-factor：副本系数</li>
+<li>–partitions：分区</li>
+<li>–topic：topic名字</li>
+</ul>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> bin/kafka-topics.sh --create --zookeeper min01:2181 --replication-factor 1 --partitions 1 --topic <span class="built_in">test</span></span></span><br></pre></td></tr></table></figure>
+
+<p>（4）查看Topic信息</p>
+<p>列出所有的Topic名称：</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> bin/kafka-topics.sh --list --zookeeper min01:2181</span></span><br><span class="line">test</span><br></pre></td></tr></table></figure>
+
+<p>查看某个Broker上的Topic信息：</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> bin/kafka-topics.sh --list --bootstrap-server min01:9092</span></span><br></pre></td></tr></table></figure>
+
+<p>查看所有Topic的详细信息：</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> bin/kafka-topics.sh --describe --zookeeper min01:2181</span></span><br><span class="line">Topic:test	PartitionCount:1	ReplicationFactor:1	Configs:</span><br><span class="line">	Topic: test	Partition: 0	Leader: 4	Replicas: 4	Isr: 4</span><br></pre></td></tr></table></figure>
+
+<p>查看指定Topic的详细信息：</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> bin/kafka-topics.sh --describe --zookeeper min01:2181 --topic <span class="built_in">test</span></span></span><br><span class="line">Topic:test	PartitionCount:1	ReplicationFactor:1	Configs:</span><br><span class="line">	Topic: test	Partition: 0	Leader: 4	Replicas: 4	Isr: 4</span><br></pre></td></tr></table></figure>
+
+<p>（5）生产消息</p>
+<p>Kafka提供了一个命令行工具，可以从命令行中读取消息并发送给Kafka集群。每一行是一条消息：</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> bin/kafka-console-producer.sh --broker-list min01:9092 --topic <span class="built_in">test</span></span></span><br><span class="line"><span class="meta">&gt;</span><span class="bash"><span class="built_in">test</span> message 1</span></span><br><span class="line"><span class="meta">&gt;</span><span class="bash"><span class="built_in">test</span> message 2</span></span><br></pre></td></tr></table></figure>
+
+<p>（6）消费消息</p>
+<p>Kafka也提供了一个消费消息的命令行工具，将存储的信息输出出来：</p>
+<ul>
+<li>–from-beginning：从头消费消息</li>
+</ul>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> bin/kafka-console-consumer.sh --bootstrap-server min01:9092 --topic <span class="built_in">test</span> --from-beginning</span></span><br><span class="line">test message 1</span><br><span class="line">test message 2</span><br></pre></td></tr></table></figure>
+
+<p>注意：老版本把offset放在Zookeeper，所以用的不是<code>--bootstrap-server</code>，而是<code>--zookeeper</code>。</p>
+<h4 id="3-2-单节点多Broker"><a href="#3-2-单节点多Broker" class="headerlink" title="3.2 单节点多Broker"></a>3.2 单节点多Broker</h4><p>这里我是单节点3个新Broker</p>
+<h5 id="3-2-1-部署"><a href="#3-2-1-部署" class="headerlink" title="3.2.1 部署"></a>3.2.1 部署</h5><p>（1）给每个Broker构建一份属于自己的配置文件</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> cp server.properties server-1.properties</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> cp server.properties server-2.properties</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> cp server.properties server-3.properties</span></span><br></pre></td></tr></table></figure>
+
+<p>（2）给每个Broker构建一份属于自己的日志存放地址</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> mkdir -p tmp/kafka-logs-1</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> mkdir -p tmp/kafka-logs-2</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> mkdir -p tmp/kafka-logs-3</span></span><br></pre></td></tr></table></figure>
+
+<p>（3）修改每个Broker的配置文件，主要是下列三个参数：</p>
+<ol>
+<li>Broker的id号（必须唯一）</li>
+<li>监听的端口号（必须唯一）</li>
+<li>每个Broker存放日志信息的地址</li>
+</ol>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> vi server-1.properties</span></span><br><span class="line">broker.id=1</span><br><span class="line">listeners=PLAINTEXT://:9093</span><br><span class="line">log.dirs=/opt/applications/kafka_2.11-2.2.1/tmp/kafka-logs-1</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> vi server-2.properties</span></span><br><span class="line">broker.id=2</span><br><span class="line">listeners=PLAINTEXT://:9094</span><br><span class="line">log.dirs=/opt/applications/kafka_2.11-2.2.1/tmp/kafka-logs-2</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> vi server-3.properties</span></span><br><span class="line">broker.id=3</span><br><span class="line">listeners=PLAINTEXT://:9095</span><br><span class="line">log.dirs=/opt/applications/kafka_2.11-2.2.1/tmp/kafka-logs-3</span><br></pre></td></tr></table></figure>
+
+<h5 id="3-2-2-使用"><a href="#3-2-2-使用" class="headerlink" title="3.2.2 使用"></a>3.2.2 使用</h5><p>（1）这里使用后台方式启动<code>-daemon</code>，启动后终端就不会显示后台信息</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> bin/kafka-server-start.sh -daemon config/server-1.properties &amp;</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> bin/kafka-server-start.sh -daemon config/server-2.properties &amp;</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> bin/kafka-server-start.sh -daemon config/server-3.properties &amp;</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> jps -m</span></span><br><span class="line">67296 Kafka config/server-3.properties</span><br><span class="line">66613 Kafka config/server-1.properties</span><br><span class="line">66955 Kafka config/server-2.properties</span><br><span class="line">35211 QuorumPeerMain /opt/applications/zookeeper-3.4.5-cdh5.10.2/bin/../conf/zoo.cfg</span><br><span class="line">67373 Jps -m</span><br></pre></td></tr></table></figure>
+
+<p>（2）创建一个新Topic，复制因子设为3</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> bin/kafka-topics.sh --create --zookeeper min01:2181 --replication-factor 3 --partitions 1 --topic <span class="built_in">test</span>-replicated</span></span><br></pre></td></tr></table></figure>
+
+<p>（3）查看Topic信息</p>
+<ul>
+<li>Leader：该节点负责分区的所有读和写，每个节点的Leader都是随机选出来的</li>
+<li>Replicas：备份节点列表。无论该节点是否是Leader或不知死活，都显示出来</li>
+<li>Isr：同步备份节点列表。活着的节点，并且正在同步Leader</li>
+</ul>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> bin/kafka-topics.sh --describe --zookeeper min01:2181 --topic <span class="built_in">test</span>-replicated</span></span><br><span class="line">Topic:test-replicated	PartitionCount:1	ReplicationFactor:3	Configs:</span><br><span class="line">	Topic: test-replicated	Partition: 0	Leader: 2	Replicas: 2,3,1	Isr: 2,3,1</span><br></pre></td></tr></table></figure>
+
+<p>（4）生产消息</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> bin/kafka-console-producer.sh --broker-list min01:9093 --topic <span class="built_in">test</span>-replicated</span></span><br></pre></td></tr></table></figure>
+
+<p>（5）消费消息</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> bin/kafka-console-consumer.sh --bootstrap-server min01:9093 --from-beginning --topic <span class="built_in">test</span>-replicated</span></span><br></pre></td></tr></table></figure>
+
+<p>（6）关闭Kafka</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> bin/kafka-server-stop.sh</span></span><br></pre></td></tr></table></figure>
+
+<p>（7）删除Topic</p>
+<p>先在配置文件<em>server.properties</em>中设置<code>delete.topic.enable=true</code>，再用命令删除</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> bin/kafka-topics.sh --delete --zookeeper min01:2181 --topic <span class="built_in">test</span></span></span><br></pre></td></tr></table></figure>
+
+<p>如果还是删不干净，登录Zookeeper客户端，删除下面两个路径下对应的Topic</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> bin/zkCli.sh</span></span><br><span class="line">rmr /brokers/topics/[topic name]</span><br><span class="line">rmr /admin/delete_topics/[topic name]</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h3 id="4-使用Kafka-Connect来导入-导出数据"><a href="#4-使用Kafka-Connect来导入-导出数据" class="headerlink" title="4. 使用Kafka Connect来导入/导出数据"></a>4. 使用Kafka Connect来导入/导出数据</h3><p>Kafka Connect是导入和导出数据的一个工具。它是一个可扩展的工具，运行连接器，实现与自定义的逻辑的外部系统交互。具体可参考<a href="http://kafka.apache.org/documentation/#connect" target="_blank" rel="noopener">官方文档</a>。</p>
+<p>一些概念：</p>
+<ul>
+<li>Connectors：通过管理task来协调数据流的高级抽象</li>
+<li>Tasks：如何将数据复制到Kafka或从Kafka复制数据的实现</li>
+<li>Workers：执行Connector和Task的运行进程</li>
+</ul>
+<p>Kafka Connect的工作模式：</p>
+<ul>
+<li>Standalone：单机模式，所有的worker都在一个独立的进程中完成</li>
+<li>Distributed：分布式模式，在有效的worker进程中它们会自动去协调执行connector和task，不管新增或挂了一个worker，其它的worker都会自动重新分配connector和task。具有高扩展性以及自动容错机制。</li>
+</ul>
+<p>这里演示在单机模式下，如何运行Kafka Connect用简单的连接器从文件导入数据到Kafka主题，再从Kafka主题导出数据到文件。</p>
+<h4 id="4-1-需要用到的文件"><a href="#4-1-需要用到的文件" class="headerlink" title="4.1 需要用到的文件"></a>4.1 需要用到的文件</h4><h5 id="4-1-1-源文件"><a href="#4-1-1-源文件" class="headerlink" title="4.1.1 源文件"></a>4.1.1 源文件</h5><p>我所使用的文件是Oracle数据库emp表导出的数据文件：</p>
+<img src="/images/Kafka%E5%9F%BA%E6%9C%AC%E4%BD%BF%E7%94%A8/image-20191226115506891.png" alt="image-20191226115506891" style="zoom:50%;">
+
+<h5 id="4-1-2-配置文件"><a href="#4-1-2-配置文件" class="headerlink" title="4.1.2 配置文件"></a>4.1.2 配置文件</h5><p>（1）<em>connect-standalone-1.properties</em></p>
+<figure class="highlight properties"><table><tr><td class="code"><pre><span class="line"><span class="comment"># Kafka集群地址</span></span><br><span class="line"><span class="meta">bootstrap.servers</span>=<span class="string">min01:9092</span></span><br><span class="line"><span class="comment"># &lt;key, value&gt;序列化转换器，控制source connector写入Kafka的数据格式。常用的有Avro和Json</span></span><br><span class="line"><span class="meta">key.converter</span>=<span class="string">org.apache.kafka.connect.json.JsonConverter</span></span><br><span class="line"><span class="meta">value.converter</span>=<span class="string">org.apache.kafka.connect.json.JsonConverter</span></span><br><span class="line"><span class="meta">key.converter.schemas.enable</span>=<span class="string">true</span></span><br><span class="line"><span class="meta">value.converter.schemas.enable</span>=<span class="string">true</span></span><br><span class="line"><span class="comment"># 存储偏移量的文件</span></span><br><span class="line"><span class="meta">offset.storage.file.filename</span>=<span class="string">/opt/applications/kafka_2.11-2.2.1/tmp/connect.offsets</span></span><br><span class="line"><span class="meta">offset.flush.interval.ms</span>=<span class="string">10000</span></span><br></pre></td></tr></table></figure>
+
+<p>（2）<em>connect-file-source-1.properties</em></p>
+<figure class="highlight properties"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 连接器的唯一名称。重名将注册失败</span></span><br><span class="line"><span class="attr">name</span>=<span class="string">local-file-source</span></span><br><span class="line"><span class="comment"># 连接器的Java类</span></span><br><span class="line"><span class="meta">connector.class</span>=<span class="string">FileStreamSource</span></span><br><span class="line"><span class="comment"># 连接器的最大任务数</span></span><br><span class="line"><span class="meta">tasks.max</span>=<span class="string">1</span></span><br><span class="line"><span class="attr">file</span>=<span class="string">/opt/data/oracle/tables/emp</span></span><br><span class="line"><span class="attr">topic</span>=<span class="string">test</span></span><br></pre></td></tr></table></figure>
+
+<p>（3）<em>connect-file-sink-1.properties</em></p>
+<figure class="highlight properties"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 连接器的唯一名称。重名将注册失败</span></span><br><span class="line"><span class="attr">name</span>=<span class="string">local-file-sink</span></span><br><span class="line"><span class="comment"># 连接器的Java类</span></span><br><span class="line"><span class="meta">connector.class</span>=<span class="string">FileStreamSink</span></span><br><span class="line"><span class="comment"># 连接器的最大任务数</span></span><br><span class="line"><span class="meta">tasks.max</span>=<span class="string">1</span></span><br><span class="line"><span class="attr">file</span>=<span class="string">/opt/data/oracle/tables/emp_kafka</span></span><br><span class="line"><span class="attr">topics</span>=<span class="string">test</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="4-2-运行Connect"><a href="#4-2-运行Connect" class="headerlink" title="4.2  运行Connect"></a>4.2  运行Connect</h4><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> bin/connect-standalone.sh config/connect-standalone-1.properties config/connect-file-source-1.properties config/connect-file-sink-1.properties</span></span><br></pre></td></tr></table></figure>
+
+<h5 id="4-2-1-遇到的坑"><a href="#4-2-1-遇到的坑" class="headerlink" title="4.2.1 遇到的坑"></a>4.2.1 遇到的坑</h5><p>在3.1.2中，我在控制台往test主题里添加了下面两行数据:</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">&gt;</span><span class="bash"><span class="built_in">test</span> message 1</span></span><br><span class="line"><span class="meta">&gt;</span><span class="bash"><span class="built_in">test</span> message 2</span></span><br></pre></td></tr></table></figure>
+
+<p>而我在<em>connect-standalone-1.properties</em>中设置value.converter为JSON，那就导致test主题里上面两行数据就成了脏数据（非JSON数据），当用默认的JsonConverter读取时，就会报错：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">Caused by: org.apache.kafka.connect.errors.DataException: Converting byte[] to Kafka Connect data failed due to serialization error: </span><br><span class="line">...</span><br><span class="line">Caused by: org.apache.kafka.common.errors.SerializationException: com.fasterxml.jackson.core.JsonParseException: Unrecognized token &apos;test&apos;: was expecting &apos;null&apos;, &apos;true&apos;, &apos;false&apos; or NaN</span><br><span class="line"> at [Source: (byte[])&quot;test message 1&quot;; line: 1, column: 6]</span><br><span class="line">...</span><br></pre></td></tr></table></figure>
+
+<p>看来用自带的命令还是不行，要解决这个坑还得自己写API。暂时我的解决方案就是用一个全新的Topic，或者自己写API。</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Kafka/" rel="tag"># Kafka</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-next post-nav-item">
+                <a href="/2019/11/20/Maven%E5%9F%BA%E7%A1%80/" rel="next" title="Maven基础">
+                  <i class="fa fa-chevron-left"></i> Maven基础
+                </a>
+            </div>
+
+            <span class="post-nav-divider"></span>
+
+            <div class="post-nav-prev post-nav-item">
+                <a href="/2019/11/22/CentOS-7-2%E7%8E%AF%E5%A2%83%E9%85%8D%E7%BD%AE/" rel="prev" title="CentOS 7.2环境配置">
+                  CentOS 7.2环境配置 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-Kafka基本概念"><span class="nav-number">1.</span> <span class="nav-text">1. Kafka基本概念</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-1-Kafka中的基本术语"><span class="nav-number">1.1.</span> <span class="nav-text">1.1 Kafka中的基本术语</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#1-2-Kafka基本架构"><span class="nav-number">1.2.</span> <span class="nav-text">1.2 Kafka基本架构</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#1-2-1-Broker"><span class="nav-number">1.2.1.</span> <span class="nav-text">1.2.1 Broker</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#1-2-2-Consumer（老版本）"><span class="nav-number">1.2.2.</span> <span class="nav-text">1.2.2 Consumer（老版本）</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#1-3-Kafka数据存储"><span class="nav-number">1.3.</span> <span class="nav-text">1.3 Kafka数据存储</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-Kafka安装"><span class="nav-number">2.</span> <span class="nav-text">2. Kafka安装</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#2-1-从Kafka官网下载kafka-2-11-2-2-1-tgz并解压"><span class="nav-number">2.1.</span> <span class="nav-text">2.1 从Kafka官网下载kafka_2.11-2.2.1.tgz并解压</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-2-添加Kafka的用户环境变量"><span class="nav-number">2.2.</span> <span class="nav-text">2.2 添加Kafka的用户环境变量</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-Kafka的部署和使用"><span class="nav-number">3.</span> <span class="nav-text">3. Kafka的部署和使用</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#3-1-单节点单Broker"><span class="nav-number">3.1.</span> <span class="nav-text">3.1 单节点单Broker</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#3-1-1-部署"><span class="nav-number">3.1.1.</span> <span class="nav-text">3.1.1 部署</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#3-1-2-使用"><span class="nav-number">3.1.2.</span> <span class="nav-text">3.1.2 使用</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-2-单节点多Broker"><span class="nav-number">3.2.</span> <span class="nav-text">3.2 单节点多Broker</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#3-2-1-部署"><span class="nav-number">3.2.1.</span> <span class="nav-text">3.2.1 部署</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#3-2-2-使用"><span class="nav-number">3.2.2.</span> <span class="nav-text">3.2.2 使用</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-使用Kafka-Connect来导入-导出数据"><span class="nav-number">4.</span> <span class="nav-text">4. 使用Kafka Connect来导入/导出数据</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#4-1-需要用到的文件"><span class="nav-number">4.1.</span> <span class="nav-text">4.1 需要用到的文件</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#4-1-1-源文件"><span class="nav-number">4.1.1.</span> <span class="nav-text">4.1.1 源文件</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#4-1-2-配置文件"><span class="nav-number">4.1.2.</span> <span class="nav-text">4.1.2 配置文件</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#4-2-运行Connect"><span class="nav-number">4.2.</span> <span class="nav-text">4.2  运行Connect</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#4-2-1-遇到的坑"><span class="nav-number">4.2.1.</span> <span class="nav-text">4.2.1 遇到的坑</span></a></li></ol></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <img class="site-author-image" itemprop="image" alt="MIN MIN"
+    src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">MIN MIN</p>
+  <div class="site-description" itemprop="description">即使最后没有人为你鼓掌，也要优雅地谢幕，感谢自己的认真付出。</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">54</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">13</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+        <span class="site-state-item-count">32</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/ashermin" title="GitHub &amp;rarr; https:&#x2F;&#x2F;github.com&#x2F;ashermin" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+<div class="copyright">
+  
+  &copy; 2019 – 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user-circle"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">MIN MIN</span>
+</div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+<script src="/js/utils.js"></script>
+<script src="/js/schemes/pisces.js"></script>
+<script src="/js/next-boot.js"></script>
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+</body>
+</html>

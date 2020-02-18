@@ -1,0 +1,759 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.0.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/avatar.jpg">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/avatar.jpg">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/avatar.jpg">
+  <link rel="mask-icon" href="/images/avatar.jpg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+
+
+<script id="hexo-configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '7.4.2',
+    exturl: false,
+    sidebar: {"position":"left","width":260,"display":"post","offset":12,"onmobile":false},
+    copycode: {"enable":true,"show_result":true,"style":"default"},
+    back2top: {"enable":true,"sidebar":false,"scrollpercent":true},
+    bookmark: {"enable":false,"color":"#222","save":"auto"},
+    fancybox: false,
+    mediumzoom: false,
+    lazyload: false,
+    pangu: false,
+    algolia: {
+      appID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    localsearch: {"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},
+    path: '',
+    motion: {"enable":false,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    translation: {
+      copy_button: '复制',
+      copy_success: '复制成功',
+      copy_failure: '复制失败'
+    },
+    sidebarPadding: 40
+  };
+</script>
+
+  <meta name="description" content="以下对于Geenplum的安装部署基于官方文档。 1. 准备工作Greenplum在生产环境中对软硬件系统对要求如下：   软硬件 配置要求    CPU 任何兼容x86_64的CPU   内存 每个节点至少16GB RAM   操作系统 Red Hat Enterprise Linux 64-bit7.xRed Hat Enterprise Linux 64-bit 6.xCentOS 64-">
+<meta name="keywords" content="Greenplum">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Greenplum安装部署">
+<meta property="og:url" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2019&#x2F;12&#x2F;17&#x2F;Greenplum%E5%AE%89%E8%A3%85%E9%83%A8%E7%BD%B2&#x2F;index.html">
+<meta property="og:site_name" content="MIN MIN">
+<meta property="og:description" content="以下对于Geenplum的安装部署基于官方文档。 1. 准备工作Greenplum在生产环境中对软硬件系统对要求如下：   软硬件 配置要求    CPU 任何兼容x86_64的CPU   内存 每个节点至少16GB RAM   操作系统 Red Hat Enterprise Linux 64-bit7.xRed Hat Enterprise Linux 64-bit 6.xCentOS 64-">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;images&#x2F;Greenplum%E5%AE%89%E8%A3%85%E9%83%A8%E7%BD%B2&#x2F;image-20191218110840416.png">
+<meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;images&#x2F;Greenplum%E5%AE%89%E8%A3%85%E9%83%A8%E7%BD%B2&#x2F;image-20191218103755581.png">
+<meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;images&#x2F;Greenplum%E5%AE%89%E8%A3%85%E9%83%A8%E7%BD%B2&#x2F;image-20191218111204557.png">
+<meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;images&#x2F;Greenplum%E5%AE%89%E8%A3%85%E9%83%A8%E7%BD%B2&#x2F;image-20191218111110032.png">
+<meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;images&#x2F;Greenplum%E5%AE%89%E8%A3%85%E9%83%A8%E7%BD%B2&#x2F;image-20191218124721470.png">
+<meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;images&#x2F;Greenplum%E5%AE%89%E8%A3%85%E9%83%A8%E7%BD%B2&#x2F;image-20191218170337199.png">
+<meta property="og:updated_time" content="2019-12-19T06:54:56.306Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;images&#x2F;Greenplum%E5%AE%89%E8%A3%85%E9%83%A8%E7%BD%B2&#x2F;image-20191218110840416.png">
+
+<link rel="canonical" href="http://yoursite.com/2019/12/17/Greenplum%E5%AE%89%E8%A3%85%E9%83%A8%E7%BD%B2/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true,
+    isPage: false,
+    isArchive: false
+  };
+</script>
+
+  <title>Greenplum安装部署 | MIN MIN</title>
+  
+
+
+  <script>
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?cad2a7930afd095772e571e6eab3628f";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+  <!--  -->
+<link href='//fonts.googleapis.com/css?family=Kaushan+Script' rel='stylesheet' type='text/css'>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">MIN MIN</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+        <p class="site-subtitle">BLOG</p>
+  </div>
+
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档</a>
+
+  </li>
+  </ul>
+
+</nav>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/12/17/Greenplum%E5%AE%89%E8%A3%85%E9%83%A8%E7%BD%B2/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="MIN MIN">
+      <meta itemprop="description" content="即使最后没有人为你鼓掌，也要优雅地谢幕，感谢自己的认真付出。">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="MIN MIN">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Greenplum安装部署
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2019-12-17 12:12:58" itemprop="dateCreated datePublished" datetime="2019-12-17T12:12:58+08:00">2019-12-17</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2019-12-19 14:54:56" itemprop="dateModified" datetime="2019-12-19T14:54:56+08:00">2019-12-19</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Greenplum/" itemprop="url" rel="index">
+                    <span itemprop="name">Greenplum</span>
+                  </a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <blockquote>
+<p>以下对于Geenplum的安装部署基于<a href="http://docs.greenplum.org/6-1/install_guide/install_guide.html" target="_blank" rel="noopener">官方文档</a>。</p>
+</blockquote><h3 id="1-准备工作"><a href="#1-准备工作" class="headerlink" title="1. 准备工作"></a>1. 准备工作</h3><p>Greenplum在生产环境中对软硬件系统对要求如下：</p><table>
+<thead>
+<tr>
+<th>软硬件</th>
+<th>配置要求</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>CPU</td>
+<td>任何兼容x86_64的CPU</td>
+</tr>
+<tr>
+<td>内存</td>
+<td>每个节点至少16GB RAM</td>
+</tr>
+<tr>
+<td>操作系统</td>
+<td>Red Hat Enterprise Linux 64-bit7.x<br>Red Hat Enterprise Linux 64-bit 6.x<br>CentOS 64-bit 7.x<br>CentOS 64-bit 6.x<br>Ubuntu 18.04 LTS</td>
+</tr>
+<tr>
+<td>文件系统</td>
+<td>SUSE和Readhat需要XFS文件系统<br>根文件系统需要支持ext3</td>
+</tr>
+<tr>
+<td>网络</td>
+<td>节点间使用10GB以太网</td>
+</tr>
+<tr>
+<td>磁盘</td>
+<td>Greenplum安装每个节点需要150MB，每个节点的元数据需要300MB</td>
+</tr>
+</tbody></table><a id="more"></a>
+
+
+<p>⚠️注意：上面配置要求是针对生产环境而言的。在非生产环境下，4GB内存、ext文件系统也是OK的。</p>
+<p>本次搭建Greenplum的机器有2台，每台配置信息如下：</p>
+<table>
+<thead>
+<tr>
+<th>软硬件</th>
+<th>个人配置</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>CPU</td>
+<td>1个2核CPU，型号Intel(R) Xeon(R) CPU E5-2660 v2 @ 2.20GHz</td>
+</tr>
+<tr>
+<td>内存</td>
+<td>8GB</td>
+</tr>
+<tr>
+<td>操作系统</td>
+<td>CentOS Linux release 7.2.1511 (Core)</td>
+</tr>
+<tr>
+<td>磁盘大小</td>
+<td>200GB</td>
+</tr>
+</tbody></table>
+<h4 id="1-1-关闭SELinux和Firewall"><a href="#1-1-关闭SELinux和Firewall" class="headerlink" title="1.1 关闭SELinux和Firewall"></a>1.1 关闭SELinux和Firewall</h4><h5 id="1-1-1-关闭SELinux"><a href="#1-1-1-关闭SELinux" class="headerlink" title="1.1.1 关闭SELinux"></a>1.1.1 关闭SELinux</h5><p>使用root用户查看SELinux的状态：</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> sestatus</span></span><br><span class="line">SELinux status: enabled</span><br></pre></td></tr></table></figure>
+
+<p>如果不是<code>disabled</code>，修改<em>/etc/selinux/config</em>文件：</p>
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="string">SELINUX=disabled</span></span><br></pre></td></tr></table></figure>
+
+<p>如果有安装System Security Services Daemon (SSSD)，防止在禁用SELinux时发生与SELinux相关的SSH身份验证拒绝，添加该参数设置：</p>
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="string">selinux_provider=none</span></span><br></pre></td></tr></table></figure>
+
+<p>重启机器。</p>
+<h5 id="1-1-2-关闭Firewall"><a href="#1-1-2-关闭Firewall" class="headerlink" title="1.1.2 关闭Firewall"></a>1.1.2 关闭Firewall</h5><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> systemctl status firewalld.service <span class="comment">#查看防火墙状态</span></span></span><br><span class="line"><span class="meta">$</span><span class="bash"> systemctl stop firewalld.service <span class="comment"># 临时关闭防火墙</span></span></span><br><span class="line"><span class="meta">$</span><span class="bash"> systemctl <span class="built_in">disable</span> firewalld.service <span class="comment"># 禁止开机启动</span></span></span><br><span class="line"><span class="meta">$</span><span class="bash"> systemctl is-enabled firewalld.service <span class="comment">#查看是否开机启动</span></span></span><br></pre></td></tr></table></figure>
+
+<p>⚠️注意：如果想让Greenplum数据库开启防火墙，可以参考<a href="http://docs.greenplum.org/6-1/install_guide/enable_iptables.html#topic1" target="_blank" rel="noopener">官方配置手册</a>。</p>
+<h4 id="1-2-操作系统参数设置"><a href="#1-2-操作系统参数设置" class="headerlink" title="1.2 操作系统参数设置"></a>1.2 操作系统参数设置</h4><p>部署Greenplum时，需要对各节点的操作系统参数进行配置，主要包括三个部分：共享内存、网络参数以及用户资源限制。主要是进行如下配置：</p>
+<h5 id="1-2-1-配置hosts文件"><a href="#1-2-1-配置hosts文件" class="headerlink" title="1.2.1  配置hosts文件"></a>1.2.1  配置hosts文件</h5><p>检查<em>/etc/hosts</em>文件，确保有将Greenplum集群所有节点的主机名和ip地址做好映射：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">192.168.1.188 min01</span><br><span class="line">192.168.1.189 min02</span><br></pre></td></tr></table></figure>
+
+<h5 id="1-2-2-编辑sysctl-conf文件"><a href="#1-2-2-编辑sysctl-conf文件" class="headerlink" title="1.2.2 编辑sysctl.conf文件"></a>1.2.2 编辑sysctl.conf文件</h5><p>编辑<em>/etc/sysctl.conf</em>文件，添加以下参数用于各种环境中的性能、优化和一致性，具体参数信息可见附录：</p>
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="comment"># kernel.shmall = _PHYS_PAGES / 2 # See Shared Memory Pages</span></span><br><span class="line"><span class="string">kernel.shmall</span> <span class="string">=</span> <span class="number">4000000000</span></span><br><span class="line"><span class="comment"># kernel.shmmax = kernel.shmall * PAGE_SIZE </span></span><br><span class="line"><span class="string">kernel.shmmax</span> <span class="string">=</span> <span class="number">500000000</span></span><br><span class="line"><span class="string">kernel.shmmni</span> <span class="string">=</span> <span class="number">4096</span></span><br><span class="line"><span class="string">vm.overcommit_memory</span> <span class="string">=</span> <span class="number">2</span> <span class="comment"># See Segment Host Memory</span></span><br><span class="line"><span class="string">vm.overcommit_ratio</span> <span class="string">=</span> <span class="number">95</span> <span class="comment"># See Segment Host Memory</span></span><br><span class="line"></span><br><span class="line"><span class="string">net.ipv4.ip_local_port_range</span> <span class="string">=</span> <span class="number">1025</span> <span class="number">65535</span> <span class="comment"># See Port Settings</span></span><br><span class="line"><span class="string">kernel.sem</span> <span class="string">=</span> <span class="number">500</span> <span class="number">2048000</span> <span class="number">200</span> <span class="number">40960</span></span><br><span class="line"><span class="string">kernel.sysrq</span> <span class="string">=</span> <span class="number">1</span></span><br><span class="line"><span class="string">kernel.core_uses_pid</span> <span class="string">=</span> <span class="number">1</span></span><br><span class="line"><span class="string">kernel.msgmnb</span> <span class="string">=</span> <span class="number">65536</span></span><br><span class="line"><span class="string">kernel.msgmax</span> <span class="string">=</span> <span class="number">65536</span></span><br><span class="line"><span class="string">kernel.msgmni</span> <span class="string">=</span> <span class="number">2048</span></span><br><span class="line"><span class="string">net.ipv4.tcp_syncookies</span> <span class="string">=</span> <span class="number">1</span></span><br><span class="line"><span class="string">net.ipv4.conf.default.accept_source_route</span> <span class="string">=</span> <span class="number">0</span></span><br><span class="line"><span class="string">net.ipv4.tcp_max_syn_backlog</span> <span class="string">=</span> <span class="number">4096</span></span><br><span class="line"><span class="string">net.ipv4.conf.all.arp_filter</span> <span class="string">=</span> <span class="number">1</span></span><br><span class="line"><span class="string">net.core.netdev_max_backlog</span> <span class="string">=</span> <span class="number">10000</span></span><br><span class="line"><span class="string">net.core.rmem_max</span> <span class="string">=</span> <span class="number">2097152</span></span><br><span class="line"><span class="string">net.core.wmem_max</span> <span class="string">=</span> <span class="number">2097152</span></span><br><span class="line"><span class="string">vm.swappiness</span> <span class="string">=</span> <span class="number">10</span></span><br><span class="line"><span class="string">vm.zone_reclaim_mode</span> <span class="string">=</span> <span class="number">0</span></span><br><span class="line"><span class="string">vm.dirty_expire_centisecs</span> <span class="string">=</span> <span class="number">500</span></span><br><span class="line"><span class="string">vm.dirty_writeback_centisecs</span> <span class="string">=</span> <span class="number">100</span></span><br><span class="line"><span class="string">vm.dirty_background_ratio</span> <span class="string">=</span> <span class="number">0</span> <span class="comment"># See System Memory</span></span><br><span class="line"><span class="string">vm.dirty_ratio</span> <span class="string">=</span> <span class="number">0</span></span><br><span class="line"><span class="string">vm.dirty_background_bytes</span> <span class="string">=</span> <span class="number">1610612736</span></span><br><span class="line"><span class="string">vm.dirty_bytes</span> <span class="string">=</span> <span class="number">4294967296</span></span><br></pre></td></tr></table></figure>
+
+<h5 id="1-2-3-系统资源限制"><a href="#1-2-3-系统资源限制" class="headerlink" title="1.2.3 系统资源限制"></a>1.2.3 系统资源限制</h5><p>编辑<em>/etc/security/limits.conf</em>文件，配置了系统的文件描述符和进程数的最大值：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">* soft nofile 524288</span><br><span class="line">* hard nofile 524288</span><br><span class="line">* soft nproc 131072</span><br><span class="line">* hard nproc 131072</span><br></pre></td></tr></table></figure>
+
+<p>⚠️注意：对于Red Hat Enterprise Linux (RHEL)和CentOS，要修改下面的文件，其会覆盖上面的文件参数</p>
+<ul>
+<li>RHEL/CentOS 6：<em>etc/security/limits.d/90-nproc.conf</em> 文件</li>
+<li>RHEL/CentOS 7：<em>/etc/security/limits.d/20-nproc.conf</em>文件 </li>
+</ul>
+<p>配置完重启系统后可以使用<code>ulimit -u</code>查看系统的最大进程数，默认是<code>4096</code>，通过上面的配置应该已经改为了<code>131072</code></p>
+<h5 id="1-2-4-创建Greenplum管理员用户"><a href="#1-2-4-创建Greenplum管理员用户" class="headerlink" title="1.2.4 创建Greenplum管理员用户"></a>1.2.4 创建Greenplum管理员用户</h5><p>需要创建一个特定的用户来运行Geenplum，一般这个用户名为<code>gpadmin</code>：</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> groupadd gpadmin</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> useradd gpadmin -r -m -g gpadmin</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> passwd gpadmin</span></span><br><span class="line">New password: &lt;changeme&gt;</span><br><span class="line">Retype new password: &lt;changeme&gt;</span><br></pre></td></tr></table></figure>
+
+<p>⚠️注意：不能以root身份运行Greenplum数据库！</p>
+<h5 id="1-2-5-同步系统时间"><a href="#1-2-5-同步系统时间" class="headerlink" title="1.2.5 同步系统时间"></a>1.2.5 同步系统时间</h5><p>这里我有两个节点：<code>min01</code>和<code>min02</code>，其中NTP服务器为<code>min01</code>，NTP客户端为<code>min02</code>。</p>
+<p>两个节点都需要检查NTP服务是否安装：<code># rpm -q ntp</code>，没有的话则使用yum安装，开启并设置开机启动：</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> yum -y install ntp</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> systemctl start ntpd</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> systemctl <span class="built_in">enable</span> ntpd</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> systemctl is-enabled ntpd</span></span><br><span class="line">enabled</span><br></pre></td></tr></table></figure>
+
+<h6 id="1-2-5-1-NTP服务器设置"><a href="#1-2-5-1-NTP服务器设置" class="headerlink" title="1.2.5.1 NTP服务器设置"></a>1.2.5.1 NTP服务器设置</h6><p>第一台服务器<code>min01</code>作为NTP Server，ntpd服务开启默认就已经同步了外网时间，主要是设置允许内网网段可以连接它，将它作为内网的时间同步服务器。</p>
+<p> 编辑<em>/etc/ntp.conf</em>文件，添加如下信息，表示允许210网段来同步此服务器：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">restrict 192.168.1.0 mask 255.255.255.0</span><br></pre></td></tr></table></figure>
+
+<img src="/images/Greenplum%E5%AE%89%E8%A3%85%E9%83%A8%E7%BD%B2/image-20191218110840416.png" alt="image-20191218110840416" style="zoom:50%;">
+
+<p>设置后重启ntpd服务，用<code>$ ntpstat</code>检查效果：</p>
+<img src="/images/Greenplum%E5%AE%89%E8%A3%85%E9%83%A8%E7%BD%B2/image-20191218103755581.png" alt="image-20191218103755581" style="zoom:50%;">
+
+<h6 id="1-2-5-2-NTP客户端设置"><a href="#1-2-5-2-NTP客户端设置" class="headerlink" title="1.2.5.2 NTP客户端设置"></a>1.2.5.2 NTP客户端设置</h6><p><code>min01(192.168.1.188)</code>作为NTP Client，将它设置为同步上面的NTP Server。修改<em>/etc/ntp.conf</em>文件，注释掉外网时间服务器，添加本地服务器即可：</p>
+<img src="/images/Greenplum%E5%AE%89%E8%A3%85%E9%83%A8%E7%BD%B2/image-20191218111204557.png" alt="image-20191218111204557" style="zoom:50%;">
+
+<p>重启ntpd服务，用ntpstat来检查效果：</p>
+<img src="/images/Greenplum%E5%AE%89%E8%A3%85%E9%83%A8%E7%BD%B2/image-20191218111110032.png" alt="image-20191218111110032" style="zoom:50%;">
+
+<hr>
+<h3 id="2-安装Greenplum"><a href="#2-安装Greenplum" class="headerlink" title="2. 安装Greenplum"></a>2. 安装Greenplum</h3><h4 id="2-1-每个节点安装Greenplum"><a href="#2-1-每个节点安装Greenplum" class="headerlink" title="2.1 每个节点安装Greenplum"></a>2.1 每个节点安装Greenplum</h4><p>使用root用户安装从<a href="https://github.com/greenplum-db/gpdb/releases" target="_blank" rel="noopener">官方GitHub</a>上下载的Greenplum的安装包：<code>greenplum-db-6.1.0-rhel7-x86_64.rpm</code>：</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> yum install -y ./greenplum-db-6.1.0-rhel7-x86_64.rpm</span></span><br></pre></td></tr></table></figure>
+
+<p>默认是安装在<em>/usr/local</em>下的，把Greenplum目录权限赋给<code>gpadmin</code>用户：</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> chown -R gpadmin:gpadmin /usr/<span class="built_in">local</span>/greenplum*</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="2-2-配置SSH免密登陆"><a href="#2-2-配置SSH免密登陆" class="headerlink" title="2.2 配置SSH免密登陆"></a>2.2 配置SSH免密登陆</h4><p>使用<code>gpadmin</code>用户，初始化Greenplum的path文件，初始化之后才能使用<code>gpssh</code>等命令，可以将此命令写入环境变量，不用每次登录都进行操作：</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> <span class="built_in">echo</span> <span class="string">"source /usr/local/greenplum-db-6.1.0/greenplum_path.sh"</span> &gt;&gt; ~/.bashrc</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> <span class="built_in">source</span> ~/.bashrc</span></span><br></pre></td></tr></table></figure>
+
+<p>生成<code>ssh-key</code>文件：（一路回车）</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> ssh-keygen</span></span><br></pre></td></tr></table></figure>
+
+<p>使用<code>ssh-copy-id</code>命令打通集群segment的SSH通路：</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> ssh min02</span></span><br></pre></td></tr></table></figure>
+
+<p>在master节点的家目录<code>~</code>下生成主机列表文件：</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> vi hostfile_exkeys</span></span><br><span class="line">min01</span><br><span class="line">min02</span><br></pre></td></tr></table></figure>
+
+<p>设置n-n免密登陆：</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> gpssh-exkeys -f hostfile_exkeys</span></span><br></pre></td></tr></table></figure>
+
+<p>用<code>gpssh</code>来检查是否能够免密登陆所有的节点：</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> gpssh -f hostfile_exkeys</span></span><br><span class="line">=&gt; ls -l /usr/local/greenplum-db-6.1.0</span><br></pre></td></tr></table></figure>
+
+<p>如果安装成功，不需要手动输入其它节点的登陆密码，就会显示出所有节点的安装目录信息。如果要求输入登录密码，就需要重新执行<code>$ gpssh-exkeys -f hostfile_exkeys</code>交换命令。</p>
+<img src="/images/Greenplum%E5%AE%89%E8%A3%85%E9%83%A8%E7%BD%B2/image-20191218124721470.png" alt="image-20191218124721470" style="zoom:50%;">
+
+<p>可以对所有节点进行同步操作了！</p>
+<hr>
+<h3 id="3-创建数据存放目录"><a href="#3-创建数据存放目录" class="headerlink" title="3. 创建数据存放目录"></a>3. 创建数据存放目录</h3><p>需要为Master、Standby和Segments创建存放Greenplum数据库数据的文件目录。</p>
+<h4 id="3-1-Master和Standby"><a href="#3-1-Master和Standby" class="headerlink" title="3.1 Master和Standby"></a>3.1 Master和Standby</h4><p>Master和Standby的数据文件目录和Segments不同，前者不会存储任何用户数据，只会存储系统目录表和系统元数据。因此其所需的空间比Segments小多了。</p>
+<p>创建一个文件夹用来存放Master的数据，并将权限覆给gpadmin用户：</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> mkdir -p greenplum/master</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> chown -R gpadmin:gpadmin greenplum</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="3-2-Segment"><a href="#3-2-Segment" class="headerlink" title="3.2 Segment"></a>3.2 Segment</h4><p>在Master节点，gpadmin用户的家目录下创建<em>hostfile_gpssh_segonly</em>文件，用来存放所有Segments的信息：</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> vi hostfile_gpssh_segonly</span></span><br><span class="line">min02</span><br></pre></td></tr></table></figure>
+
+<p>切换到root用户，使用<code>gpssh</code>命令创建<code>primary</code>和<code>mirror</code>两个数据文件夹给所有的Segments，并将权限覆给gpadmin用户：</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> gpssh -f hostfile_gpssh_segonly -e <span class="string">'mkdir -p /opt/applications/greenplum/primary'</span></span></span><br><span class="line">[min02] sudo mkdir -p /opt/applications/greenplum/primary</span><br><span class="line"><span class="meta">$</span><span class="bash"> gpssh -f hostfile_gpssh_segonly -e <span class="string">'sudo mkdir -p /opt/applications/greenplum/mirror'</span></span></span><br><span class="line">[min02] sudo mkdir -p /opt/applications/greenplum/mirror</span><br><span class="line"><span class="meta">$</span><span class="bash"> gpssh -f hostfile_gpssh_segonly -e <span class="string">'chown -R gpadmin:gpadmin /opt/applications/greenplum'</span></span></span><br><span class="line">[min02] sudo chown -R gpadmin:gpadmin /opt/applications/greenplum</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h3 id="4-初始化Greenplum数据库"><a href="#4-初始化Greenplum数据库" class="headerlink" title="4. 初始化Greenplum数据库"></a>4. 初始化Greenplum数据库</h3><p>初始化一个Greenplum数据库首先要创建一个新的初始化配置文件，并修改相应参数；然后使用<code>gpinitsystem</code>脚本来初始化数据库，其会在Master、Standby以及所有Segments节点上初始化数据库。初始化完成后就可以使用Greenplum数据库来操作数据了。</p>
+<h4 id="4-1-创建初始化文件"><a href="#4-1-创建初始化文件" class="headerlink" title="4.1 创建初始化文件"></a>4.1 创建初始化文件</h4><p>使用<code>gpadmin</code>用户，创建<em>hostfile_gpinitsystem</em>文件，将Segments节点的信息写入：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">min02</span><br></pre></td></tr></table></figure>
+
+<h4 id="4-2-创建Greenplum数据库的配置文件"><a href="#4-2-创建Greenplum数据库的配置文件" class="headerlink" title="4.2 创建Greenplum数据库的配置文件"></a>4.2 创建Greenplum数据库的配置文件</h4><p>Greenplum默认的配置文件为<em>$GPHOME/docs/cli_help/gpconfigs/gpinitsystem_config</em>，拷贝出来一份进行修改：</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> cp gpinitsystem_config /opt/applications/greenplum/gpconfigs/</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> vi gpinitsystem_config</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="string">ARRAY_NAME="Greenplum</span> <span class="string">Data</span> <span class="string">Platform"</span></span><br><span class="line"><span class="string">SEG_PREFIX=gpseg</span></span><br><span class="line"><span class="string">PORT_BASE=6000</span></span><br><span class="line"><span class="string">declare</span> <span class="bullet">-a</span> <span class="string">DATA_DIRECTORY=(/opt/applications/greenplum/primary</span> <span class="string">/opt/applications/greenplum/primary)</span></span><br><span class="line"><span class="string">MASTER_HOSTNAME=min01</span></span><br><span class="line"><span class="string">MASTER_DIRECTORY=/opt/applications/greenplum/master</span></span><br><span class="line"><span class="string">MASTER_PORT=5432</span></span><br><span class="line"><span class="string">TRUSTED_SHELL=ssh</span></span><br><span class="line"><span class="string">CHECK_POINT_SEGMENTS=8</span></span><br><span class="line"><span class="string">ENCODING=UNICODE</span></span><br></pre></td></tr></table></figure>
+
+<p>其中<code>DATA_DIRECTORY</code>参数指定了Segment节点的数据目录，也指定了该节点上会创建多少个Segment。上面的参数表示每个节点创建2个Segment，且都在<em>/opt/applications/greenplum/primary</em>目录中。</p>
+<p>如果需要配置Mirror Segment，则还需要添加Mirror Segment的相关配置参数：</p>
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="string">MIRROR_PORT_BASE=7000</span></span><br><span class="line"><span class="string">declare</span> <span class="bullet">-a</span> <span class="string">MIRROR_DATA_DIRECTORY=(/opt/applications/greenplum/mirror</span> <span class="string">/opt/applications/greenplum/mirror)</span></span><br></pre></td></tr></table></figure>
+
+<p>通过<code>gpaddmirrors</code>可以在初始化完毕之后再配置Mirror Segment，参考<a href="http://docs.greenplum.org/6-1/utility_guide/ref/gpaddmirrors.html" target="_blank" rel="noopener">官方文档</a>。</p>
+<blockquote>
+<p>⚠️注意：1个Greenplum数据库必须包含1个Master实例和至少2 个Segment实例（即使集群是单节点）。</p>
+<p><code>MIRROR_PORT_BASE</code>端口号的范围根据<em>/etc/sysctl.conf</em>中的<code>net.ipv4.ip_local_port_range</code>参数来选。</p>
+</blockquote>
+<h4 id="4-3-设置Greenplum环境变量"><a href="#4-3-设置Greenplum环境变量" class="headerlink" title="4.3 设置Greenplum环境变量"></a>4.3 设置Greenplum环境变量</h4><p>编辑<code>gpadmin</code>用户环境变量：</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> vi ~/.bashrc</span></span><br><span class="line">export PGPORT=5432</span><br><span class="line">export PGUSER=gpadmin</span><br><span class="line">export MASTER_DATA_DIRECTORY=/opt/applications/greenplum/master/gpseg-1</span><br><span class="line">source /usr/local/greenplum-db-6.1.0/greenplum_path.sh</span><br><span class="line"><span class="meta">#</span><span class="bash">如果是RHEL 7或CentOS 7，启用在greenplum_path.sh环境中使用ps命令</span></span><br><span class="line">export LD_PRELOAD=/lib64/libz.so.1 ps</span><br><span class="line"><span class="meta">$</span><span class="bash"> <span class="built_in">source</span> ~/.bashrc</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="4-4-执行初始化命令"><a href="#4-4-执行初始化命令" class="headerlink" title="4.4 执行初始化命令"></a>4.4 执行初始化命令</h4><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> gpinitsystem -c /opt/applications/greenplum/gpconfigs/gpinitsystem_config -h /home/gpadmin/hostfile_gpinitsystem</span></span><br></pre></td></tr></table></figure>
+
+<p>如果集群中包含Standby Master，则需要加上<code>-s standby_master_hostname</code>指定主机名；如果需要初始化Mirror Segment节点，需要使用<code>-S</code>：</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> gpinitsystem -c /opt/applications/greenplum/gpconfigs/gpinitsystem_config -h /home/gpadmin/hostfile_gpinitsystem -s standby_master_hostname -S</span></span><br></pre></td></tr></table></figure>
+
+<p>初始化命令会检查初始化信息，并确保可以访问配置文件指定的节点，同时对数据目录有读写权限。如果所有检查通过，会提示用户确认以上信息，需要输入字符Y，初始化工具就正式开始初始化工作。初始化工具会初始化Master节点以及每个Segment节点，Segment节点的初始化工作是并行完成的。初始化之后，脚本会启动Greenplum数据库，用户可以看到下一条提示信息：</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">Greenplum Database instance successfully created</span><br></pre></td></tr></table></figure>
+
+<p>至此，1个Greenplum集群已经初始化成功。可以登录到某个节点，使用<code>ps -ef | grep postgres</code>命令查看正在运行的Greenplum进程；也可以使用<code>gpstate</code>命令查看数据库当前信息：</p>
+<img src="/images/Greenplum%E5%AE%89%E8%A3%85%E9%83%A8%E7%BD%B2/image-20191218170337199.png" alt="image-20191218170337199" style="zoom:50%;">
+
+<hr>
+<h3 id="附录"><a href="#附录" class="headerlink" title="附录"></a>附录</h3><p><em>/etc/sysctl.conf</em>文件参数说明，参数取自<a href="http://docs.greenplum.org/6-1/install_guide/prep_os.html#topic3__sysctl_file" target="_blank" rel="noopener">官网</a>：</p>
+<table>
+<thead>
+<tr>
+<th align="left">参数名称</th>
+<th align="left">设置值/字节</th>
+<th align="left">参数说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">kernel.shmmax</td>
+<td align="left">500000000</td>
+<td align="left">表示单个共享内存段的最大值，此值一般为<code>kernel.shmall</code>*<code>PAGE_SIZE</code></td>
+</tr>
+<tr>
+<td align="left">kernel.shmmni</td>
+<td align="left">4096</td>
+<td align="left">表示单个共享内存段的最小值，一般为4kB，即4096bit，也可适当调大，一般为4096的2-3倍</td>
+</tr>
+<tr>
+<td align="left">kernel.shmall</td>
+<td align="left">4000000000</td>
+<td align="left">表示可用共享内存的总量，一般为物理内存的一半</td>
+</tr>
+<tr>
+<td align="left">kernel.sem</td>
+<td align="left">500 2048000 200 40960</td>
+<td align="left">该文件用于控制内核信号量，信号量是System VIPC用于进程间通讯的方法。<br>第一列：表示每个信号集中的最大信号量数目；<br>第二列：表示系统范围内的最大信号量总数目；<br>第三列：表示每个信号发生时的最大系统操作数目；<br>第四列：表示系统范围内的最大信号集总数目。<br>所以，<code>第一列</code>*<code>第四列</code>=<code>第二列</code></td>
+</tr>
+<tr>
+<td align="left">kernel.sysrq</td>
+<td align="left">1</td>
+<td align="left">内核系统请求调试功能控制，0表示禁用，1表示启用</td>
+</tr>
+<tr>
+<td align="left">kernel.core_uses_pid</td>
+<td align="left">1</td>
+<td align="left">这有利于多线程调试，0表示禁用，1表示启用</td>
+</tr>
+<tr>
+<td align="left">kernel.msgmnb</td>
+<td align="left">65536</td>
+<td align="left">该文件指定一个消息队列的最大长度<br>缺省设置：16384</td>
+</tr>
+<tr>
+<td align="left">kernel.msgmax</td>
+<td align="left">65536</td>
+<td align="left">该文件指定了从一个进程发送到另一个进程的消息的最大长度。进程间的消息传递是在内核的内存中进行的，不会交换到磁盘上，所以如果增加该值，则将增加操作系统所使用的内存数量。<br>缺省设置：8192</td>
+</tr>
+<tr>
+<td align="left">kernel.msgmni</td>
+<td align="left">2048</td>
+<td align="left">该文件指定消息队列标识的最大数目，即系统范围内最大多少个消息队列。</td>
+</tr>
+<tr>
+<td align="left">net.ipv4.tcp_syncookies</td>
+<td align="left">1</td>
+<td align="left">表示开启SYN Cookies，当SYN等待队列溢出时，启用cookies来处理，可以防范少量的SYN攻击。<br>0表示关闭（默认），1表示启用</td>
+</tr>
+<tr>
+<td align="left">net.ipv4.ip_forward</td>
+<td align="left">0</td>
+<td align="left">该文件表示是否打开IP转发。<br>0表示禁止，1表示转发，缺省设置0</td>
+</tr>
+<tr>
+<td align="left">net.ipv4.conf.default.accept_source_route</td>
+<td align="left">0</td>
+<td align="left">是否允许源地址经过路由。<br>0表示禁止。1表示打开，缺省设置0</td>
+</tr>
+<tr>
+<td align="left">net.ipv4.tcp_tw_recycle</td>
+<td align="left">1</td>
+<td align="left">允许将TIME_WAIT sockets快速回收以便利用。<br>0表示禁用，1表示启用</td>
+</tr>
+<tr>
+<td align="left">net.ipv4.tcp_max_syn_backlog</td>
+<td align="left">4096</td>
+<td align="left">增加TCP SYN队列长度，使系统可以处理更多的并发连接。一般为4096，可以调大，必须是4096的倍数，建议是2-3倍</td>
+</tr>
+<tr>
+<td align="left">net.ipv4.conf.all.arp_filter</td>
+<td align="left">1</td>
+<td align="left">表示控制具体应该由哪块网卡来回应arp包,缺省设置0，建议设置为1</td>
+</tr>
+<tr>
+<td align="left">net.ipv4.ip_local_port_range</td>
+<td align="left">1025 65535</td>
+<td align="left">指定端口范围的一个配置,默认是10000-65535，可调整为1025-65535</td>
+</tr>
+<tr>
+<td align="left">net.core.netdev_max_backlog</td>
+<td align="left">10000</td>
+<td align="left">进入包的最大设备队列。默认是1000，对重负载服务器而言，该值太低，可调整到16384/32768/65535</td>
+</tr>
+<tr>
+<td align="left">net.core.rmem_max</td>
+<td align="left">2097152</td>
+<td align="left">最大socket读buffer。可参考的优化值：1746400/3492800/6985600</td>
+</tr>
+<tr>
+<td align="left">net.core.wmem_max</td>
+<td align="left">2097152</td>
+<td align="left">最大socket写buffer。可参考的优化值：1746400/3492800/6985600</td>
+</tr>
+<tr>
+<td align="left">vm.overcommit_memory</td>
+<td align="left">2</td>
+<td align="left">Linux下overcommit有三种策略，0：启发式策略；1：任何overcommit都会被接受；2：当系统分配的内存超过swap+N%*物理RAM(N%由vm.overcommit_ratio决定)时，会拒绝commit。<br>一般设置为2</td>
+</tr>
+<tr>
+<td align="left">vm.swappiness</td>
+<td align="left">10</td>
+<td align="left">当物理内存超过设置的值是开始使用swap的内存空间，计算公式是100-10=90%表示物理内存使用到90%时开始交换分区使用</td>
+</tr>
+<tr>
+<td align="left">kernel.pid_max</td>
+<td align="left">655360</td>
+<td align="left">用户打开最大进程数，全局配置的参数</td>
+</tr>
+</tbody></table>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Greenplum/" rel="tag"># Greenplum</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-next post-nav-item">
+                <a href="/2019/12/17/Greenplum%E7%9A%84%E6%9E%B6%E6%9E%84/" rel="next" title="Greenplum的架构">
+                  <i class="fa fa-chevron-left"></i> Greenplum的架构
+                </a>
+            </div>
+
+            <span class="post-nav-divider"></span>
+
+            <div class="post-nav-prev post-nav-item">
+                <a href="/2019/12/17/CentOS7-VMware%E5%85%8B%E9%9A%86/" rel="prev" title="CentOS7 VMware克隆">
+                  CentOS7 VMware克隆 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-准备工作"><span class="nav-number">1.</span> <span class="nav-text">1. 准备工作</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-1-关闭SELinux和Firewall"><span class="nav-number">1.1.</span> <span class="nav-text">1.1 关闭SELinux和Firewall</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#1-1-1-关闭SELinux"><span class="nav-number">1.1.1.</span> <span class="nav-text">1.1.1 关闭SELinux</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#1-1-2-关闭Firewall"><span class="nav-number">1.1.2.</span> <span class="nav-text">1.1.2 关闭Firewall</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#1-2-操作系统参数设置"><span class="nav-number">1.2.</span> <span class="nav-text">1.2 操作系统参数设置</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#1-2-1-配置hosts文件"><span class="nav-number">1.2.1.</span> <span class="nav-text">1.2.1  配置hosts文件</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#1-2-2-编辑sysctl-conf文件"><span class="nav-number">1.2.2.</span> <span class="nav-text">1.2.2 编辑sysctl.conf文件</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#1-2-3-系统资源限制"><span class="nav-number">1.2.3.</span> <span class="nav-text">1.2.3 系统资源限制</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#1-2-4-创建Greenplum管理员用户"><span class="nav-number">1.2.4.</span> <span class="nav-text">1.2.4 创建Greenplum管理员用户</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#1-2-5-同步系统时间"><span class="nav-number">1.2.5.</span> <span class="nav-text">1.2.5 同步系统时间</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#1-2-5-1-NTP服务器设置"><span class="nav-number">1.2.5.1.</span> <span class="nav-text">1.2.5.1 NTP服务器设置</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#1-2-5-2-NTP客户端设置"><span class="nav-number">1.2.5.2.</span> <span class="nav-text">1.2.5.2 NTP客户端设置</span></a></li></ol></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-安装Greenplum"><span class="nav-number">2.</span> <span class="nav-text">2. 安装Greenplum</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#2-1-每个节点安装Greenplum"><span class="nav-number">2.1.</span> <span class="nav-text">2.1 每个节点安装Greenplum</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-2-配置SSH免密登陆"><span class="nav-number">2.2.</span> <span class="nav-text">2.2 配置SSH免密登陆</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-创建数据存放目录"><span class="nav-number">3.</span> <span class="nav-text">3. 创建数据存放目录</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#3-1-Master和Standby"><span class="nav-number">3.1.</span> <span class="nav-text">3.1 Master和Standby</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-2-Segment"><span class="nav-number">3.2.</span> <span class="nav-text">3.2 Segment</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-初始化Greenplum数据库"><span class="nav-number">4.</span> <span class="nav-text">4. 初始化Greenplum数据库</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#4-1-创建初始化文件"><span class="nav-number">4.1.</span> <span class="nav-text">4.1 创建初始化文件</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#4-2-创建Greenplum数据库的配置文件"><span class="nav-number">4.2.</span> <span class="nav-text">4.2 创建Greenplum数据库的配置文件</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#4-3-设置Greenplum环境变量"><span class="nav-number">4.3.</span> <span class="nav-text">4.3 设置Greenplum环境变量</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#4-4-执行初始化命令"><span class="nav-number">4.4.</span> <span class="nav-text">4.4 执行初始化命令</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#附录"><span class="nav-number">5.</span> <span class="nav-text">附录</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <img class="site-author-image" itemprop="image" alt="MIN MIN"
+    src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">MIN MIN</p>
+  <div class="site-description" itemprop="description">即使最后没有人为你鼓掌，也要优雅地谢幕，感谢自己的认真付出。</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">54</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">13</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+        <span class="site-state-item-count">32</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/ashermin" title="GitHub &amp;rarr; https:&#x2F;&#x2F;github.com&#x2F;ashermin" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+<div class="copyright">
+  
+  &copy; 2019 – 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user-circle"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">MIN MIN</span>
+</div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+<script src="/js/utils.js"></script>
+<script src="/js/schemes/pisces.js"></script>
+<script src="/js/next-boot.js"></script>
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+</body>
+</html>

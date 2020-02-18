@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.0.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/avatar.jpg">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/avatar.jpg">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/avatar.jpg">
+  <link rel="mask-icon" href="/images/avatar.jpg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+
+
+<script id="hexo-configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '7.4.2',
+    exturl: false,
+    sidebar: {"position":"left","width":260,"display":"post","offset":12,"onmobile":false},
+    copycode: {"enable":true,"show_result":true,"style":"default"},
+    back2top: {"enable":true,"sidebar":false,"scrollpercent":true},
+    bookmark: {"enable":false,"color":"#222","save":"auto"},
+    fancybox: false,
+    mediumzoom: false,
+    lazyload: false,
+    pangu: false,
+    algolia: {
+      appID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    localsearch: {"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},
+    path: '',
+    motion: {"enable":false,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    translation: {
+      copy_button: '复制',
+      copy_success: '复制成功',
+      copy_failure: '复制失败'
+    },
+    sidebarPadding: 40
+  };
+</script>
+
+  <meta name="description" content="Greenplum是开源分布式数据库，采用无共享（Share-Nothing）的MPP（Massively Parallel Processing）架构。 无共享架构的特点是整个系统使用多个处理单元协作完成任务。每个处理单元拥有自己的操作系统、内存和磁盘等资源，不同节点之间通过网络进行通信。 Greenplum数据库中，每个处理单元叫作Segment节点。Master节点负责生成查询计划，并协调每">
+<meta name="keywords" content="Greenplum">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Greenplum的架构">
+<meta property="og:url" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2019&#x2F;12&#x2F;17&#x2F;Greenplum%E7%9A%84%E6%9E%B6%E6%9E%84&#x2F;index.html">
+<meta property="og:site_name" content="MIN MIN">
+<meta property="og:description" content="Greenplum是开源分布式数据库，采用无共享（Share-Nothing）的MPP（Massively Parallel Processing）架构。 无共享架构的特点是整个系统使用多个处理单元协作完成任务。每个处理单元拥有自己的操作系统、内存和磁盘等资源，不同节点之间通过网络进行通信。 Greenplum数据库中，每个处理单元叫作Segment节点。Master节点负责生成查询计划，并协调每">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;images&#x2F;Greenplum%E6%9E%B6%E6%9E%84&#x2F;image-20191217121758593.png">
+<meta property="og:updated_time" content="2019-12-19T08:36:12.558Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;images&#x2F;Greenplum%E6%9E%B6%E6%9E%84&#x2F;image-20191217121758593.png">
+
+<link rel="canonical" href="http://yoursite.com/2019/12/17/Greenplum%E7%9A%84%E6%9E%B6%E6%9E%84/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true,
+    isPage: false,
+    isArchive: false
+  };
+</script>
+
+  <title>Greenplum的架构 | MIN MIN</title>
+  
+
+
+  <script>
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?cad2a7930afd095772e571e6eab3628f";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+  <!--  -->
+<link href='//fonts.googleapis.com/css?family=Kaushan+Script' rel='stylesheet' type='text/css'>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">MIN MIN</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+        <p class="site-subtitle">BLOG</p>
+  </div>
+
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档</a>
+
+  </li>
+  </ul>
+
+</nav>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/12/17/Greenplum%E7%9A%84%E6%9E%B6%E6%9E%84/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="MIN MIN">
+      <meta itemprop="description" content="即使最后没有人为你鼓掌，也要优雅地谢幕，感谢自己的认真付出。">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="MIN MIN">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Greenplum的架构
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2019-12-17 12:12:08" itemprop="dateCreated datePublished" datetime="2019-12-17T12:12:08+08:00">2019-12-17</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2019-12-19 16:36:12" itemprop="dateModified" datetime="2019-12-19T16:36:12+08:00">2019-12-19</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Greenplum/" itemprop="url" rel="index">
+                    <span itemprop="name">Greenplum</span>
+                  </a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>Greenplum是开源分布式数据库，采用无共享（Share-Nothing）的MPP（Massively Parallel Processing）架构。</p><blockquote>
+<p>无共享架构的特点是整个系统使用多个处理单元协作完成任务。每个处理单元拥有自己的操作系统、内存和磁盘等资源，不同节点之间通过网络进行通信。</p>
+</blockquote><p>Greenplum数据库中，每个处理单元叫作Segment节点。Master节点负责生成查询计划，并协调每个处理单元进行查询执行。在查询执行过程中，负责节点间的数据传输功能的组件为Interconnect。为了实现Greenplum的高可用，Master节点和每个Segment节点都有自己的备份节点：Standby Master和Mirror Segment。</p><a id="more"></a>
+
+
+<blockquote>
+<p>Greenplum的高可用架构之所以采用主备方式而不是类似Hadoop的多副本机制，主要是因为Hadoop的磁盘存储是基于磁盘簇（Just Bundle Of Disks,JBOD），每一块磁盘没有冗余机制，而是通过应用层的多副本来保证数据可靠性。Greenplum建议的磁盘存储方式是RAID（Redundant Array Of Inexpensive Disks），每一块磁盘在物理上都有冗余机制，主备方式则是在磁盘冗余基础上提供另一级的数据可靠性。</p>
+</blockquote>
+<h3 id="Greenplum的组成"><a href="#Greenplum的组成" class="headerlink" title="Greenplum的组成"></a>Greenplum的组成</h3><p>Greenplum数据库采用Master/Slave架构，一个Greenplum集群通常由一个Master节点、一个Standby Master节点以及多个Segment节点组成，节点之间通过高速网络互连。</p>
+<p>流程：当Master节点接收到用户发起的查询语句时，会对查询语句进行查询编译、查询优化等操作，生成并行查询计划，并发到Segment节点执行。Segment执行完毕，会将数据发回Master节点，最终呈现给用户。</p>
+<img src="/images/Greenplum%E6%9E%B6%E6%9E%84/image-20191217121758593.png" alt="image-20191217121758593" style="zoom:50%;">
+
+<h4 id="Master"><a href="#Master" class="headerlink" title="Master"></a>Master</h4><p>Greenplum数据库的Master是整个Greenplum数据库系统的入口，它接受连接和SQL查询并且把工作分布到Segment实例上。</p>
+<p>Greenplum数据库的最终用户与Greenplum数据库（通过Master）交互时，会觉得他们是在与一个典型的PostgreSQL数据库交互。他们使用诸如psql之类的客户端或者JDBC、ODBC、<a href="https://www.postgresql.org/docs/8.3/static/libpq.html" target="_blank" rel="noopener">libpq</a>（PostgreSQL的C语言API）等应用编程接口（API）连接到数据库。</p>
+<p>Master是<em>全局系统目录</em>的所在地。全局系统目录是一组包含了有关Greenplum数据库系统本身的元数据的系统表。Master上不包含任何用户数据，数据只存在于<em>Segment</em>之上。Master会认证客户端连接、处理到来的SQL命令、在Segment之间分布工作负载、协调每一个Segment返回的结果以及把最终结果呈现给客户端程序。</p>
+<p>Greenplum数据库使用预写式日志（WAL）来实现主/备镜像。在基于WAL的日志中，所有的修改都会在应用之前被写入日志，以确保对于任何正在处理的操作的数据完整性。</p>
+<h4 id="Segment"><a href="#Segment" class="headerlink" title="Segment"></a>Segment</h4><p>Greenplum数据库的Segment实例是独立的PostgreSQL数据库，每一个都存储了数据的一部分并且执行查询处理的主要部分。</p>
+<p>当一个用户通过Greenplum的Master连接到数据库并且发出一个查询时，在每一个Segment数据库上都会创建一些进程来处理该查询的工作。更多有关查询处理的内容，请见<a href="https://greenplum.cn/gp5/admin_guide/query/topics/parallel-proc.html#topic1" target="_blank" rel="noopener">关于Greenplum的查询处理</a>。</p>
+<p>用户定义的表及其索引会分布在Greenplum数据库系统中可用的Segment上，每一个Segment都包含数据的不同部分。服务于Segment数据的数据库服务器进程运行在相应的Segment实例之下。用户通过Master与一个Greenplum数据库系统中的Segment交互。</p>
+<p>Segment运行在被称作<em>Segment主机</em>的服务器上。一台Segment主机通常运行2至8个Greenplum的Segment，这取决于CPU核数、RAM、存储、网络接口和工作负载。Segment主机预期都以相同的方式配置。从Greenplum数据库获得最佳性能的关键在于在大量能力相同的Segment之间<em>平均地</em>分布数据和工作负载，这样所有的Segment可以同时开始为一个任务工作并且同时完成它们的工作。</p>
+<h4 id="Interconnect"><a href="#Interconnect" class="headerlink" title="Interconnect"></a>Interconnect</h4><p>Interconect是Greenplum数据库架构中的网络层。</p>
+<p><em>Interconnect</em>指的是Segment之间的进程间通信以及这种通信所依赖的网络基础设施。Greenplum的Interconnect采用了一种标准的以太交换网络。出于性能原因，推荐使用万兆网或者更快的系统。</p>
+<p>默认情况下，Interconnect使用带流控制的用户数据包协议（UDPIFC）在网络上发送消息。Greenplum软件在UDP之上执行包验证。这意味着其可靠性等效于传输控制协议（TCP）且性能和可扩展性要超过TCP。如果Interconnect被改为TCP，Greenplum数据库会有1000个Segment实例的可扩展性限制。对于Interconnect的默认协议UDPIFC则不存在这种限制。</p>
+<h4 id="Standby-Master"><a href="#Standby-Master" class="headerlink" title="Standby Master"></a>Standby Master</h4><p>Standby Master是Master节点的备份节点，通常部署在与Master节点不同的物理节点上。Master节点不存储用户数据，当数据库元信息有更新时，这些变化会自动同步到Standby Master节点以保证元信息的一致性。当Master节点GG时，Standby Master节点就登基上位来了。</p>
+<h4 id="Mirror-Segment"><a href="#Mirror-Segment" class="headerlink" title="Mirror Segment"></a>Mirror Segment</h4><p>每一个Segment节点可以部署一个Mirror Segment节点，此时原有的Segment节点被称为Primary Segment节点。当Primary Segment节点接收Master节点的查询请求并需要修改用户数据时，对应的数据变化会复制到相应的Mirror Segment节点上。在查询执行过程中，一旦Primary Segment不可用时，查询执行会重新分发到Mirror Segment节点以保证返回正确的查询结果。</p>
+<p>注：具体Greenplum架构信息可以详见<a href="https://docs.greenplum.cn/6-0/admin_guide/intro/arch_overview.html" target="_blank" rel="noopener">官方文档</a>，这里我参考了《Greenplum：从大数据战略到实现》一书。</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Greenplum/" rel="tag"># Greenplum</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-next post-nav-item">
+                <a href="/2019/12/13/PostgreSQL%E5%85%A5%E9%97%A8/" rel="next" title="PostgreSQL入门">
+                  <i class="fa fa-chevron-left"></i> PostgreSQL入门
+                </a>
+            </div>
+
+            <span class="post-nav-divider"></span>
+
+            <div class="post-nav-prev post-nav-item">
+                <a href="/2019/12/17/Greenplum%E5%AE%89%E8%A3%85%E9%83%A8%E7%BD%B2/" rel="prev" title="Greenplum安装部署">
+                  Greenplum安装部署 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#Greenplum的组成"><span class="nav-number">1.</span> <span class="nav-text">Greenplum的组成</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Master"><span class="nav-number">1.1.</span> <span class="nav-text">Master</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Segment"><span class="nav-number">1.2.</span> <span class="nav-text">Segment</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Interconnect"><span class="nav-number">1.3.</span> <span class="nav-text">Interconnect</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Standby-Master"><span class="nav-number">1.4.</span> <span class="nav-text">Standby Master</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Mirror-Segment"><span class="nav-number">1.5.</span> <span class="nav-text">Mirror Segment</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <img class="site-author-image" itemprop="image" alt="MIN MIN"
+    src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">MIN MIN</p>
+  <div class="site-description" itemprop="description">即使最后没有人为你鼓掌，也要优雅地谢幕，感谢自己的认真付出。</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">54</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">13</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+        <span class="site-state-item-count">32</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/ashermin" title="GitHub &amp;rarr; https:&#x2F;&#x2F;github.com&#x2F;ashermin" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+<div class="copyright">
+  
+  &copy; 2019 – 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user-circle"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">MIN MIN</span>
+</div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+<script src="/js/utils.js"></script>
+<script src="/js/schemes/pisces.js"></script>
+<script src="/js/next-boot.js"></script>
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+</body>
+</html>

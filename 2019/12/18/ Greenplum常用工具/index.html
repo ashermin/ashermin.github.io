@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.0.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/avatar.jpg">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/avatar.jpg">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/avatar.jpg">
+  <link rel="mask-icon" href="/images/avatar.jpg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+
+
+<script id="hexo-configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '7.4.2',
+    exturl: false,
+    sidebar: {"position":"left","width":260,"display":"post","offset":12,"onmobile":false},
+    copycode: {"enable":true,"show_result":true,"style":"default"},
+    back2top: {"enable":true,"sidebar":false,"scrollpercent":true},
+    bookmark: {"enable":false,"color":"#222","save":"auto"},
+    fancybox: false,
+    mediumzoom: false,
+    lazyload: false,
+    pangu: false,
+    algolia: {
+      appID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    localsearch: {"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},
+    path: '',
+    motion: {"enable":false,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    translation: {
+      copy_button: '复制',
+      copy_success: '复制成功',
+      copy_failure: '复制失败'
+    },
+    sidebarPadding: 40
+  };
+</script>
+
+  <meta name="description" content="gpstartgpstart命令用于启动一个Greenplum集群，包括启动Master和Segment节点。如果只想启动Master节点，而不启动Segment节点，可以加-m选项，这样就能以维护模式（maintenance mode）启动Master节点。（具体选项详见官方手册）直接启动，不提示终端用户输入确认：">
+<meta name="keywords" content="Greenplum">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Greenplum常用工具">
+<meta property="og:url" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2019&#x2F;12&#x2F;18&#x2F;%20Greenplum%E5%B8%B8%E7%94%A8%E5%B7%A5%E5%85%B7&#x2F;index.html">
+<meta property="og:site_name" content="MIN MIN">
+<meta property="og:description" content="gpstartgpstart命令用于启动一个Greenplum集群，包括启动Master和Segment节点。如果只想启动Master节点，而不启动Segment节点，可以加-m选项，这样就能以维护模式（maintenance mode）启动Master节点。（具体选项详见官方手册）直接启动，不提示终端用户输入确认：">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;images&#x2F;Greenplum%E6%95%B0%E6%8D%AE%E5%BA%93%E7%9A%84%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4&#x2F;image-20191218212125450.png">
+<meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;images&#x2F;Greenplum%E6%95%B0%E6%8D%AE%E5%BA%93%E7%9A%84%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4&#x2F;image-20191218212616730.png">
+<meta property="og:updated_time" content="2019-12-23T02:22:14.078Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;images&#x2F;Greenplum%E6%95%B0%E6%8D%AE%E5%BA%93%E7%9A%84%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4&#x2F;image-20191218212125450.png">
+
+<link rel="canonical" href="http://yoursite.com/2019/12/18/%20Greenplum%E5%B8%B8%E7%94%A8%E5%B7%A5%E5%85%B7/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true,
+    isPage: false,
+    isArchive: false
+  };
+</script>
+
+  <title>Greenplum常用工具 | MIN MIN</title>
+  
+
+
+  <script>
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?cad2a7930afd095772e571e6eab3628f";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+  <!--  -->
+<link href='//fonts.googleapis.com/css?family=Kaushan+Script' rel='stylesheet' type='text/css'>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">MIN MIN</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+        <p class="site-subtitle">BLOG</p>
+  </div>
+
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档</a>
+
+  </li>
+  </ul>
+
+</nav>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/12/18/%20Greenplum%E5%B8%B8%E7%94%A8%E5%B7%A5%E5%85%B7/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="MIN MIN">
+      <meta itemprop="description" content="即使最后没有人为你鼓掌，也要优雅地谢幕，感谢自己的认真付出。">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="MIN MIN">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Greenplum常用工具
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2019-12-18 20:18:26" itemprop="dateCreated datePublished" datetime="2019-12-18T20:18:26+08:00">2019-12-18</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2019-12-23 10:22:14" itemprop="dateModified" datetime="2019-12-23T10:22:14+08:00">2019-12-23</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Greenplum/" itemprop="url" rel="index">
+                    <span itemprop="name">Greenplum</span>
+                  </a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h3 id="gpstart"><a href="#gpstart" class="headerlink" title="gpstart"></a>gpstart</h3><p><code>gpstart</code>命令用于启动一个Greenplum集群，包括启动Master和Segment节点。如果只想启动Master节点，而不启动Segment节点，可以加<code>-m</code>选项，这样就能以维护模式（maintenance mode）启动Master节点。（具体选项详见<a href="http://docs.greenplum.org/6-1/utility_guide/ref/gpstart.html#topic1" target="_blank" rel="noopener">官方手册</a>）</p><p>直接启动，不提示终端用户输入确认：</p><a id="more"></a>
+
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> gpstart -a</span></span><br></pre></td></tr></table></figure>
+
+<p>只启动Master实例，主要在故障处理时使用：</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> gpstart -m PGOPTIONS=<span class="string">'-c gp_session_role=utility'</span> psql</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="gpstop"><a href="#gpstop" class="headerlink" title="gpstop"></a>gpstop</h3><p><code>gpstop</code>命令用于关闭一个Greenplum集群。其相关选项说明如下表：（具体选项详见<a href="http://docs.greenplum.org/6-1/utility_guide/ref/gpstop.html" target="_blank" rel="noopener">官方手册</a>）</p>
+<table>
+<thead>
+<tr>
+<th>选项</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>-r</td>
+<td>停止并重启数据库</td>
+</tr>
+<tr>
+<td>-m</td>
+<td>关闭以维护模式启动的Master</td>
+</tr>
+<tr>
+<td>-M fast</td>
+<td>任何进行中的事务都会中断并回滚</td>
+</tr>
+<tr>
+<td>-M immediate</td>
+<td>任何进行中的事务都会中止。这种模式不会允许数据库做一些事务处理或者清理任何临时文件，而是直接杀死所有postgres进程</td>
+</tr>
+<tr>
+<td>-M smart</td>
+<td>如果有活跃连接，这条命令会失败并提示警告信息，这是<strong>默认</strong>的关闭方式</td>
+</tr>
+<tr>
+<td>-u</td>
+<td>重新加载<em>pg_hba.conf</em>和<em>postgresql.conf</em>文件，但是不会关闭整个数据库系统。这种方式用于运行期间重新加载修改后的配置参数</td>
+</tr>
+</tbody></table>
+<h3 id="gpstate"><a href="#gpstate" class="headerlink" title="gpstate"></a>gpstate</h3><p><code>gpstate</code>命令用于展示运行中的Greenplum数据库的信息，比如哪个节点宕机、Master和Segment的配置信息、数据库系统所使用的端口号、Segment和Mirror Segment的映射关系等。（具体选项详见<a href="http://docs.greenplum.org/6-1/utility_guide/ref/gpstate.html" target="_blank" rel="noopener">官方手册</a>）</p>
+<p>查看Primary实例和Mirror实例的对应关系 ：</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> gpstate -c</span></span><br></pre></td></tr></table></figure>
+
+<p><img src="/images/Greenplum%E6%95%B0%E6%8D%AE%E5%BA%93%E7%9A%84%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4/image-20191218212125450.png" alt="image-20191218212125450"></p>
+<p>只列出Mirror实例的状态和配置信息：</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> gpstate -m</span></span><br></pre></td></tr></table></figure>
+
+<img src="/images/Greenplum%E6%95%B0%E6%8D%AE%E5%BA%93%E7%9A%84%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4/image-20191218212616730.png" alt="image-20191218212616730" style="zoom:50%;">
+
+<p>显示Standby Master的详细信息：</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> gpstate -f</span></span><br></pre></td></tr></table></figure>
+
+<p>查看详细状态。如在同步,可显示数据同步完成百分比：</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> gpstate -s</span></span><br></pre></td></tr></table></figure>
+
+<p>查看Greenplum数据库版本：</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> gpstate --version</span></span><br><span class="line">gpstate version 6.1.0 build commit:6788ca8c13b2bd6e8976ccffea07313cbab30560</span><br></pre></td></tr></table></figure>
+
+<h3 id="gpactivatestandby"><a href="#gpactivatestandby" class="headerlink" title="gpactivatestandby"></a>gpactivatestandby</h3><p><code>gpactivatestandby</code>命令用户激活Standby节点，通常用于Master节点无法正常工作的情况。Standby节点被激活后会成为Greenplum数据库集群中的Master节点，并接受客户端的查询请求。（具体选项详见<a href="http://docs.greenplum.org/6-1/utility_guide/ref/gpactivatestandby.html" target="_blank" rel="noopener">官方手册</a>）</p>
+<p>使用<code>-d</code>选项指明正在激活的Master节点数据目录的绝对路径。如果没有<code>-d</code>选项，该命令会使用环境变量<code>MASTER_DATA_DIRECTORY</code>的值：</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> gpactivatestandby -d /gpdata</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="gpconfig"><a href="#gpconfig" class="headerlink" title="gpconfig"></a>gpconfig</h3><p><code>gpconfig</code>命令用于设置、修改和查看数据库的Master、Segment和Mirror节点<em>postgresql.conf</em>配置文件中的配置参数。（具体选项详见<a href="http://docs.greenplum.org/6-1/utility_guide/ref/gpconfig.html" target="_blank" rel="noopener">官方手册</a>）</p>
+<p>设置所有Segment节点的<code>max_connections</code>参数为<code>100</code>，Master节点的<code>max_connections</code>为<code>10</code>：</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> gpconfig -c max_connections -v 100 -m 10</span></span><br></pre></td></tr></table></figure>
+
+<p>列出所有的配置参数信息：</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> gpconfig -l</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="gpdeletesystem"><a href="#gpdeletesystem" class="headerlink" title="gpdeletesystem"></a>gpdeletesystem</h3><p><code>gpdeletesystem</code>命令用于删除一个Greenplum数据库系统。执行该命令会终止所有Master和Segment节点上的postgres进程，然后删除数据目录。（具体选项详见<a href="http://docs.greenplum.org/6-1/utility_guide/ref/gpdeletesystem.html" target="_blank" rel="noopener">官方手册</a>）</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> gpdeletesystem -d /gpdata/gp-1</span></span><br></pre></td></tr></table></figure>
+
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Greenplum/" rel="tag"># Greenplum</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-next post-nav-item">
+                <a href="/2019/12/17/CentOS7-VMware%E5%85%8B%E9%9A%86/" rel="next" title="CentOS7 VMware克隆">
+                  <i class="fa fa-chevron-left"></i> CentOS7 VMware克隆
+                </a>
+            </div>
+
+            <span class="post-nav-divider"></span>
+
+            <div class="post-nav-prev post-nav-item">
+                <a href="/2019/12/19/%E8%BF%9E%E6%8E%A5Greenplum%E6%95%B0%E6%8D%AE%E5%BA%93/" rel="prev" title="连接Greenplum数据库">
+                  连接Greenplum数据库 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#gpstart"><span class="nav-number">1.</span> <span class="nav-text">gpstart</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#gpstop"><span class="nav-number">2.</span> <span class="nav-text">gpstop</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#gpstate"><span class="nav-number">3.</span> <span class="nav-text">gpstate</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#gpactivatestandby"><span class="nav-number">4.</span> <span class="nav-text">gpactivatestandby</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#gpconfig"><span class="nav-number">5.</span> <span class="nav-text">gpconfig</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#gpdeletesystem"><span class="nav-number">6.</span> <span class="nav-text">gpdeletesystem</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <img class="site-author-image" itemprop="image" alt="MIN MIN"
+    src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">MIN MIN</p>
+  <div class="site-description" itemprop="description">即使最后没有人为你鼓掌，也要优雅地谢幕，感谢自己的认真付出。</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">54</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">13</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+        <span class="site-state-item-count">32</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/ashermin" title="GitHub &amp;rarr; https:&#x2F;&#x2F;github.com&#x2F;ashermin" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+<div class="copyright">
+  
+  &copy; 2019 – 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user-circle"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">MIN MIN</span>
+</div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+<script src="/js/utils.js"></script>
+<script src="/js/schemes/pisces.js"></script>
+<script src="/js/next-boot.js"></script>
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+</body>
+</html>

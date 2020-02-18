@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.0.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/avatar.jpg">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/avatar.jpg">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/avatar.jpg">
+  <link rel="mask-icon" href="/images/avatar.jpg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+
+
+<script id="hexo-configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '7.4.2',
+    exturl: false,
+    sidebar: {"position":"left","width":260,"display":"post","offset":12,"onmobile":false},
+    copycode: {"enable":true,"show_result":true,"style":"default"},
+    back2top: {"enable":true,"sidebar":false,"scrollpercent":true},
+    bookmark: {"enable":false,"color":"#222","save":"auto"},
+    fancybox: false,
+    mediumzoom: false,
+    lazyload: false,
+    pangu: false,
+    algolia: {
+      appID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    localsearch: {"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},
+    path: '',
+    motion: {"enable":false,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    translation: {
+      copy_button: '复制',
+      copy_success: '复制成功',
+      copy_failure: '复制失败'
+    },
+    sidebarPadding: 40
+  };
+</script>
+
+  <meta name="description" content="环境准备操作Hive的同时对HBase也会产生影响，所以Hive需要持有操作HBase的Jar包和Zookeeper的信息。可以在hive-site.xml中配置：&amp;lt;property&amp;gt;  	&amp;lt;name&amp;gt;hive.aux.jars.path&amp;lt;&#x2F;name&amp;gt;  	&amp;lt;value&amp;gt;$HBASE_HOME&#x2F;lib&#x2F;hbase-common-1.2.0-cdh5.">
+<meta name="keywords" content="HBase">
+<meta property="og:type" content="article">
+<meta property="og:title" content="HBase与Hive的整合使用">
+<meta property="og:url" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2019&#x2F;12&#x2F;11&#x2F;HBase%E4%B8%8EHive%E7%9A%84%E6%95%B4%E5%90%88%E4%BD%BF%E7%94%A8&#x2F;index.html">
+<meta property="og:site_name" content="MIN MIN">
+<meta property="og:description" content="环境准备操作Hive的同时对HBase也会产生影响，所以Hive需要持有操作HBase的Jar包和Zookeeper的信息。可以在hive-site.xml中配置：&amp;lt;property&amp;gt;  	&amp;lt;name&amp;gt;hive.aux.jars.path&amp;lt;&#x2F;name&amp;gt;  	&amp;lt;value&amp;gt;$HBASE_HOME&#x2F;lib&#x2F;hbase-common-1.2.0-cdh5.">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;images&#x2F;HBase%E4%B8%8EHive%E7%9A%84%E6%95%B4%E5%90%88%E4%BD%BF%E7%94%A8&#x2F;image-20191211232142764.png">
+<meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;images&#x2F;HBase%E4%B8%8EHive%E7%9A%84%E6%95%B4%E5%90%88%E4%BD%BF%E7%94%A8&#x2F;image-20191211232208881.png">
+<meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;images&#x2F;HBase%E4%B8%8EHive%E7%9A%84%E6%95%B4%E5%90%88%E4%BD%BF%E7%94%A8&#x2F;image-20191211233539615.png">
+<meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;images&#x2F;HBase%E4%B8%8EHive%E7%9A%84%E6%95%B4%E5%90%88%E4%BD%BF%E7%94%A8&#x2F;image-20191211233637279.png">
+<meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;images&#x2F;HBase%E4%B8%8EHive%E7%9A%84%E6%95%B4%E5%90%88%E4%BD%BF%E7%94%A8&#x2F;image-20191211234028861.png">
+<meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;images&#x2F;HBase%E4%B8%8EHive%E7%9A%84%E6%95%B4%E5%90%88%E4%BD%BF%E7%94%A8&#x2F;image-20191211234124380.png">
+<meta property="og:updated_time" content="2019-12-11T15:59:18.061Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;images&#x2F;HBase%E4%B8%8EHive%E7%9A%84%E6%95%B4%E5%90%88%E4%BD%BF%E7%94%A8&#x2F;image-20191211232142764.png">
+
+<link rel="canonical" href="http://yoursite.com/2019/12/11/HBase%E4%B8%8EHive%E7%9A%84%E6%95%B4%E5%90%88%E4%BD%BF%E7%94%A8/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true,
+    isPage: false,
+    isArchive: false
+  };
+</script>
+
+  <title>HBase与Hive的整合使用 | MIN MIN</title>
+  
+
+
+  <script>
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?cad2a7930afd095772e571e6eab3628f";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+  <!--  -->
+<link href='//fonts.googleapis.com/css?family=Kaushan+Script' rel='stylesheet' type='text/css'>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">MIN MIN</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+        <p class="site-subtitle">BLOG</p>
+  </div>
+
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档</a>
+
+  </li>
+  </ul>
+
+</nav>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/12/11/HBase%E4%B8%8EHive%E7%9A%84%E6%95%B4%E5%90%88%E4%BD%BF%E7%94%A8/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="MIN MIN">
+      <meta itemprop="description" content="即使最后没有人为你鼓掌，也要优雅地谢幕，感谢自己的认真付出。">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="MIN MIN">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          HBase与Hive的整合使用
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2019-12-11 22:32:12 / 修改时间：23:59:18" itemprop="dateCreated datePublished" datetime="2019-12-11T22:32:12+08:00">2019-12-11</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/HBase/" itemprop="url" rel="index">
+                    <span itemprop="name">HBase</span>
+                  </a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>环境准备</p><p>操作Hive的同时对HBase也会产生影响，所以Hive需要持有操作HBase的Jar包和Zookeeper的信息。可以在<code>hive-site.xml</code>中配置：</p><figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">property</span>&gt;</span>  </span><br><span class="line">	<span class="tag">&lt;<span class="name">name</span>&gt;</span>hive.aux.jars.path<span class="tag">&lt;/<span class="name">name</span>&gt;</span>  </span><br><span class="line">	<span class="tag">&lt;<span class="name">value</span>&gt;</span>$HBASE_HOME/lib/hbase-common-1.2.0-cdh5.10.2.jar,$HBASE_HOME/lib/hbase-server-1.2.0-cdh5.10.2.jar,$HBASE_HOME/lib/hbase-client-1.2.0-cdh5.10.2.jar,$HBASE_HOME/lib/hbase-protocol-1.2.0-cdh5.10.2.jar,$HBASE_HOME/lib/hbase-it-1.2.0-cdh5.10.2.jar,$HBASE_HOME/lib/htrace-core-3.2.0-incubating.jar,$HBASE_HOME/lib/hbase-hadoop2-compat-1.2.0-cdh5.10.2.jar,$HBASE_HOME/lib/hbase-hadoop-compat-1.2.0-cdh5.10.2.jar<span class="tag">&lt;/<span class="name">value</span>&gt;</span>  </span><br><span class="line"><span class="tag">&lt;/<span class="name">property</span>&gt;</span> </span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;<span class="name">property</span>&gt;</span>  </span><br><span class="line">	<span class="tag">&lt;<span class="name">name</span>&gt;</span>hive.zookeeper.quorum<span class="tag">&lt;/<span class="name">name</span>&gt;</span>  </span><br><span class="line">	<span class="tag">&lt;<span class="name">value</span>&gt;</span>min01<span class="tag">&lt;/<span class="name">value</span>&gt;</span>  </span><br><span class="line"><span class="tag">&lt;/<span class="name">property</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;<span class="name">property</span>&gt;</span>  </span><br><span class="line">	<span class="tag">&lt;<span class="name">name</span>&gt;</span>hive.zookeeper.client.port<span class="tag">&lt;/<span class="name">name</span>&gt;</span>  </span><br><span class="line">	<span class="tag">&lt;<span class="name">value</span>&gt;</span>2181<span class="tag">&lt;/<span class="name">value</span>&gt;</span>  </span><br><span class="line"><span class="tag">&lt;/<span class="name">property</span>&gt;</span></span><br></pre></td></tr></table></figure><a id="more"></a>
+
+
+
+<h3 id="1-同时建立Hive和HBase表，并且双方能相互影响数据"><a href="#1-同时建立Hive和HBase表，并且双方能相互影响数据" class="headerlink" title="1. 同时建立Hive和HBase表，并且双方能相互影响数据"></a>1. 同时建立Hive和HBase表，并且双方能相互影响数据</h3><p>在Hive中创建表并且关联上HBase：</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">CREATE</span> <span class="keyword">TABLE</span> <span class="keyword">IF</span> <span class="keyword">NOT</span> <span class="keyword">EXISTS</span> hive_hbase_emp(</span><br><span class="line">empno <span class="built_in">INT</span>,</span><br><span class="line">ename <span class="keyword">STRING</span>,</span><br><span class="line">job <span class="keyword">STRING</span>,</span><br><span class="line">mgr <span class="built_in">INT</span>,</span><br><span class="line">hiredate <span class="built_in">DATE</span>,</span><br><span class="line">sal <span class="keyword">DOUBLE</span>,</span><br><span class="line">comm <span class="keyword">DOUBLE</span>,</span><br><span class="line">depno <span class="built_in">INT</span></span><br><span class="line">)<span class="keyword">STORED</span> <span class="keyword">BY</span> <span class="string">'org.apache.hadoop.hive.hbase.HBaseStorageHandler'</span></span><br><span class="line"><span class="keyword">WITH</span> SERDEPROPERTIES (<span class="string">"hbase.columns.mapping"</span> = <span class="string">":key,cf1:ename,cf1:job,cf1:mgr,cf1:hiredate,cf1:sal,cf1:comm,cf1:depno"</span>)</span><br><span class="line">TBLPROPERTIES (<span class="string">"hbase.table.name"</span> = <span class="string">"hbase_hive_hbase_emp"</span>, <span class="string">"hbase.mapred.output.outputtable"</span> = <span class="string">"hbase_hive_hbase_emp"</span>);</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><code>STORED BY &#39;xxx&#39;</code>：指定存储处理器</li>
+<li><code>WITH SERDEPROPERTIES (&quot;hbase.columns.mapping&quot; = &quot;:key,...&quot;</code>：声明列簇、列名</li>
+<li><code>hbase.table.name</code>：声明HBase表名，为可选属性默认与Hive的表名相同</li>
+<li><code>hbase.mapred.output.outputtable</code>：指定插入数据时写入的表，如果以后需要往该表插入数据就需要指定该值</li>
+</ul>
+<p>可以看到同时在Hive和HBase中创建了表：</p>
+<img src="/images/HBase%E4%B8%8EHive%E7%9A%84%E6%95%B4%E5%90%88%E4%BD%BF%E7%94%A8/image-20191211232142764.png" alt="image-20191211232142764" style="zoom:50%;">
+
+<img src="/images/HBase%E4%B8%8EHive%E7%9A%84%E6%95%B4%E5%90%88%E4%BD%BF%E7%94%A8/image-20191211232208881.png" alt="image-20191211232208881" style="zoom:50%;">
+
+<h4 id="1-1-向Hive表插入数据，HBase能同步到"><a href="#1-1-向Hive表插入数据，HBase能同步到" class="headerlink" title="1.1 向Hive表插入数据，HBase能同步到"></a>1.1 向Hive表插入数据，HBase能同步到</h4><p>向Hive表<code>hive_hbase_emp</code>插入数据，数据是之前在<a href="https://ashermin.github.io/2019/12/01/Hive%E5%9F%BA%E7%A1%80/" target="_blank" rel="noopener">《Hive基础》</a>中创建的<code>Emp</code>表：</p>
+<figure class="highlight"><table><tr><td class="code"><pre><span class="line">hive&gt; INSERT INTO TABLE hive_hbase_emp SELECT * FROM Emp;</span><br></pre></td></tr></table></figure>
+
+<img src="/images/HBase%E4%B8%8EHive%E7%9A%84%E6%95%B4%E5%90%88%E4%BD%BF%E7%94%A8/image-20191211233539615.png" alt="image-20191211233539615" style="zoom:50%;">
+
+<img src="/images/HBase%E4%B8%8EHive%E7%9A%84%E6%95%B4%E5%90%88%E4%BD%BF%E7%94%A8/image-20191211233637279.png" alt="image-20191211233637279" style="zoom:50%;">
+
+<h4 id="1-2-HBase表对数据进行修改，Hive表也能同步到"><a href="#1-2-HBase表对数据进行修改，Hive表也能同步到" class="headerlink" title="1.2 HBase表对数据进行修改，Hive表也能同步到"></a>1.2 HBase表对数据进行修改，Hive表也能同步到</h4><p>将<code>7934</code>号部门的<code>sal</code>值由<code>1600</code>改为<code>9999</code>：</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">hbase(main)&gt;</span><span class="bash"> put <span class="string">'hbase_hive_hbase_emp'</span>,<span class="string">'7934'</span>,<span class="string">'cf1:sal'</span>,<span class="string">'9999'</span></span></span><br></pre></td></tr></table></figure>
+
+<img src="/images/HBase%E4%B8%8EHive%E7%9A%84%E6%95%B4%E5%90%88%E4%BD%BF%E7%94%A8/image-20191211234028861.png" alt="image-20191211234028861" style="zoom:50%;">
+
+<img src="/images/HBase%E4%B8%8EHive%E7%9A%84%E6%95%B4%E5%90%88%E4%BD%BF%E7%94%A8/image-20191211234124380.png" alt="image-20191211234124380" style="zoom:50%;">
+
+<hr>
+<h3 id="2-在Hive中创建外部表来关联已经存在的HBase表"><a href="#2-在Hive中创建外部表来关联已经存在的HBase表" class="headerlink" title="2. 在Hive中创建外部表来关联已经存在的HBase表"></a>2. 在Hive中创建外部表来关联已经存在的HBase表</h3><p>目标：在HBase中已经存储了一张表<code>hbase_hive_hbase_emp</code>，然后在Hive中创建一个外部表来关联HBase中的<code>hbase_hive_hbase_emp</code>这张表，使之可以借助Hive来分析HBase这张表中的数据。</p>
+<p>在Hive中创建外部表：（建表语句和刚才的除了多出一个<code>EXTERNAL</code>，其余都是差不多的）</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">CREATE</span> <span class="keyword">EXTERNAL</span> <span class="keyword">TABLE</span> <span class="keyword">IF</span> <span class="keyword">NOT</span> <span class="keyword">EXISTS</span> external_hive_hbase_emp(</span><br><span class="line">empno <span class="built_in">INT</span>,</span><br><span class="line">ename <span class="keyword">STRING</span>,</span><br><span class="line">job <span class="keyword">STRING</span>,</span><br><span class="line">mgr <span class="built_in">INT</span>,</span><br><span class="line">hiredate <span class="built_in">DATE</span>,</span><br><span class="line">sal <span class="keyword">DOUBLE</span>,</span><br><span class="line">comm <span class="keyword">DOUBLE</span>,</span><br><span class="line">depno <span class="built_in">INT</span></span><br><span class="line">)<span class="keyword">STORED</span> <span class="keyword">BY</span> <span class="string">'org.apache.hadoop.hive.hbase.HBaseStorageHandler'</span></span><br><span class="line"><span class="keyword">WITH</span> SERDEPROPERTIES (<span class="string">"hbase.columns.mapping"</span> = <span class="string">":key,cf1:ename,cf1:job,cf1:mgr,cf1:hiredate,cf1:sal,cf1:comm,cf1:depno"</span>)</span><br><span class="line">TBLPROPERTIES (<span class="string">"hbase.table.name"</span> = <span class="string">"hbase_hive_hbase_emp"</span>, <span class="string">"hbase.mapred.output.outputtable"</span> = <span class="string">"hbase_hive_hbase_emp"</span>);</span><br></pre></td></tr></table></figure>
+
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/HBase/" rel="tag"># HBase</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-next post-nav-item">
+                <a href="/2019/12/10/HBase%E4%B8%8EMapReduce%E9%9B%86%E6%88%90/" rel="next" title="HBase与MapReduce集成">
+                  <i class="fa fa-chevron-left"></i> HBase与MapReduce集成
+                </a>
+            </div>
+
+            <span class="post-nav-divider"></span>
+
+            <div class="post-nav-prev post-nav-item">
+                <a href="/2019/12/13/PostgreSQL%E5%85%A5%E9%97%A8/" rel="prev" title="PostgreSQL入门">
+                  PostgreSQL入门 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-同时建立Hive和HBase表，并且双方能相互影响数据"><span class="nav-number">1.</span> <span class="nav-text">1. 同时建立Hive和HBase表，并且双方能相互影响数据</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-1-向Hive表插入数据，HBase能同步到"><span class="nav-number">1.1.</span> <span class="nav-text">1.1 向Hive表插入数据，HBase能同步到</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#1-2-HBase表对数据进行修改，Hive表也能同步到"><span class="nav-number">1.2.</span> <span class="nav-text">1.2 HBase表对数据进行修改，Hive表也能同步到</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-在Hive中创建外部表来关联已经存在的HBase表"><span class="nav-number">2.</span> <span class="nav-text">2. 在Hive中创建外部表来关联已经存在的HBase表</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <img class="site-author-image" itemprop="image" alt="MIN MIN"
+    src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">MIN MIN</p>
+  <div class="site-description" itemprop="description">即使最后没有人为你鼓掌，也要优雅地谢幕，感谢自己的认真付出。</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">54</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">13</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+        <span class="site-state-item-count">32</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/ashermin" title="GitHub &amp;rarr; https:&#x2F;&#x2F;github.com&#x2F;ashermin" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+<div class="copyright">
+  
+  &copy; 2019 – 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user-circle"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">MIN MIN</span>
+</div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+<script src="/js/utils.js"></script>
+<script src="/js/schemes/pisces.js"></script>
+<script src="/js/next-boot.js"></script>
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+</body>
+</html>

@@ -1,0 +1,787 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.0.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/avatar.jpg">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/avatar.jpg">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/avatar.jpg">
+  <link rel="mask-icon" href="/images/avatar.jpg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+
+
+<script id="hexo-configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '7.4.2',
+    exturl: false,
+    sidebar: {"position":"left","width":260,"display":"post","offset":12,"onmobile":false},
+    copycode: {"enable":true,"show_result":true,"style":"default"},
+    back2top: {"enable":true,"sidebar":false,"scrollpercent":true},
+    bookmark: {"enable":false,"color":"#222","save":"auto"},
+    fancybox: false,
+    mediumzoom: false,
+    lazyload: false,
+    pangu: false,
+    algolia: {
+      appID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    localsearch: {"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},
+    path: '',
+    motion: {"enable":false,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    translation: {
+      copy_button: '复制',
+      copy_success: '复制成功',
+      copy_failure: '复制失败'
+    },
+    sidebarPadding: 40
+  };
+</script>
+
+  <meta name="description" content="1. PostgreSQL安装以下是CentOS7的安装过程，根据官网进行安装，这里我安装的版本是11.6：安装RPM包：$ sudo yum install https:&#x2F;&#x2F;download.postgresql.org&#x2F;pub&#x2F;repos&#x2F;yum&#x2F;reporpms&#x2F;EL-7-x86_64&#x2F;pgdg-redhat-repo-latest.noarch.rpm">
+<meta name="keywords" content="PostgreSQL">
+<meta property="og:type" content="article">
+<meta property="og:title" content="PostgreSQL入门">
+<meta property="og:url" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2019&#x2F;12&#x2F;13&#x2F;PostgreSQL%E5%85%A5%E9%97%A8&#x2F;index.html">
+<meta property="og:site_name" content="MIN MIN">
+<meta property="og:description" content="1. PostgreSQL安装以下是CentOS7的安装过程，根据官网进行安装，这里我安装的版本是11.6：安装RPM包：$ sudo yum install https:&#x2F;&#x2F;download.postgresql.org&#x2F;pub&#x2F;repos&#x2F;yum&#x2F;reporpms&#x2F;EL-7-x86_64&#x2F;pgdg-redhat-repo-latest.noarch.rpm">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;images&#x2F;PostgreSQL%E5%85%A5%E9%97%A8&#x2F;image-20191216152644182.png">
+<meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;images&#x2F;PostgreSQL%E5%85%A5%E9%97%A8&#x2F;image-20191215222330356.png">
+<meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;images&#x2F;PostgreSQL%E5%85%A5%E9%97%A8&#x2F;image-20191215225535805.png">
+<meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;images&#x2F;PostgreSQL%E5%85%A5%E9%97%A8&#x2F;image-20191215230947706.png">
+<meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;images&#x2F;PostgreSQL%E5%85%A5%E9%97%A8&#x2F;image-20191216095439877.png">
+<meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;images&#x2F;PostgreSQL%E5%85%A5%E9%97%A8&#x2F;image-20191216094425581.png">
+<meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;images&#x2F;PostgreSQL%E5%85%A5%E9%97%A8&#x2F;image-20191216094511136.png">
+<meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;images&#x2F;PostgreSQL%E5%85%A5%E9%97%A8&#x2F;image-20191216153220383.png">
+<meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;images&#x2F;PostgreSQL%E5%85%A5%E9%97%A8&#x2F;image-20191216155405171.png">
+<meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;images&#x2F;PostgreSQL%E5%85%A5%E9%97%A8&#x2F;image-20191216155424063.png">
+<meta property="og:updated_time" content="2019-12-16T14:27:40.261Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;images&#x2F;PostgreSQL%E5%85%A5%E9%97%A8&#x2F;image-20191216152644182.png">
+
+<link rel="canonical" href="http://yoursite.com/2019/12/13/PostgreSQL%E5%85%A5%E9%97%A8/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true,
+    isPage: false,
+    isArchive: false
+  };
+</script>
+
+  <title>PostgreSQL入门 | MIN MIN</title>
+  
+
+
+  <script>
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?cad2a7930afd095772e571e6eab3628f";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+  <!--  -->
+<link href='//fonts.googleapis.com/css?family=Kaushan+Script' rel='stylesheet' type='text/css'>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">MIN MIN</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+        <p class="site-subtitle">BLOG</p>
+  </div>
+
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档</a>
+
+  </li>
+  </ul>
+
+</nav>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/12/13/PostgreSQL%E5%85%A5%E9%97%A8/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="MIN MIN">
+      <meta itemprop="description" content="即使最后没有人为你鼓掌，也要优雅地谢幕，感谢自己的认真付出。">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="MIN MIN">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          PostgreSQL入门
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2019-12-13 17:08:45" itemprop="dateCreated datePublished" datetime="2019-12-13T17:08:45+08:00">2019-12-13</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2019-12-16 22:27:40" itemprop="dateModified" datetime="2019-12-16T22:27:40+08:00">2019-12-16</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/PostgreSQL/" itemprop="url" rel="index">
+                    <span itemprop="name">PostgreSQL</span>
+                  </a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h3 id="1-PostgreSQL安装"><a href="#1-PostgreSQL安装" class="headerlink" title="1. PostgreSQL安装"></a>1. PostgreSQL安装</h3><p>以下是<code>CentOS7</code>的安装过程，根据<a href="https://www.postgresql.org/download/linux/redhat/" target="_blank" rel="noopener">官网</a>进行安装，这里我安装的版本是<code>11.6</code>：</p><p>安装RPM包：</p><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> sudo yum install https://download.postgresql.org/pub/repos/yum/reporpms/EL-7-x86_64/pgdg-redhat-repo-latest.noarch.rpm</span></span><br></pre></td></tr></table></figure><a id="more"></a>
+
+
+
+<p>安装客户端：</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> sudo yum install postgresql11</span></span><br></pre></td></tr></table></figure>
+
+<p>安装服务器：</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> sudo yum install postgresql11-server</span></span><br></pre></td></tr></table></figure>
+
+<p>初始化数据库，并且设置开机自启动：</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> sudo /usr/pgsql-11/bin/postgresql-11-setup initdb</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> systemctl <span class="built_in">enable</span> postgresql-11</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> systemctl start postgresql-11</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> systemctl is-enabled postgresql-11 <span class="comment">#查看是否开机启动</span></span></span><br><span class="line"><span class="meta">$</span><span class="bash"> systemctl status postgresql-11 <span class="comment">#查看是否启动状态</span></span></span><br></pre></td></tr></table></figure>
+
+<p>PostegreSQL默认端口号是<code>5432</code>，可以查看是否监听：</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> netstat -lntp|grep 5432</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> netstat -antp|grep 5432</span></span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p><strong>修改Linux系统postgres用户的密码</strong></p>
+<p>安装好PostgreSQL后，默认会为系统创建一个名为<code>postgres</code>的用户：</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> cat /etc/passwd</span></span><br><span class="line">postgres:x:26:26:PostgreSQL Server:/var/lib/pgsql:/bin/bash</span><br></pre></td></tr></table></figure>
+
+<p>先删除postgres用户的密码：</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> sudo passwd -d postgres</span></span><br><span class="line">Removing password for user postgres.</span><br><span class="line">passwd: Success</span><br></pre></td></tr></table></figure>
+
+<p>再设置postgres用户的密码：</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> sudo -u postgres passwd</span></span><br><span class="line">Changing password for user postgres.</span><br><span class="line">New password: </span><br><span class="line">Retype new password: </span><br><span class="line">passwd: all authentication tokens updated successfully.</span><br></pre></td></tr></table></figure>
+
+<p>切换至<code>postgres</code>用户来操作PostgreSQL：</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> sudo su postgres</span></span><br></pre></td></tr></table></figure>
+</blockquote>
+<hr>
+<h3 id="2-访问数据库"><a href="#2-访问数据库" class="headerlink" title="2. 访问数据库"></a>2. 访问数据库</h3><p>查看PostgreSQL的版本：</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> psql --version</span></span><br><span class="line">psql (PostgreSQL) 11.6</span><br></pre></td></tr></table></figure>
+
+<p>查看PostgreSQL的数据库，类似于<code>SHOW DATABASES;</code>：</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> psql -l</span></span><br><span class="line">                                 List of databases</span><br><span class="line">   Name    |  Owner   | Encoding |  Collate   |   Ctype    |   Access privileges   </span><br><span class="line">-----------+----------+----------+------------+------------+-----------------------</span><br><span class="line"> postgres  | postgres | UTF8     | en_US.utf8 | en_US.utf8 | </span><br><span class="line"> template0 | postgres | UTF8     | en_US.utf8 | en_US.utf8 | =c/postgres          +</span><br><span class="line">           |          |          |            |            | postgres=CTc/postgres</span><br><span class="line"> template1 | postgres | UTF8     | en_US.utf8 | en_US.utf8 | =c/postgres          +</span><br><span class="line">           |          |          |            |            | postgres=CTc/postgres</span><br><span class="line">(3 rows)</span><br></pre></td></tr></table></figure>
+
+<p>新建数据库<code>minmindb</code>：</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> createdb minmindb</span></span><br></pre></td></tr></table></figure>
+
+<p>进入刚刚创建的<code>minmindb</code>数据库：</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> psql minmindb</span></span><br><span class="line">psql (11.6)</span><br><span class="line">Type "help" for help.</span><br></pre></td></tr></table></figure>
+
+<p>删除<code>minmindb</code>数据库：</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> dropdb minmindb</span></span><br></pre></td></tr></table></figure>
+
+<hr>
+<h3 id="3-SQL语言"><a href="#3-SQL语言" class="headerlink" title="3. SQL语言"></a>3. SQL语言</h3><h4 id="3-1-表的CRUD"><a href="#3-1-表的CRUD" class="headerlink" title="3.1 表的CRUD"></a>3.1 表的CRUD</h4><h5 id="3-1-1创建表"><a href="#3-1-1创建表" class="headerlink" title="3.1.1创建表"></a>3.1.1创建表</h5><p>创建表的方式有以下两种：</p>
+<h6 id="3-1-1-1-通过shell端创建表"><a href="#3-1-1-1-通过shell端创建表" class="headerlink" title="3.1.1.1 通过shell端创建表"></a>3.1.1.1 通过shell端创建表</h6><figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">CREATE</span> <span class="keyword">TABLE</span> products(</span><br><span class="line">	product_no <span class="built_in">INTEGER</span> <span class="keyword">NOT</span> <span class="literal">NULL</span> <span class="keyword">UNIQUE</span>,  <span class="comment">--唯一索引</span></span><br><span class="line">	product_name <span class="built_in">TEXT</span> <span class="keyword">DEFAULT</span> <span class="string">'product DEFAULT name'</span>,  <span class="comment">--默认值</span></span><br><span class="line">	original_price <span class="built_in">NUMERIC</span> <span class="keyword">CHECK</span>(original_price&gt;<span class="number">0</span>),  <span class="comment">--检查约束</span></span><br><span class="line">	selling_price <span class="built_in">NUMERIC</span> <span class="keyword">CHECK</span>(selling_price&gt;<span class="number">1</span>),  <span class="comment">--检查约束</span></span><br><span class="line">	<span class="keyword">CHECK</span>(original_price&lt;selling_price)  <span class="comment">--检查约束，售价不能低于原价</span></span><br><span class="line">);</span><br></pre></td></tr></table></figure>
+
+<h6 id="3-1-1-2-通过文件创建表"><a href="#3-1-1-2-通过文件创建表" class="headerlink" title="3.1.1.2 通过文件创建表"></a>3.1.1.2 通过文件创建表</h6><p>在<code>postgres</code>用户的家目录下创建<code>products.sql</code>文件，将上面的代码写进去，然后进入数据库通过导入该文件来创建表：</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> \i products.sql</span></span><br></pre></td></tr></table></figure>
+
+<h5 id="3-1-2-查看表结构"><a href="#3-1-2-查看表结构" class="headerlink" title="3.1.2 查看表结构"></a>3.1.2 查看表结构</h5><p>查看当前数据库的所有表：<code>\dt</code></p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line">minmindb=<span class="comment"># \dt</span></span><br><span class="line">                关联列表</span><br><span class="line"> 架构模式 |   名称   |  类型  |  拥有者  </span><br><span class="line"><span class="comment">----------+----------+--------+----------</span></span><br><span class="line"> public   | products | 数据表 | postgres</span><br><span class="line">(1 行记录)</span><br></pre></td></tr></table></figure>
+
+<p>查看某个表的详细信息：<code>\d &lt;table&gt;</code></p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line">minmindb=<span class="comment"># \d products</span></span><br><span class="line">                           数据表 "public.products"</span><br><span class="line">      栏位      |  类型   | 校对规则 |  可空的  |             预设             </span><br><span class="line"><span class="comment">----------------+---------+----------+----------+------------------------------</span></span><br><span class="line"> product_no     | integer |          | not null | </span><br><span class="line"> product_name   | text    |          |          | 'product DEFAULT name'::text</span><br><span class="line"> original_price | numeric |          |          | </span><br><span class="line"> selling_price  | numeric |          |          | </span><br><span class="line">索引：</span><br><span class="line">    "products_product_no_key" UNIQUE CONSTRAINT, btree (product_no)</span><br><span class="line">检查约束限制</span><br><span class="line">    "products_check" <span class="keyword">CHECK</span> (original_price &lt; selling_price)</span><br><span class="line">    <span class="string">"products_original_price_check"</span> <span class="keyword">CHECK</span> (original_price &gt; <span class="number">0</span>::<span class="built_in">numeric</span>)</span><br><span class="line">    <span class="string">"products_selling_price_check"</span> <span class="keyword">CHECK</span> (selling_price &gt; <span class="number">1</span>::<span class="built_in">numeric</span>)</span><br></pre></td></tr></table></figure>
+
+<h5 id="3-1-3-重命名表名"><a href="#3-1-3-重命名表名" class="headerlink" title="3.1.3 重命名表名"></a>3.1.3 重命名表名</h5><p>语法：<code>ALTER TABLE &lt;old_table&gt; RENAME TO &lt;new_table&gt;;</code></p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">ALTER</span> <span class="keyword">TABLE</span> products <span class="keyword">RENAME</span> <span class="keyword">TO</span> product;</span><br></pre></td></tr></table></figure>
+
+<h5 id="3-1-4-删除表"><a href="#3-1-4-删除表" class="headerlink" title="3.1.4 删除表"></a>3.1.4 删除表</h5><p>语法：<code>DROP TABLE &lt;table&gt;</code></p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">DROP</span> <span class="keyword">TABLE</span> product;</span><br></pre></td></tr></table></figure>
+
+<h5 id="3-1-5-修改表结构"><a href="#3-1-5-修改表结构" class="headerlink" title="3.1.5 修改表结构"></a>3.1.5 修改表结构</h5><p>重命名某个字段，语法：<code>ALTER TABLE &lt;table&gt; RENAME &lt;old_filed&gt; TO &lt;new_field&gt;;</code></p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">ALTER</span> <span class="keyword">TABLE</span> products <span class="keyword">RENAME</span> product_no <span class="keyword">TO</span> product_number;</span><br></pre></td></tr></table></figure>
+
+<p>添加字段，语法：<code>ALTER TABLE &lt;table&gt; ADD &lt;new_filed&gt; &lt;type&gt;;</code></p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">ALTER</span> <span class="keyword">TABLE</span> products <span class="keyword">ADD</span> <span class="keyword">status</span> <span class="built_in">VARCHAR</span>(<span class="number">20</span>) <span class="keyword">DEFAULT</span> <span class="string">'saling'</span>;</span><br></pre></td></tr></table></figure>
+
+<p>修改字段属性，注意到默认值还在，仅仅修改了字符长度：</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">ALTER</span> <span class="keyword">TABLE</span> products <span class="keyword">ALTER</span> <span class="keyword">status</span> <span class="keyword">TYPE</span> <span class="built_in">VARCHAR</span>(<span class="number">25</span>);</span><br></pre></td></tr></table></figure>
+
+<img src="/images/PostgreSQL%E5%85%A5%E9%97%A8/image-20191216152644182.png" alt="image-20191216152644182" style="zoom:50%;">
+
+<p>删除某字段：</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">ALTER</span> <span class="keyword">TABLE</span> products <span class="keyword">DROP</span> <span class="keyword">status</span>;</span><br></pre></td></tr></table></figure>
+
+<h5 id="3-1-6-为字段添加-删除索引"><a href="#3-1-6-为字段添加-删除索引" class="headerlink" title="3.1.6 为字段添加/删除索引"></a>3.1.6 为字段添加/删除索引</h5><figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">CREATE</span> <span class="keyword">INDEX</span> status_index <span class="keyword">ON</span> products(<span class="keyword">status</span>);</span><br><span class="line"><span class="keyword">DROP</span> <span class="keyword">INDEX</span> status_index;</span><br></pre></td></tr></table></figure>
+
+<h4 id="3-2-数据类型"><a href="#3-2-数据类型" class="headerlink" title="3.2 数据类型"></a>3.2 数据类型</h4><h5 id="3-2-1-数值型"><a href="#3-2-1-数值型" class="headerlink" title="3.2.1 数值型"></a>3.2.1 数值型</h5><p>比较常用的是<code>integer(int)</code>、<code>real</code>、<code>serial</code>、<code>numeric</code></p>
+<ul>
+<li><p><code>REAl</code>类似于float浮点型</p>
+</li>
+<li><p><code>NUMERIC(precision, scale)</code>，其中<code>precision</code>是全部位数，<code>scale</code>是小数点后的位数</p>
+</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th align="left">名字</th>
+<th align="left">存储长度</th>
+<th align="left">描述</th>
+<th align="left">范围</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">smallint</td>
+<td align="left">2 字节</td>
+<td align="left">小范围整数</td>
+<td align="left">-32768 到 +32767</td>
+</tr>
+<tr>
+<td align="left">integer</td>
+<td align="left">4 字节</td>
+<td align="left">常用的整数</td>
+<td align="left">-2147483648 到 +2147483647</td>
+</tr>
+<tr>
+<td align="left">bigint</td>
+<td align="left">8 字节</td>
+<td align="left">大范围整数</td>
+<td align="left">-9223372036854775808 到 +9223372036854775807</td>
+</tr>
+<tr>
+<td align="left">decimal</td>
+<td align="left">可变长</td>
+<td align="left">用户指定的精度，精确</td>
+<td align="left">小数点前 131072 位；小数点后 16383 位</td>
+</tr>
+<tr>
+<td align="left">numeric</td>
+<td align="left">可变长</td>
+<td align="left">用户指定的精度，精确</td>
+<td align="left">小数点前 131072 位；小数点后 16383 位</td>
+</tr>
+<tr>
+<td align="left">real</td>
+<td align="left">4 字节</td>
+<td align="left">可变精度，不精确</td>
+<td align="left">6 位十进制数字精度</td>
+</tr>
+<tr>
+<td align="left">double precision</td>
+<td align="left">8 字节</td>
+<td align="left">可变精度，不精确</td>
+<td align="left">15 位十进制数字精度</td>
+</tr>
+<tr>
+<td align="left">smallserial</td>
+<td align="left">2 字节</td>
+<td align="left">自增的小范围整数</td>
+<td align="left">1 到 32767</td>
+</tr>
+<tr>
+<td align="left">serial</td>
+<td align="left">4 字节</td>
+<td align="left">自增整数</td>
+<td align="left">1 到 2147483647</td>
+</tr>
+<tr>
+<td align="left">bigserial</td>
+<td align="left">8 字节</td>
+<td align="left">自增的大范围整数</td>
+<td align="left">1 到 9223372036854775807</td>
+</tr>
+</tbody></table>
+<h5 id="3-2-2-字符型"><a href="#3-2-2-字符型" class="headerlink" title="3.2.2 字符型"></a>3.2.2 字符型</h5><table>
+<thead>
+<tr>
+<th align="left">名字</th>
+<th align="center">描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">char(n)</td>
+<td align="center">定长</td>
+</tr>
+<tr>
+<td align="left">varchar(n)</td>
+<td align="center">有限制得变长</td>
+</tr>
+<tr>
+<td align="left">text</td>
+<td align="center">无限变长</td>
+</tr>
+</tbody></table>
+<h5 id="3-2-3-布尔类型"><a href="#3-2-3-布尔类型" class="headerlink" title="3.2.3 布尔类型"></a>3.2.3 布尔类型</h5><p>boolean 有”true”(真)或”false”(假)两个状态， 第三种”unknown”(未知)状态，用 NULL 表示。</p>
+<table>
+<thead>
+<tr>
+<th align="left">名称</th>
+<th align="left">存储格式</th>
+<th align="left">描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">boolean</td>
+<td align="left">1 字节</td>
+<td align="left">true/false</td>
+</tr>
+</tbody></table>
+<h5 id="3-2-4-日期-时间类型"><a href="#3-2-4-日期-时间类型" class="headerlink" title="3.2.4 日期/时间类型"></a>3.2.4 日期/时间类型</h5><table>
+<thead>
+<tr>
+<th align="left">名字</th>
+<th align="left">存储空间</th>
+<th align="left">描述</th>
+<th align="left">最小值</th>
+<th align="left">最大值</th>
+<th align="left">解析度</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">timestamp [ (<em>p</em>) ] [ without time zone ]</td>
+<td align="left">8 字节</td>
+<td align="left">日期和时间，无时区（年月日时分秒）</td>
+<td align="left">4713 BC</td>
+<td align="left">294276 AD</td>
+<td align="left">1 微妙 / 14 位</td>
+</tr>
+<tr>
+<td align="left">timestamp [ (<em>p</em>) ] with time zone</td>
+<td align="left">8 字节</td>
+<td align="left">日期和时间，有时区（年月日时分秒）</td>
+<td align="left">4713 BC</td>
+<td align="left">294276 AD</td>
+<td align="left">1 微妙 / 14 位</td>
+</tr>
+<tr>
+<td align="left">date</td>
+<td align="left">4 字节</td>
+<td align="left">日期(年月日)</td>
+<td align="left">4713 BC</td>
+<td align="left">5874897 AD</td>
+<td align="left">1 日</td>
+</tr>
+<tr>
+<td align="left">time [ (<em>p</em>) ] [ without time zone ]</td>
+<td align="left">8 字节</td>
+<td align="left">一天中的时间，无时区（时分秒）</td>
+<td align="left">00:00:00</td>
+<td align="left">24:00:00</td>
+<td align="left">1 毫秒 / 14 位</td>
+</tr>
+<tr>
+<td align="left">time [ (<em>p</em>) ] with time zone</td>
+<td align="left">12 字节</td>
+<td align="left">一天中的时间，有时区（时分秒）</td>
+<td align="left">00:00:00+1459</td>
+<td align="left">24:00:00-1459</td>
+<td align="left">1 毫秒 / 14 位</td>
+</tr>
+<tr>
+<td align="left">interval [ <em>fields</em> ] [ (<em>p</em>) ]</td>
+<td align="left">12 字节</td>
+<td align="left">时间间隔</td>
+<td align="left">-178000000 年</td>
+<td align="left">178000000 年</td>
+<td align="left">1 毫秒 / 14 位</td>
+</tr>
+</tbody></table>
+<h4 id="3-3-表字段的约束"><a href="#3-3-表字段的约束" class="headerlink" title="3.3 表字段的约束"></a>3.3 表字段的约束</h4><p>常用的有以下约束：</p>
+<ul>
+<li><p><code>NOT NULL</code>：不能为空</p>
+</li>
+<li><p><code>UNIQUE</code>：所有数据中值必须唯一</p>
+</li>
+<li><p><code>CHECK</code>：字段设置条件，检查约束</p>
+</li>
+<li><p><code>DEFAULT</code>：字段默认值</p>
+</li>
+<li><p><code>PRIMARY KEY</code>：主键，其实就是<code>NOT NULL</code>+<code>UNIQUE</code>的效果</p>
+</li>
+</ul>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">CREATE</span> <span class="keyword">TABLE</span> posts(</span><br><span class="line">	<span class="keyword">id</span> <span class="built_in">SERIAL</span> PRIMARY <span class="keyword">KEY</span>,</span><br><span class="line">	title <span class="built_in">VARCHAR</span>(<span class="number">255</span>) <span class="keyword">NOT</span> <span class="literal">NULL</span>,</span><br><span class="line">	<span class="keyword">content</span> <span class="built_in">TEXT</span> <span class="keyword">CHECK</span>(<span class="keyword">LENGTH</span>(<span class="keyword">content</span>) &gt; <span class="number">3</span>),  <span class="comment">--内容长度必须大于3个字符长度</span></span><br><span class="line">	is_draft <span class="built_in">BOOLEAN</span> <span class="keyword">DEFAULT</span> <span class="literal">TRUE</span>,  <span class="comment">--默认文章是草稿，除非发布</span></span><br><span class="line">	is_del <span class="built_in">BOOLEAN</span> <span class="keyword">DEFAULT</span> <span class="literal">FALSE</span>,  <span class="comment">--逻辑删除</span></span><br><span class="line">	created_date <span class="built_in">TIMESTAMP</span> <span class="keyword">DEFAULT</span> <span class="string">'now'</span></span><br><span class="line">);</span><br></pre></td></tr></table></figure>
+
+<p>使用<code>\d posts</code>查看刚刚创建的<code>posts</code>表：</p>
+<img src="/images/PostgreSQL%E5%85%A5%E9%97%A8/image-20191215222330356.png" alt="image-20191215222330356" style="zoom:50%;">
+
+<h4 id="3-4-数据操纵"><a href="#3-4-数据操纵" class="headerlink" title="3.4 数据操纵"></a>3.4 数据操纵</h4><h5 id="3-4-1-插入数据"><a href="#3-4-1-插入数据" class="headerlink" title="3.4.1 插入数据"></a>3.4.1 插入数据</h5><p>语法：<code>INSERT INTO &lt;table&gt;(field1,field2,...) VALUES (value1,value2,...);</code></p>
+<p>借之前建的<code>posts</code>表，在插入数据时正好可以试下约束：</p>
+<p>第一次插入：失败，因为<code>content</code>字段设置了<code>LENGTH(content) &gt; 3</code>的检查约束</p>
+<p>⚠️注意：这里<code>title</code>字段设置了<code>&#39;&#39;</code>，其在PostgreSQL中并不是<code>NULL</code>的意思。</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">INSERT</span> <span class="keyword">INTO</span> posts(title,<span class="keyword">content</span>) <span class="keyword">VALUES</span> (<span class="string">''</span>,<span class="string">''</span>);  <span class="comment">--插入失败，content不满足大于3</span></span><br></pre></td></tr></table></figure>
+
+<img src="/images/PostgreSQL%E5%85%A5%E9%97%A8/image-20191215225535805.png" alt="image-20191215225535805" style="zoom:50%;">
+
+<p>第二次插入：成功。</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">INSERT</span> <span class="keyword">INTO</span> posts(title,<span class="keyword">content</span>) <span class="keyword">VALUES</span> (<span class="string">'PostgreSQL 10.1'</span>,<span class="string">'PostgreSQL 10.1中文手册内容'</span>);</span><br><span class="line"><span class="keyword">INSERT</span> <span class="keyword">INTO</span> posts(title,<span class="keyword">content</span>) <span class="keyword">VALUES</span> (<span class="string">'PostgreSQL 9.6'</span>,<span class="string">'PostgreSQL 9.6中文手册内容'</span>);</span><br></pre></td></tr></table></figure>
+
+<h5 id="3-4-2-查询数据"><a href="#3-4-2-查询数据" class="headerlink" title="3.4.2 查询数据"></a>3.4.2 查询数据</h5><p>和其他数据库差不多，通过<code>SELECT</code>可以显示数据信息。值得注意的是，刚刚第一次插入数据时虽然失败了，但主键<code>id</code>还是算+1的，所以这里第一行数据的主键是2。</p>
+<p>⚠️注意：可以使用<code>\x</code>来打开扩展显示，在每行数据很长的时候，观察数据比较方便直观。</p>
+<img src="/images/PostgreSQL%E5%85%A5%E9%97%A8/image-20191215230947706.png" alt="image-20191215230947706" style="zoom:50%;">
+
+<p>例：再插入几行数据，然后按照<code>id</code>来降序排序，并且只取前2～4行的数据：</p>
+<p>提示：<code>OFFSET</code>是指从第几行开始取数据，默认从0开始。</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> <span class="keyword">id</span>,title,<span class="keyword">content</span> <span class="keyword">FROM</span> posts <span class="keyword">ORDER</span> <span class="keyword">BY</span> <span class="keyword">id</span> <span class="keyword">DESC</span> <span class="keyword">LIMIT</span> <span class="number">3</span> <span class="keyword">OFFSET</span> <span class="number">1</span>;</span><br></pre></td></tr></table></figure>
+
+<img src="/images/PostgreSQL%E5%85%A5%E9%97%A8/image-20191216095439877.png" alt="image-20191216095439877" style="zoom:50%;">
+
+<h5 id="3-4-3-更新数据"><a href="#3-4-3-更新数据" class="headerlink" title="3.4.3 更新数据"></a>3.4.3 更新数据</h5><figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">UPDATE</span> posts <span class="keyword">SET</span> is_draft=<span class="literal">FALSE</span> <span class="keyword">WHERE</span> <span class="keyword">id</span>=<span class="number">4</span>;</span><br></pre></td></tr></table></figure>
+
+<img src="/images/PostgreSQL%E5%85%A5%E9%97%A8/image-20191216094425581.png" alt="image-20191216094425581" style="zoom:50%;">
+
+<h5 id="3-4-4-删除数据"><a href="#3-4-4-删除数据" class="headerlink" title="3.4.4 删除数据"></a>3.4.4 删除数据</h5><p>和插入数据一样，只能从表中整行整行地删除数据。</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="comment"># DELETE FROM posts WHERE content LIKE '%9.5%';</span></span><br></pre></td></tr></table></figure>
+
+<img src="/images/PostgreSQL%E5%85%A5%E9%97%A8/image-20191216094511136.png" alt="image-20191216094511136" style="zoom:50%;">
+
+<h4 id="3-5-常用函数"><a href="#3-5-常用函数" class="headerlink" title="3.5 常用函数"></a>3.5 常用函数</h4><p>新建<code>student</code>表，下面的SQL查询都基于此表：</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">CREATE</span> <span class="keyword">TABLE</span> student(</span><br><span class="line">	<span class="keyword">id</span> <span class="built_in">INT</span> PRIMARY <span class="keyword">KEY</span>,</span><br><span class="line">	<span class="keyword">name</span> <span class="built_in">VARCHAR</span>(<span class="number">20</span>) <span class="keyword">NOT</span> <span class="literal">NULL</span>,</span><br><span class="line">	gender <span class="built_in">VARCHAR</span>(<span class="number">10</span>) <span class="keyword">NOT</span> <span class="literal">NULL</span>,</span><br><span class="line">	grade <span class="built_in">VARCHAR</span>(<span class="number">20</span>) <span class="keyword">NOT</span> <span class="literal">NULL</span>,</span><br><span class="line">	score_chinese <span class="built_in">INT</span>,</span><br><span class="line">	score_maths <span class="built_in">INT</span>,</span><br><span class="line">	score_english <span class="built_in">INT</span>,</span><br><span class="line">	score_pe <span class="built_in">INT</span></span><br><span class="line">);</span><br><span class="line"></span><br><span class="line"><span class="keyword">INSERT</span> <span class="keyword">INTO</span> student <span class="keyword">VALUES</span> (<span class="number">01</span>,<span class="string">'刘一'</span>,<span class="string">'male'</span>,<span class="string">'senior1'</span>,<span class="number">110</span>,<span class="number">115</span>,<span class="number">92</span>,<span class="number">95</span>);</span><br><span class="line"><span class="keyword">INSERT</span> <span class="keyword">INTO</span> student <span class="keyword">VALUES</span> (<span class="number">02</span>,<span class="string">'陈二'</span>,<span class="string">'female'</span>,<span class="string">'senior3'</span>,<span class="number">124</span>,<span class="number">127</span>,<span class="number">132</span>,<span class="number">121</span>);</span><br><span class="line"><span class="keyword">INSERT</span> <span class="keyword">INTO</span> student <span class="keyword">VALUES</span> (<span class="number">03</span>,<span class="string">'张三'</span>,<span class="string">'male'</span>,<span class="string">'senior1'</span>,<span class="number">116</span>,<span class="number">98</span>,<span class="number">88</span>,<span class="number">100</span>);</span><br><span class="line"><span class="keyword">INSERT</span> <span class="keyword">INTO</span> student <span class="keyword">VALUES</span> (<span class="number">04</span>,<span class="string">'李四'</span>,<span class="string">'female'</span>,<span class="string">'senior1'</span>,<span class="number">110</span>,<span class="number">115</span>,<span class="number">92</span>,<span class="number">102</span>);</span><br><span class="line"><span class="keyword">INSERT</span> <span class="keyword">INTO</span> student <span class="keyword">VALUES</span> (<span class="number">05</span>,<span class="string">'王五'</span>,<span class="string">'male'</span>,<span class="string">'senior2'</span>,<span class="number">109</span>,<span class="number">104</span>,<span class="number">108</span>,<span class="number">110</span>);</span><br><span class="line"><span class="keyword">INSERT</span> <span class="keyword">INTO</span> student <span class="keyword">VALUES</span> (<span class="number">06</span>,<span class="string">'赵六'</span>,<span class="string">'male'</span>,<span class="string">'senior2'</span>,<span class="number">113</span>,<span class="number">109</span>,<span class="number">135</span>,<span class="number">116</span>);</span><br><span class="line"><span class="keyword">INSERT</span> <span class="keyword">INTO</span> student <span class="keyword">VALUES</span> (<span class="number">07</span>,<span class="string">'孙七'</span>,<span class="string">'male'</span>,<span class="string">'senior1'</span>,<span class="number">91</span>,<span class="number">83</span>,<span class="number">98</span>,<span class="number">129</span>);</span><br><span class="line"><span class="keyword">INSERT</span> <span class="keyword">INTO</span> student <span class="keyword">VALUES</span> (<span class="number">08</span>,<span class="string">'周八'</span>,<span class="string">'female'</span>,<span class="string">'senior3'</span>,<span class="number">115</span>,<span class="number">92</span>,<span class="number">95</span>,<span class="number">102</span>);</span><br><span class="line"><span class="keyword">INSERT</span> <span class="keyword">INTO</span> student <span class="keyword">VALUES</span> (<span class="number">09</span>,<span class="string">'吴九'</span>,<span class="string">'female'</span>,<span class="string">'senior2'</span>,<span class="number">125</span>,<span class="number">127</span>,<span class="number">132</span>,<span class="number">94</span>);</span><br><span class="line"><span class="keyword">INSERT</span> <span class="keyword">INTO</span> student <span class="keyword">VALUES</span> (<span class="number">10</span>,<span class="string">'郑十'</span>,<span class="string">'male'</span>,<span class="string">'senior3'</span>,<span class="number">77</span>,<span class="number">89</span>,<span class="number">86</span>,<span class="number">94</span>);</span><br><span class="line"><span class="keyword">INSERT</span> <span class="keyword">INTO</span> student <span class="keyword">VALUES</span> (<span class="number">11</span>,<span class="string">'闵亿'</span>,<span class="string">'male'</span>,<span class="string">'senior3'</span>,<span class="number">118</span>,<span class="number">136</span>,<span class="number">121</span>,<span class="number">127</span>);</span><br></pre></td></tr></table></figure>
+
+<p>常用函数：</p>
+<ul>
+<li><code>length</code>：字符串长度</li>
+<li><code>concat</code>：拼接两个字符串，与<code>||</code>同效果</li>
+<li><code>substring(&lt;string&gt; [from int] [for int])</code>：抽取子字串</li>
+<li><code>random</code>：随机</li>
+<li><code>row_number</code>：当前行在其分区中的行号，从1计</li>
+</ul>
+<p>需求：按照年级<code>grade</code>进行分组，按照降序排出四门总分前二的学生信息：</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> </span><br><span class="line">	<span class="keyword">id</span>,</span><br><span class="line">	<span class="keyword">SUBSTRING</span>(<span class="keyword">name</span>,<span class="number">1</span>,<span class="number">1</span>)||<span class="string">'同学'</span> <span class="keyword">AS</span> <span class="keyword">name</span>,</span><br><span class="line">	gender,</span><br><span class="line">	grade,</span><br><span class="line">	score_chinese,</span><br><span class="line">	score_maths,</span><br><span class="line">	score_english,</span><br><span class="line">	score_pe,</span><br><span class="line">	(score_chinese + score_maths + score_english + score_pe) <span class="keyword">AS</span> sum_score</span><br><span class="line"><span class="keyword">FROM</span> </span><br><span class="line">	(<span class="keyword">SELECT</span> </span><br><span class="line">		<span class="keyword">id</span>,</span><br><span class="line">		<span class="keyword">name</span>,</span><br><span class="line">		gender,</span><br><span class="line">		grade,</span><br><span class="line">		score_chinese,</span><br><span class="line">		score_maths,</span><br><span class="line">		score_english,</span><br><span class="line">		score_pe,</span><br><span class="line">		ROW_NUMBER() <span class="keyword">OVER</span> (<span class="keyword">PARTITION</span> <span class="keyword">BY</span> grade <span class="keyword">ORDER</span> <span class="keyword">BY</span> score_chinese + score_maths + score_english + score_pe <span class="keyword">DESC</span>) rk</span><br><span class="line">	<span class="keyword">FROM</span> </span><br><span class="line">		student)tmp </span><br><span class="line"><span class="keyword">WHERE</span> rk &lt; <span class="number">3</span>;</span><br></pre></td></tr></table></figure>
+
+<img src="/images/PostgreSQL%E5%85%A5%E9%97%A8/image-20191216153220383.png" alt="image-20191216153220383" style="zoom:50%;">
+
+<h4 id="3-6-视图"><a href="#3-6-视图" class="headerlink" title="3.6 视图"></a>3.6 视图</h4><p>视图就是一个<code>SELECT</code>语言，把业务系统中常用的<code>SELECT</code>语句简化成一个类似于表的对象，便于读取和开发。</p>
+<p>创建视图语法：<code>CREATE VIEW &lt;view_name&gt; AS SELECT...;</code></p>
+<p>例：创建一个视图，用来存储每个年级的数学平均成绩</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">CREATE</span> <span class="keyword">VIEW</span> view_grade_maths <span class="keyword">AS</span> <span class="keyword">SELECT</span> grade,<span class="keyword">AVG</span>(score_maths) <span class="keyword">FROM</span> student <span class="keyword">GROUP</span> <span class="keyword">BY</span> grade <span class="keyword">ORDER</span> <span class="keyword">BY</span> grade;</span><br></pre></td></tr></table></figure>
+
+<img src="/images/PostgreSQL%E5%85%A5%E9%97%A8/image-20191216155405171.png" alt="image-20191216155405171" style="zoom:50%;">
+
+<p>查看视图：</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> * <span class="keyword">FROM</span> view_grade_maths;</span><br></pre></td></tr></table></figure>
+
+<img src="/images/PostgreSQL%E5%85%A5%E9%97%A8/image-20191216155424063.png" alt="image-20191216155424063" style="zoom:50%;">
+
+<p>删除视图：</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">DROP</span> <span class="keyword">VIEW</span> view_grade_maths;</span><br></pre></td></tr></table></figure>
+
+<h4 id="3-7-事务"><a href="#3-7-事务" class="headerlink" title="3.7 事务"></a>3.7 事务</h4><p>三大要点：<code>BEGIN</code>开始事务、<code>COMMIT</code>提交事务、<code>ROLLBACK</code>回滚事务</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/PostgreSQL/" rel="tag"># PostgreSQL</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-next post-nav-item">
+                <a href="/2019/12/11/HBase%E4%B8%8EHive%E7%9A%84%E6%95%B4%E5%90%88%E4%BD%BF%E7%94%A8/" rel="next" title="HBase与Hive的整合使用">
+                  <i class="fa fa-chevron-left"></i> HBase与Hive的整合使用
+                </a>
+            </div>
+
+            <span class="post-nav-divider"></span>
+
+            <div class="post-nav-prev post-nav-item">
+                <a href="/2019/12/17/Greenplum%E7%9A%84%E6%9E%B6%E6%9E%84/" rel="prev" title="Greenplum的架构">
+                  Greenplum的架构 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-PostgreSQL安装"><span class="nav-number">1.</span> <span class="nav-text">1. PostgreSQL安装</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-访问数据库"><span class="nav-number">2.</span> <span class="nav-text">2. 访问数据库</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-SQL语言"><span class="nav-number">3.</span> <span class="nav-text">3. SQL语言</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#3-1-表的CRUD"><span class="nav-number">3.1.</span> <span class="nav-text">3.1 表的CRUD</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#3-1-1创建表"><span class="nav-number">3.1.1.</span> <span class="nav-text">3.1.1创建表</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#3-1-1-1-通过shell端创建表"><span class="nav-number">3.1.1.1.</span> <span class="nav-text">3.1.1.1 通过shell端创建表</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#3-1-1-2-通过文件创建表"><span class="nav-number">3.1.1.2.</span> <span class="nav-text">3.1.1.2 通过文件创建表</span></a></li></ol></li><li class="nav-item nav-level-5"><a class="nav-link" href="#3-1-2-查看表结构"><span class="nav-number">3.1.2.</span> <span class="nav-text">3.1.2 查看表结构</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#3-1-3-重命名表名"><span class="nav-number">3.1.3.</span> <span class="nav-text">3.1.3 重命名表名</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#3-1-4-删除表"><span class="nav-number">3.1.4.</span> <span class="nav-text">3.1.4 删除表</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#3-1-5-修改表结构"><span class="nav-number">3.1.5.</span> <span class="nav-text">3.1.5 修改表结构</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#3-1-6-为字段添加-删除索引"><span class="nav-number">3.1.6.</span> <span class="nav-text">3.1.6 为字段添加/删除索引</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-2-数据类型"><span class="nav-number">3.2.</span> <span class="nav-text">3.2 数据类型</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#3-2-1-数值型"><span class="nav-number">3.2.1.</span> <span class="nav-text">3.2.1 数值型</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#3-2-2-字符型"><span class="nav-number">3.2.2.</span> <span class="nav-text">3.2.2 字符型</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#3-2-3-布尔类型"><span class="nav-number">3.2.3.</span> <span class="nav-text">3.2.3 布尔类型</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#3-2-4-日期-时间类型"><span class="nav-number">3.2.4.</span> <span class="nav-text">3.2.4 日期/时间类型</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-3-表字段的约束"><span class="nav-number">3.3.</span> <span class="nav-text">3.3 表字段的约束</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-4-数据操纵"><span class="nav-number">3.4.</span> <span class="nav-text">3.4 数据操纵</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#3-4-1-插入数据"><span class="nav-number">3.4.1.</span> <span class="nav-text">3.4.1 插入数据</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#3-4-2-查询数据"><span class="nav-number">3.4.2.</span> <span class="nav-text">3.4.2 查询数据</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#3-4-3-更新数据"><span class="nav-number">3.4.3.</span> <span class="nav-text">3.4.3 更新数据</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#3-4-4-删除数据"><span class="nav-number">3.4.4.</span> <span class="nav-text">3.4.4 删除数据</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-5-常用函数"><span class="nav-number">3.5.</span> <span class="nav-text">3.5 常用函数</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-6-视图"><span class="nav-number">3.6.</span> <span class="nav-text">3.6 视图</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-7-事务"><span class="nav-number">3.7.</span> <span class="nav-text">3.7 事务</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <img class="site-author-image" itemprop="image" alt="MIN MIN"
+    src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">MIN MIN</p>
+  <div class="site-description" itemprop="description">即使最后没有人为你鼓掌，也要优雅地谢幕，感谢自己的认真付出。</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">54</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">13</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+        <span class="site-state-item-count">32</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/ashermin" title="GitHub &amp;rarr; https:&#x2F;&#x2F;github.com&#x2F;ashermin" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+<div class="copyright">
+  
+  &copy; 2019 – 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user-circle"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">MIN MIN</span>
+</div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+<script src="/js/utils.js"></script>
+<script src="/js/schemes/pisces.js"></script>
+<script src="/js/next-boot.js"></script>
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+</body>
+</html>

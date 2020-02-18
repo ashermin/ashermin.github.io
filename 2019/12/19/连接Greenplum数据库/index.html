@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.0.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/avatar.jpg">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/avatar.jpg">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/avatar.jpg">
+  <link rel="mask-icon" href="/images/avatar.jpg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+
+
+<script id="hexo-configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '7.4.2',
+    exturl: false,
+    sidebar: {"position":"left","width":260,"display":"post","offset":12,"onmobile":false},
+    copycode: {"enable":true,"show_result":true,"style":"default"},
+    back2top: {"enable":true,"sidebar":false,"scrollpercent":true},
+    bookmark: {"enable":false,"color":"#222","save":"auto"},
+    fancybox: false,
+    mediumzoom: false,
+    lazyload: false,
+    pangu: false,
+    algolia: {
+      appID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    localsearch: {"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},
+    path: '',
+    motion: {"enable":false,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    translation: {
+      copy_button: '复制',
+      copy_success: '复制成功',
+      copy_failure: '复制失败'
+    },
+    sidebarPadding: 40
+  };
+</script>
+
+  <meta name="description" content="1. 使用psql连接下面的例子展示了如何通过psql来访问数据库，这里我连接的Greenplum数据库为minmindb$ psql -d minmindb -h min01 -p 5432 -U gpadmin$ psql minmindb如果不输入数据库名，默认进入的是当前用户名的数据库，如果不存在该数据库，则会报错：">
+<meta name="keywords" content="Greenplum">
+<meta property="og:type" content="article">
+<meta property="og:title" content="连接Greenplum数据库">
+<meta property="og:url" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2019&#x2F;12&#x2F;19&#x2F;%E8%BF%9E%E6%8E%A5Greenplum%E6%95%B0%E6%8D%AE%E5%BA%93&#x2F;index.html">
+<meta property="og:site_name" content="MIN MIN">
+<meta property="og:description" content="1. 使用psql连接下面的例子展示了如何通过psql来访问数据库，这里我连接的Greenplum数据库为minmindb$ psql -d minmindb -h min01 -p 5432 -U gpadmin$ psql minmindb如果不输入数据库名，默认进入的是当前用户名的数据库，如果不存在该数据库，则会报错：">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;images&#x2F;%E4%BD%BF%E7%94%A8pgAdmin%E8%BF%9E%E6%8E%A5Greenplum&#x2F;image-20191219195057157.png">
+<meta property="og:updated_time" content="2019-12-19T14:40:36.312Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;images&#x2F;%E4%BD%BF%E7%94%A8pgAdmin%E8%BF%9E%E6%8E%A5Greenplum&#x2F;image-20191219195057157.png">
+
+<link rel="canonical" href="http://yoursite.com/2019/12/19/%E8%BF%9E%E6%8E%A5Greenplum%E6%95%B0%E6%8D%AE%E5%BA%93/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true,
+    isPage: false,
+    isArchive: false
+  };
+</script>
+
+  <title>连接Greenplum数据库 | MIN MIN</title>
+  
+
+
+  <script>
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?cad2a7930afd095772e571e6eab3628f";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+  <!--  -->
+<link href='//fonts.googleapis.com/css?family=Kaushan+Script' rel='stylesheet' type='text/css'>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">MIN MIN</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+        <p class="site-subtitle">BLOG</p>
+  </div>
+
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档</a>
+
+  </li>
+  </ul>
+
+</nav>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/12/19/%E8%BF%9E%E6%8E%A5Greenplum%E6%95%B0%E6%8D%AE%E5%BA%93/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="MIN MIN">
+      <meta itemprop="description" content="即使最后没有人为你鼓掌，也要优雅地谢幕，感谢自己的认真付出。">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="MIN MIN">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          连接Greenplum数据库
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2019-12-19 17:11:01 / 修改时间：22:40:36" itemprop="dateCreated datePublished" datetime="2019-12-19T17:11:01+08:00">2019-12-19</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Greenplum/" itemprop="url" rel="index">
+                    <span itemprop="name">Greenplum</span>
+                  </a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h3 id="1-使用psql连接"><a href="#1-使用psql连接" class="headerlink" title="1. 使用psql连接"></a>1. 使用psql连接</h3><p>下面的例子展示了如何通过psql来访问数据库，这里我连接的Greenplum数据库为<code>minmindb</code></p><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> psql -d minmindb -h min01 -p 5432 -U gpadmin</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> psql minmindb</span></span><br></pre></td></tr></table></figure><p>如果不输入数据库名，默认进入的是当前用户名的数据库，如果不存在该数据库，则会报错：</p><a id="more"></a>
+
+
+
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">[gpadmin@min01 ~]$ psql</span><br><span class="line">psql: FATAL:  database "gpadmin" does not exist</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h3 id="2-使用pgAdmin4连接"><a href="#2-使用pgAdmin4连接" class="headerlink" title="2. 使用pgAdmin4连接"></a>2. 使用pgAdmin4连接</h3><p>pgAdmin4的<a href="https://www.pgadmin.org/download/" target="_blank" rel="noopener">官方下载地址</a>。</p>
+<p>使用pgAdmin4链接Greenplum需要修改<em>pg_hba.conf</em>文件：</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> vi /opt/applications/greenplum/master/gpseg-1/pg_hba.conf</span></span><br><span class="line">host all all 0.0.0.0/0 md5</span><br></pre></td></tr></table></figure>
+
+<p>重启Greenplum：</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> gpstop -r</span></span><br></pre></td></tr></table></figure>
+
+<p>这里我连接的Greenplum数据库为<code>minmindb</code>，给它设一个密码，下面登录时就输这个密码：</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">minmindb=# \password</span><br><span class="line">Enter new password: </span><br><span class="line">Enter it again:</span><br></pre></td></tr></table></figure>
+
+<img src="/images/%E4%BD%BF%E7%94%A8pgAdmin%E8%BF%9E%E6%8E%A5Greenplum/image-20191219195057157.png" alt="image-20191219195057157" style="zoom:50%;">
+
+<hr>
+<h3 id="3-数据库应用接口"><a href="#3-数据库应用接口" class="headerlink" title="3. 数据库应用接口"></a>3. 数据库应用接口</h3><p>用户可能想要开发用户自己的客户端应用接入到Greenplum数据库。PostgreSQL为最常用的数据库应用编程接口（API）提供了数种数据库驱动，这些同样也能在Greenplum数据库中使用。这些驱动作为一个独立的下载提供。每一种驱动（除了随PostgreSQL提供的libpq）都是一个独立的PostgreSQL开发项目并且必须被下载、安装并且配置以连接到Greenplum数据库。可用的驱动如下：</p>
+<table>
+<thead>
+<tr>
+<th align="left">API</th>
+<th align="left">PostgreSQL驱动</th>
+<th align="left">下载链接</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">ODBC</td>
+<td align="left">psqlODBC</td>
+<td align="left"><a href="https://odbc.postgresql.org/" target="_blank" rel="noopener">https://odbc.postgresql.org/</a></td>
+</tr>
+<tr>
+<td align="left">JDBC</td>
+<td align="left">pgjdbc</td>
+<td align="left"><a href="https://jdbc.postgresql.org/" target="_blank" rel="noopener">https://jdbc.postgresql.org/</a></td>
+</tr>
+<tr>
+<td align="left">Perl DBI</td>
+<td align="left">pgperl</td>
+<td align="left"><a href="http://search.cpan.org/dist/DBD-Pg/" target="_blank" rel="noopener">http://search.cpan.org/dist/DBD-Pg/</a></td>
+</tr>
+<tr>
+<td align="left">Python DBI</td>
+<td align="left">pygresql</td>
+<td align="left"><a href="http://www.pygresql.org/" target="_blank" rel="noopener">http://www.pygresql.org/</a></td>
+</tr>
+<tr>
+<td align="left">libpq C Library</td>
+<td align="left">libpq</td>
+<td align="left"><a href="https://www.postgresql.org/docs/8.3/static/libpq.html" target="_blank" rel="noopener">https://www.postgresql.org/docs/8.3/static/libpq.html</a></td>
+</tr>
+</tbody></table>
+<p>用API访问Greenplum数据库的一般步骤是：</p>
+<ol>
+<li><p>从合适的来源下载用户的编程语言平台以及相应的API。例如，用户可以从Oracle得到Java开发工具包（JDK）和JDBC API。</p>
+</li>
+<li><p>根据API规范编写用户的客户端应用。在编程时，注意Greenplum数据库中的SQL支持这样用户才不会使用不被支持的SQL语法。</p>
+<p>更多信息请见<em>Greenplum数据库参考指南</em>。</p>
+</li>
+</ol>
+<p>下载合适的驱动并且配置到Greenplum数据库Master实例的连接。</p>
+<hr>
+<p>在连接访问Greenplum数据库时如果遇到了其它的问题，可以查阅<a href="https://greenplum.cn/gp5/admin_guide/access_db/topics/g-troubleshooting-connection-problems.html" target="_blank" rel="noopener">官方文档</a>。</p>
+<hr>
+<h3 id="附录"><a href="#附录" class="headerlink" title="附录"></a>附录</h3><h4 id="pg-hba-conf文件解析"><a href="#pg-hba-conf文件解析" class="headerlink" title="pg_hba.conf文件解析"></a><em>pg_hba.conf</em>文件解析</h4><p>详见可以参阅<a href="https://greenplum.cn/gp5/admin_guide/client_auth.html#topic2" target="_blank" rel="noopener">官方文档</a>。</p>
+<p>PG数据库的<em>pg_hba.conf</em>配置文件中存储着和连接相关的权限配置，文件存放在Data目录下。文件中每一行为一条配置，每条配置中包括<strong>连接类型（TYPE）</strong>、<strong>数据库（DATABASE）</strong>、<strong>用户（USER）</strong>、<strong>客户端地址（ADDRESS）</strong>和<strong>认证方式（METHOD）</strong>这五个字段：</p>
+<p>下面分别解释下上述字段常用的设置：</p>
+<ul>
+<li>连接类型（TYPE）：包括local、host、hostssl、hostnossl<ul>
+<li>local：只允许本地客户端登录</li>
+<li>host：允许远程客户端登录</li>
+<li>hostssl：允许经过ssl加密的连接</li>
+<li>hostnossl：和hostssl相反，允许未经过ssl加密的连接</li>
+</ul>
+</li>
+<li>数据库（DATABASE）：设置所允许连接的数据库<ul>
+<li>设置为ALL时，表示允许连接所有数据库</li>
+<li>设置为replication时，表示允许复制连接的请求。如果存在两个需要同步的数据库，那么需要设置replication值</li>
+</ul>
+</li>
+<li>用户（USER）：设置允许登录的数据库用户<ul>
+<li>设置为ALL时，表示允许所有用户登录</li>
+</ul>
+</li>
+<li>客户端地址（ADDRESS）：设置允许登录的客户端地址，设置格式为：<code>xxx.xxx.xxx.xxx/n</code>，其中<code>/</code>后的<code>n</code>表示子网掩码<ul>
+<li><code>192.168.6.1/32</code>，表示IP为192.168.6.1，子网掩码为255.255.255.255</li>
+<li><code>192.168.6.0/24</code>，表示子网掩码为255.255.255.0，此时允许192.168.6.0-192.168.6.255范围内的客户端地址链接</li>
+</ul>
+</li>
+<li>认证方式（METHOD）：常用的值包括Trust和MD5<ul>
+<li>Trust表示不需要口令而允许对应的客户端链接</li>
+<li>MD5表示客户端需要使用MD5加密的口令认证连接</li>
+</ul>
+</li>
+</ul>
+<p>通常配置成如下：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">host all all 0.0.0.0/0 md5</span><br></pre></td></tr></table></figure>
+
+<p>表示允许地址在<code>0.0.0.0</code>～<code>255.255.255.255</code>范围内的客户端，通过MD5加密的密码，使用任意用户连接任意数据库。</p>
+<p>建议通过此配置文件配置客户端的地址范围，而具体的数据库的权限，建议使用PG的角色权限管理，更方便也更安全。</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Greenplum/" rel="tag"># Greenplum</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-next post-nav-item">
+                <a href="/2019/12/18/%20Greenplum%E5%B8%B8%E7%94%A8%E5%B7%A5%E5%85%B7/" rel="next" title="Greenplum常用工具">
+                  <i class="fa fa-chevron-left"></i> Greenplum常用工具
+                </a>
+            </div>
+
+            <span class="post-nav-divider"></span>
+
+            <div class="post-nav-prev post-nav-item">
+                <a href="/2019/12/19/Greenplum%E6%95%B0%E6%8D%AE%E5%BA%93%E4%B9%8BDDL/" rel="prev" title="Greenplum数据库之DDL">
+                  Greenplum数据库之DDL <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-使用psql连接"><span class="nav-number">1.</span> <span class="nav-text">1. 使用psql连接</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-使用pgAdmin4连接"><span class="nav-number">2.</span> <span class="nav-text">2. 使用pgAdmin4连接</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-数据库应用接口"><span class="nav-number">3.</span> <span class="nav-text">3. 数据库应用接口</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#附录"><span class="nav-number">4.</span> <span class="nav-text">附录</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#pg-hba-conf文件解析"><span class="nav-number">4.1.</span> <span class="nav-text">pg_hba.conf文件解析</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <img class="site-author-image" itemprop="image" alt="MIN MIN"
+    src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">MIN MIN</p>
+  <div class="site-description" itemprop="description">即使最后没有人为你鼓掌，也要优雅地谢幕，感谢自己的认真付出。</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">54</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">13</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+        <span class="site-state-item-count">32</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/ashermin" title="GitHub &amp;rarr; https:&#x2F;&#x2F;github.com&#x2F;ashermin" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+<div class="copyright">
+  
+  &copy; 2019 – 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user-circle"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">MIN MIN</span>
+</div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+<script src="/js/utils.js"></script>
+<script src="/js/schemes/pisces.js"></script>
+<script src="/js/next-boot.js"></script>
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+</body>
+</html>

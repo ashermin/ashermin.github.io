@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.0.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/avatar.jpg">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/avatar.jpg">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/avatar.jpg">
+  <link rel="mask-icon" href="/images/avatar.jpg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+
+
+<script id="hexo-configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '7.4.2',
+    exturl: false,
+    sidebar: {"position":"left","width":260,"display":"post","offset":12,"onmobile":false},
+    copycode: {"enable":true,"show_result":true,"style":"default"},
+    back2top: {"enable":true,"sidebar":false,"scrollpercent":true},
+    bookmark: {"enable":false,"color":"#222","save":"auto"},
+    fancybox: false,
+    mediumzoom: false,
+    lazyload: false,
+    pangu: false,
+    algolia: {
+      appID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    localsearch: {"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},
+    path: '',
+    motion: {"enable":false,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    translation: {
+      copy_button: '复制',
+      copy_success: '复制成功',
+      copy_failure: '复制失败'
+    },
+    sidebarPadding: 40
+  };
+</script>
+
+  <meta name="description" content="1. Hive DDL所谓DDL即Data Definition Language，具体内容可参加官网。 Tips：显示当前数据库名 hive&amp;gt; set hive.cli.print.current.db=true;hive (default)&amp;gt; 1.1 Create&#x2F;Drop&#x2F;Alter&#x2F;Use Database">
+<meta name="keywords" content="Hive">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Hive基础">
+<meta property="og:url" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2019&#x2F;12&#x2F;01&#x2F;Hive%E5%9F%BA%E7%A1%80&#x2F;index.html">
+<meta property="og:site_name" content="MIN MIN">
+<meta property="og:description" content="1. Hive DDL所谓DDL即Data Definition Language，具体内容可参加官网。 Tips：显示当前数据库名 hive&amp;gt; set hive.cli.print.current.db=true;hive (default)&amp;gt; 1.1 Create&#x2F;Drop&#x2F;Alter&#x2F;Use Database">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2019-12-01T14:58:30.982Z">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://yoursite.com/2019/12/01/Hive%E5%9F%BA%E7%A1%80/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true,
+    isPage: false,
+    isArchive: false
+  };
+</script>
+
+  <title>Hive基础 | MIN MIN</title>
+  
+
+
+  <script>
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?cad2a7930afd095772e571e6eab3628f";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+  <!--  -->
+<link href='//fonts.googleapis.com/css?family=Kaushan+Script' rel='stylesheet' type='text/css'>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">MIN MIN</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+        <p class="site-subtitle">BLOG</p>
+  </div>
+
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档</a>
+
+  </li>
+  </ul>
+
+</nav>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/12/01/Hive%E5%9F%BA%E7%A1%80/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="MIN MIN">
+      <meta itemprop="description" content="即使最后没有人为你鼓掌，也要优雅地谢幕，感谢自己的认真付出。">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="MIN MIN">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Hive基础
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2019-12-01 18:39:16 / 修改时间：22:58:30" itemprop="dateCreated datePublished" datetime="2019-12-01T18:39:16+08:00">2019-12-01</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Hive/" itemprop="url" rel="index">
+                    <span itemprop="name">Hive</span>
+                  </a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h3 id="1-Hive-DDL"><a href="#1-Hive-DDL" class="headerlink" title="1. Hive DDL"></a>1. Hive DDL</h3><p>所谓DDL即Data Definition Language，具体内容可参加<a href="https://cwiki.apache.org/confluence/display/Hive/LanguageManual+DDL" target="_blank" rel="noopener">官网</a>。</p><blockquote>
+<p>Tips：显示当前数据库名</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">hive&gt;</span><span class="bash"> <span class="built_in">set</span> hive.cli.print.current.db=<span class="literal">true</span>;</span></span><br><span class="line">hive (default)&gt;</span><br></pre></td></tr></table></figure>
+</blockquote><h4 id="1-1-Create-Drop-Alter-Use-Database"><a href="#1-1-Create-Drop-Alter-Use-Database" class="headerlink" title="1.1 Create/Drop/Alter/Use Database"></a>1.1 Create/Drop/Alter/Use Database</h4><a id="more"></a>
+
+<p><strong>Create Database</strong>格式：</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">CREATE</span> (<span class="keyword">DATABASE</span>|<span class="keyword">SCHEMA</span>) [<span class="keyword">IF</span> <span class="keyword">NOT</span> <span class="keyword">EXISTS</span>] database_name</span><br><span class="line">  [<span class="keyword">COMMENT</span> database_comment] <span class="comment">--对数据库的描述</span></span><br><span class="line">  [LOCATION hdfs_path] <span class="comment">--指定数据库存在HDFS上的位置</span></span><br><span class="line">  [<span class="keyword">WITH</span> DBPROPERTIES (property_name=property_value, ...)]; <span class="comment">--数据库的属性信息</span></span><br></pre></td></tr></table></figure>
+
+<p>一般创建数据库的语句是<code>CREATE DATABASE Hive_learn;</code>，其实创建时可以添加更加丰富的信息，如添加注释、指定数据库存放路径（默认在<code>/user/hive/warehouse</code>）、添加数据库信息：</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">CREATE</span> <span class="keyword">DATABASE</span> <span class="keyword">IF</span> <span class="keyword">NOT</span> <span class="keyword">EXISTS</span> Hive_learn <span class="keyword">COMMENT</span> <span class="string">'Learn Hive DDL'</span> LOCATION <span class="string">'/learn/hive/Hive_learn'</span> <span class="keyword">WITH</span> DBPROPERTIES (<span class="string">'creator'</span>=<span class="string">'minmin'</span>,<span class="string">'createTime'</span>=<span class="string">'2019-12-1'</span>);</span><br></pre></td></tr></table></figure>
+
+<p>通过<code>DESC EXTENDED</code>可以查看数据库的详细信息：</p>
+<figure class="highlight"><table><tr><td class="code"><pre><span class="line">hive (default)&gt; DESC DATABASE EXTENDED hive_learn;</span><br><span class="line">OK</span><br><span class="line">hive_learn	Learn Hive DDL	hdfs://min01:8020/learn/hive/Hive_learn	minmin	USER	&#123;creator=minmin, createTime=2019-12-1&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>Drop Database</strong>格式：</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">DROP</span> (<span class="keyword">DATABASE</span>|<span class="keyword">SCHEMA</span>) [<span class="keyword">IF</span> <span class="keyword">EXISTS</span>] database_name [RESTRICT（默认）|<span class="keyword">CASCADE</span>];</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><code>RESTRICT</code>（默认）：删除不包含表的数据库</li>
+<li><code>CASCADE</code>：删除含有表的数据库</li>
+</ul>
+<p><strong>Alter Database</strong>格式：</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">ALTER</span> (<span class="keyword">DATABASE</span>|<span class="keyword">SCHEMA</span>) database_name <span class="keyword">SET</span> DBPROPERTIES (property_name=property_value, ...);   <span class="comment">-- (<span class="doctag">Note:</span> SCHEMA added in Hive 0.14.0)</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">ALTER</span> (<span class="keyword">DATABASE</span>|<span class="keyword">SCHEMA</span>) database_name <span class="keyword">SET</span> OWNER [<span class="keyword">USER</span>|<span class="keyword">ROLE</span>] user_or_role;</span><br><span class="line"><span class="comment">-- (<span class="doctag">Note:</span> Hive 0.13.0 and later; SCHEMA added in Hive 0.14.0)</span></span><br><span class="line">  </span><br><span class="line"><span class="keyword">ALTER</span> (<span class="keyword">DATABASE</span>|<span class="keyword">SCHEMA</span>) database_name <span class="keyword">SET</span> LOCATION hdfs_path;</span><br><span class="line"><span class="comment">-- (<span class="doctag">Note:</span> Hive 2.2.1, 2.4.0 and later)</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="1-2-Create-Drop-Truncate-Table"><a href="#1-2-Create-Drop-Truncate-Table" class="headerlink" title="1.2 Create/Drop/Truncate Table"></a>1.2 Create/Drop/Truncate Table</h4><p><strong>Create Table</strong>格式：</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">CREATE</span> [<span class="keyword">EXTERNAL</span>] <span class="keyword">TABLE</span> [<span class="keyword">IF</span> <span class="keyword">NOT</span> <span class="keyword">EXISTS</span>] table_name</span><br><span class="line">[(col_name data_type [<span class="keyword">COMMENT</span> col_comment], ...)]</span><br><span class="line">[<span class="keyword">COMMENT</span> table_comment]</span><br><span class="line">[PARTITIONED <span class="keyword">BY</span> (col_name data_type [<span class="keyword">COMMENT</span> col_comment], ...)]</span><br><span class="line">[CLUSTERED <span class="keyword">BY</span> (col_name, col_name, ...</span><br><span class="line">　　[SORTED <span class="keyword">BY</span> (col_name [<span class="keyword">ASC</span>|<span class="keyword">DESC</span>], ...)] <span class="keyword">INTO</span> num_buckets BUCKETS]</span><br><span class="line">[<span class="keyword">ROW</span> <span class="keyword">FORMAT</span> row_format]</span><br><span class="line">[<span class="keyword">STORED</span> <span class="keyword">AS</span> file_format]</span><br><span class="line">[LOCATION hdfs_path]</span><br></pre></td></tr></table></figure>
+
+<p>这里我将Oracle中自带的<code>EMP</code>表导出为<code>EMP.txt</code>，然后其导入至新建的Hive表<code>Emp</code>（Hive表中的字段类型可以详见<a href="https://cwiki.apache.org/confluence/display/Hive/LanguageManual+Types" target="_blank" rel="noopener">官网</a>）：</p>
+<table>
+<thead>
+<tr>
+<th>Empno</th>
+<th>ename</th>
+<th>job</th>
+<th>mgr</th>
+<th>hiredate</th>
+<th>sal</th>
+<th>comm</th>
+<th>depno</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>员工编号</td>
+<td>姓名</td>
+<td>岗位</td>
+<td>上级领导的编号</td>
+<td>入职时间</td>
+<td>薪资</td>
+<td>补贴</td>
+<td>部门编号</td>
+</tr>
+</tbody></table>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">CREATE</span> <span class="keyword">TABLE</span> <span class="keyword">IF</span> <span class="keyword">NOT</span> <span class="keyword">EXISTS</span> Emp(</span><br><span class="line">empno <span class="built_in">INT</span>,</span><br><span class="line">ename <span class="keyword">STRING</span>,</span><br><span class="line">job <span class="keyword">STRING</span>,</span><br><span class="line">mgr <span class="built_in">INT</span>,</span><br><span class="line">hiredate <span class="built_in">DATE</span>,</span><br><span class="line">sal <span class="keyword">DOUBLE</span>,</span><br><span class="line">comm <span class="keyword">DOUBLE</span>,</span><br><span class="line">depno <span class="built_in">INT</span></span><br><span class="line">) <span class="keyword">ROW</span> <span class="keyword">FORMAT</span> <span class="keyword">DELIMITED</span> <span class="keyword">FIELDS</span> <span class="keyword">TERMINATED</span> <span class="keyword">BY</span> <span class="string">'\t'</span>;</span><br></pre></td></tr></table></figure>
+
+<p>将本地的<code>EMP.txt</code>导入至Hive的<code>Emp</code>表：</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line">hive (default)&gt; LOAD DATA LOCAL INPATH '/opt/data/EMP.txt' OVERWRITE INTO TABLE emp;</span><br><span class="line"></span><br><span class="line">hive (default)&gt; SELECT * FROM emp;</span><br><span class="line">OK</span><br><span class="line">7369	SMITH	CLERK	7902	NULL	1100.0	NULL	20</span><br><span class="line">7499	allen	SALESMAN	7698	NULL	50.0	310.0	30</span><br><span class="line">7521	WARD	SALESMAN	7698	NULL	50.0	510.0	30</span><br><span class="line">7566	JONES	MANAGER	7839	NULL	3575.0	NULL	20</span><br><span class="line">7654	MARTIN	SALESMAN	7698	NULL	50.0	1410.0	30</span><br><span class="line">7698	BLAKE	MANAGER	7839	NULL	3450.0	NULL	30</span><br><span class="line">7782	CLARK	MANAGER	7839	NULL	3050.0	NULL	10</span><br><span class="line">7788	SCOTT	ANALYST	7566	NULL	50.0	NULL	20</span><br><span class="line">7839	KING	PRESIDENT	NULL	NULL	50.0	NULL	10</span><br><span class="line">7844	TURNER	SALESMAN	7698	NULL	50.0	10.0	30</span><br><span class="line">7876	ADAMS	CLERK	7788	NULL	1400.0	NULL	20</span><br><span class="line">...（省略）...</span><br></pre></td></tr></table></figure>
+
+<p>通过查看<code>emp</code>表的详细信息，可以知道该表存在HDFS的具体路径为<code>/user/hive/warehouse/emp</code>：</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line">hive (default)&gt; DESC FORMATTED emp;</span><br><span class="line">OK</span><br><span class="line"><span class="comment"># col_name            	data_type           	comment             </span></span><br><span class="line">	 	 </span><br><span class="line">empno               	int                 	                    </span><br><span class="line">ename               	string              	                    </span><br><span class="line">job                 	string              	                    </span><br><span class="line">mgr                 	int                 	                    </span><br><span class="line">hiredate            	date                	                    </span><br><span class="line">sal                 	double              	                    </span><br><span class="line">comm                	double              	                    </span><br><span class="line">depno               	int                 	                    </span><br><span class="line">	 	 </span><br><span class="line"><span class="comment"># Detailed Table Information	 	 </span></span><br><span class="line">Database:           	default             	 </span><br><span class="line">Owner:              	minmin              	 </span><br><span class="line">CreateTime:         	Sun Dec 01 20:32:45 CST 2019	 </span><br><span class="line">LastAccessTime:     	UNKNOWN             	 </span><br><span class="line">Protect Mode:       	None                	 </span><br><span class="line">Retention:          	0                   	 </span><br><span class="line">Location:           	hdfs://min01:8020/user/hive/warehouse/emp	 </span><br><span class="line">Table Type:         	MANAGED_TABLE       	 </span><br><span class="line">Table Parameters:	 	 </span><br><span class="line">	COLUMN_STATS_ACCURATE	true                </span><br><span class="line">	numFiles            	1                   </span><br><span class="line">	numRows             	0                   </span><br><span class="line">	rawDataSize         	0                   </span><br><span class="line">	totalSize           	5476                </span><br><span class="line">	transient_lastDdlTime	1575203580          </span><br><span class="line">	 	 </span><br><span class="line"><span class="comment"># Storage Information	 	 </span></span><br><span class="line">SerDe Library:      	org.apache.hadoop.hive.serde2.lazy.LazySimpleSerDe	 </span><br><span class="line">InputFormat:        	org.apache.hadoop.mapred.TextInputFormat	 </span><br><span class="line">OutputFormat:       	org.apache.hadoop.hive.ql.io.HiveIgnoreKeyTextOutputFormat	 </span><br><span class="line">Compressed:         	No                  	 </span><br><span class="line">Num Buckets:        	-1                  	 </span><br><span class="line">Bucket Columns:     	[]                  	 </span><br><span class="line">Sort Columns:       	[]                  	 </span><br><span class="line">Storage Desc Params:	 	 </span><br><span class="line">	field.delim         	\t                  </span><br><span class="line">	serialization.format	\t                  </span><br><span class="line">Time taken: 0.091 seconds, Fetched: 39 row(s)</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> hdfs dfs -ls /user/hive/warehouse/emp</span></span><br><span class="line">-rwxr-xr-x  1  minmin supergroup  5476 2019-12-01 20:33  /user/hive/warehouse/emp/EMP.txt</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h3 id="2-Hive-DML"><a href="#2-Hive-DML" class="headerlink" title="2. Hive DML"></a>2. Hive DML</h3><p>所谓DML即Data Manipulation Language，主要是数据的加载、查询、导出导入等，具体内容可参加<a href="https://cwiki.apache.org/confluence/display/Hive/LanguageManual+DML" target="_blank" rel="noopener">官网</a>。</p>
+<h4 id="2-1-Loading-files-into-tables"><a href="#2-1-Loading-files-into-tables" class="headerlink" title="2.1 Loading files into tables"></a>2.1 Loading files into tables</h4><p>默认是从HDFS上将文件<strong>移动</strong>到Hive表；而加了<code>LOCAL</code>则是从本地将文件<strong>拷贝</strong>到Hive表。</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">LOAD</span> <span class="keyword">DATA</span> [<span class="keyword">LOCAL</span>] INPATH <span class="string">'filepath'</span> [OVERWRITE] <span class="keyword">INTO</span> <span class="keyword">TABLE</span> tablename [<span class="keyword">PARTITION</span> (partcol1=val1, partcol2=val2 ...)]</span><br><span class="line"> </span><br><span class="line"><span class="keyword">LOAD</span> <span class="keyword">DATA</span> [<span class="keyword">LOCAL</span>] INPATH <span class="string">'filepath'</span> [OVERWRITE] <span class="keyword">INTO</span> <span class="keyword">TABLE</span> tablename [<span class="keyword">PARTITION</span> (partcol1=val1, partcol2=val2 ...)] [INPUTFORMAT <span class="string">'inputformat'</span> SERDE <span class="string">'serde'</span>] (<span class="number">3.0</span> <span class="keyword">or</span> later)</span><br></pre></td></tr></table></figure>
+
+<h4 id="2-2-Inserting-data-into-Hive-Tables-from-queries"><a href="#2-2-Inserting-data-into-Hive-Tables-from-queries" class="headerlink" title="2.2 Inserting data into Hive Tables from queries"></a>2.2 Inserting data into Hive Tables from queries</h4><p>根据<code>emp</code>表的某些字段来创建一张新表<code>emp2</code>：（需要走MapReduce）</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line">hive (default)&gt; CREATE TABLE emp2 AS SELECT empno,ename,job FROM emp;</span><br><span class="line"></span><br><span class="line">hive (default)&gt; SELECT * FROM emp2;</span><br><span class="line">7369	SMITH	CLERK</span><br><span class="line">7499	allen	SALESMAN</span><br><span class="line">7521	WARD	SALESMAN</span><br><span class="line">7566	JONES	MANAGER</span><br><span class="line">...（省略）...</span><br></pre></td></tr></table></figure>
+
+<h4 id="2-3-Writing-data-into-the-filesystem-from-queries"><a href="#2-3-Writing-data-into-the-filesystem-from-queries" class="headerlink" title="2.3 Writing data into the filesystem from queries"></a>2.3 Writing data into the filesystem from queries</h4><p>将<code>emp</code>表的某些字段导出至本地的文件<code>emp_local.txt</code>：</p>
+<figure class="highlight"><table><tr><td class="code"><pre><span class="line">hive (default)&gt; INSERT OVERWRITE LOCAL DIRECTORY '/opt/data/emp_local'</span><br><span class="line">              &gt; ROW FORMAT DELIMITED FIELDS TERMINATED BY '\t'</span><br><span class="line">              &gt; SELECT empno,ename,sal FROM emp;</span><br></pre></td></tr></table></figure>
+
+<p>导出的<code>emp_local</code>是个文件夹，数据在里面的<code>000000_0</code>：</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">-rw-r--r--. 1 minmin minmin 1832 12月  1 21:13 000000_0</span><br><span class="line">[minmin@min01 emp_local.txt]$ cat 000000_0 </span><br><span class="line">7369	SMITH	1100.0</span><br><span class="line">7499	allen	50.0</span><br><span class="line">7521	WARD	50.0</span><br><span class="line">...（省略）...</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h3 id="3-Hive-Select"><a href="#3-Hive-Select" class="headerlink" title="3. Hive Select"></a>3. Hive Select</h3><p>查询基本语法：</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> [<span class="keyword">ALL</span> | <span class="keyword">DISTINCT</span>] select_expr, select_expr, ...</span><br><span class="line"><span class="keyword">FROM</span> table_reference</span><br><span class="line">[<span class="keyword">WHERE</span> where_condition]</span><br><span class="line">[<span class="keyword">GROUP</span> <span class="keyword">BY</span> col_list]</span><br><span class="line">[<span class="keyword">ORDER</span> <span class="keyword">BY</span> col_list]</span><br><span class="line">[CLUSTER <span class="keyword">BY</span> col_list</span><br><span class="line">  | [<span class="keyword">DISTRIBUTE</span> <span class="keyword">BY</span> col_list] [<span class="keyword">SORT</span> <span class="keyword">BY</span> col_list]</span><br><span class="line">]</span><br><span class="line">[<span class="keyword">LIMIT</span> [<span class="keyword">offset</span>,] <span class="keyword">rows</span>]</span><br></pre></td></tr></table></figure>
+
+<h4 id="3-1-需求：求平均工资大于1500的部门"><a href="#3-1-需求：求平均工资大于1500的部门" class="headerlink" title="3.1 需求：求平均工资大于1500的部门"></a>3.1 需求：求平均工资大于1500的部门</h4><p>⚠️注意：对于<strong>分组函数</strong>，过滤不能用<del><code>WHERE</code></del>，而要用<code>HAVING</code>！</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> depno,<span class="keyword">AVG</span>(sal) avg_sal <span class="keyword">FROM</span> emp <span class="keyword">GROUP</span> <span class="keyword">BY</span> depno <span class="keyword">HAVING</span> avg_sal&gt;<span class="number">1500</span>;</span><br></pre></td></tr></table></figure>
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Hive/" rel="tag"># Hive</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-next post-nav-item">
+                <a href="/2019/11/30/CentOS-7%E5%AE%89%E8%A3%85MySQL/" rel="next" title="CentOS 7安装MySQL">
+                  <i class="fa fa-chevron-left"></i> CentOS 7安装MySQL
+                </a>
+            </div>
+
+            <span class="post-nav-divider"></span>
+
+            <div class="post-nav-prev post-nav-item">
+                <a href="/2019/12/03/HBase%E5%8E%9F%E7%90%86%E8%A7%A3%E6%9E%90/" rel="prev" title="HBase原理解析">
+                  HBase原理解析 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-Hive-DDL"><span class="nav-number">1.</span> <span class="nav-text">1. Hive DDL</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-1-Create-Drop-Alter-Use-Database"><span class="nav-number">1.1.</span> <span class="nav-text">1.1 Create/Drop/Alter/Use Database</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#1-2-Create-Drop-Truncate-Table"><span class="nav-number">1.2.</span> <span class="nav-text">1.2 Create/Drop/Truncate Table</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-Hive-DML"><span class="nav-number">2.</span> <span class="nav-text">2. Hive DML</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#2-1-Loading-files-into-tables"><span class="nav-number">2.1.</span> <span class="nav-text">2.1 Loading files into tables</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-2-Inserting-data-into-Hive-Tables-from-queries"><span class="nav-number">2.2.</span> <span class="nav-text">2.2 Inserting data into Hive Tables from queries</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-3-Writing-data-into-the-filesystem-from-queries"><span class="nav-number">2.3.</span> <span class="nav-text">2.3 Writing data into the filesystem from queries</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-Hive-Select"><span class="nav-number">3.</span> <span class="nav-text">3. Hive Select</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#3-1-需求：求平均工资大于1500的部门"><span class="nav-number">3.1.</span> <span class="nav-text">3.1 需求：求平均工资大于1500的部门</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <img class="site-author-image" itemprop="image" alt="MIN MIN"
+    src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">MIN MIN</p>
+  <div class="site-description" itemprop="description">即使最后没有人为你鼓掌，也要优雅地谢幕，感谢自己的认真付出。</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">54</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">13</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+        <span class="site-state-item-count">32</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/ashermin" title="GitHub &amp;rarr; https:&#x2F;&#x2F;github.com&#x2F;ashermin" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+<div class="copyright">
+  
+  &copy; 2019 – 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user-circle"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">MIN MIN</span>
+</div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+<script src="/js/utils.js"></script>
+<script src="/js/schemes/pisces.js"></script>
+<script src="/js/next-boot.js"></script>
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+</body>
+</html>

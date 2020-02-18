@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.0.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/avatar.jpg">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/avatar.jpg">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/avatar.jpg">
+  <link rel="mask-icon" href="/images/avatar.jpg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+
+
+<script id="hexo-configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '7.4.2',
+    exturl: false,
+    sidebar: {"position":"left","width":260,"display":"post","offset":12,"onmobile":false},
+    copycode: {"enable":true,"show_result":true,"style":"default"},
+    back2top: {"enable":true,"sidebar":false,"scrollpercent":true},
+    bookmark: {"enable":false,"color":"#222","save":"auto"},
+    fancybox: false,
+    mediumzoom: false,
+    lazyload: false,
+    pangu: false,
+    algolia: {
+      appID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    localsearch: {"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},
+    path: '',
+    motion: {"enable":false,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    translation: {
+      copy_button: '复制',
+      copy_success: '复制成功',
+      copy_failure: '复制失败'
+    },
+    sidebarPadding: 40
+  };
+</script>
+
+  <meta name="description" content="Oracle游标是通过关键字CURSOR的来定义一组Oracle查询出来的数据集（Result Set），类似数组一样，把查询的数据集存储在内存当中，然后通过游标指向其中一条记录，通过循环游标达到循环数据集的目的。Oracle游标可以分为显式游标和隐式游标： 显示游标：用于对查询语句的处理，尤其是在查询结果为多条记录的情况下；  隐式游标：用于处理DML语句和返回单行数据的SELECT…INTO查">
+<meta name="keywords" content="Oracle">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Oracle 游标">
+<meta property="og:url" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2020&#x2F;01&#x2F;12&#x2F;Oracle-%E6%B8%B8%E6%A0%87&#x2F;index.html">
+<meta property="og:site_name" content="MIN MIN">
+<meta property="og:description" content="Oracle游标是通过关键字CURSOR的来定义一组Oracle查询出来的数据集（Result Set），类似数组一样，把查询的数据集存储在内存当中，然后通过游标指向其中一条记录，通过循环游标达到循环数据集的目的。Oracle游标可以分为显式游标和隐式游标： 显示游标：用于对查询语句的处理，尤其是在查询结果为多条记录的情况下；  隐式游标：用于处理DML语句和返回单行数据的SELECT…INTO查">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2020-01-13T09:05:37.832Z">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://yoursite.com/2020/01/12/Oracle-%E6%B8%B8%E6%A0%87/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true,
+    isPage: false,
+    isArchive: false
+  };
+</script>
+
+  <title>Oracle 游标 | MIN MIN</title>
+  
+
+
+  <script>
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?cad2a7930afd095772e571e6eab3628f";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+  <!--  -->
+<link href='//fonts.googleapis.com/css?family=Kaushan+Script' rel='stylesheet' type='text/css'>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">MIN MIN</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+        <p class="site-subtitle">BLOG</p>
+  </div>
+
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档</a>
+
+  </li>
+  </ul>
+
+</nav>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/01/12/Oracle-%E6%B8%B8%E6%A0%87/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="MIN MIN">
+      <meta itemprop="description" content="即使最后没有人为你鼓掌，也要优雅地谢幕，感谢自己的认真付出。">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="MIN MIN">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Oracle 游标
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-01-12 11:12:14" itemprop="dateCreated datePublished" datetime="2020-01-12T11:12:14+08:00">2020-01-12</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-01-13 17:05:37" itemprop="dateModified" datetime="2020-01-13T17:05:37+08:00">2020-01-13</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Oracle/" itemprop="url" rel="index">
+                    <span itemprop="name">Oracle</span>
+                  </a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>Oracle游标是通过关键字<code>CURSOR</code>的来定义一组Oracle查询出来的数据集（Result Set），类似数组一样，把查询的数据集存储在内存当中，然后通过游标指向其中一条记录，通过循环游标达到循环数据集的目的。</p><p>Oracle游标可以分为显式游标和隐式游标：</p><ul>
+<li><p><strong>显示游标</strong>：用于对<strong>查询语句</strong>的处理，尤其是在查询结果为多条记录的情况下；</p>
+</li>
+<li><p><strong>隐式游标</strong>：用于处理<strong>DML语句</strong>和返回单行数据的<strong>SELECT…INTO查询</strong>。</p>
+</li>
+</ul><a id="more"></a>
+
+
+<h3 id="1-显式游标"><a href="#1-显式游标" class="headerlink" title="1. 显式游标"></a>1. 显式游标</h3><h4 id="1-1-显式游标的使用步骤"><a href="#1-1-显式游标的使用步骤" class="headerlink" title="1.1 显式游标的使用步骤"></a>1.1 显式游标的使用步骤</h4><h5 id="声明游标"><a href="#声明游标" class="headerlink" title="声明游标"></a>声明游标</h5><p>声明游标是给游标命名并给游标关联一个查询结果集，具体声明语法如下：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">CURSOR 游标名 [参数名 数据类型,...]</span><br><span class="line">IS SELECT 语句;</span><br></pre></td></tr></table></figure>
+
+<h5 id="打开游标"><a href="#打开游标" class="headerlink" title="打开游标"></a>打开游标</h5><p>游标声明完，可以通过打开游标打开命令，初始化游标指针，游标一旦打开后，游标对应的结果集就是静态不会再变了，不管查询的表的基础数据发生了变化。打开游标的命令如下：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">OPEN 游标名;</span><br></pre></td></tr></table></figure>
+
+<h5 id="读取游标中数据"><a href="#读取游标中数据" class="headerlink" title="读取游标中数据"></a>读取游标中数据</h5><p>读取游标中的数据是通过<code>FETCH...INTO</code>语句来单条数据提取，把当前游标指针指向的数据行读取到对应的变量中，并且将指针指向下一条记录；也可以使用<code>BULK COLLECT</code>一次即可提取所有行并绑定到记录变量，这就是所谓的批量绑定。游标读取一般和循环LOOP一起使用，用于循环获取数据集中的记录。</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">--单条数据提取</span><br><span class="line">FETCH 游标名 INTO 变量名;</span><br><span class="line">--批量提取数据</span><br><span class="line">FETCH 游标名 BULK COLLECT INTO 集合变量[LIMIT 一次提取的数据量];</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>在游标中可以使用<code>BLUK COLLECT</code>一次取出一个数据集合，比用游标单条取数据效率高，尤其是在网络不大好的情况下。</p>
+</blockquote>
+<h5 id="关闭游标"><a href="#关闭游标" class="headerlink" title="关闭游标"></a>关闭游标</h5><p>游标使用完，一定要关闭游标释放资源。关闭后，该游标关联的结果集就释放了，不能够再操作了：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">CLOSE 游标名;</span><br></pre></td></tr></table></figure>
+
+<h4 id="1-2-显式游标的属性"><a href="#1-2-显式游标的属性" class="headerlink" title="1.2 显式游标的属性"></a>1.2 显式游标的属性</h4><p>利用显式游标的属性值可以获取游标所处的状态，然后对应做相应的处理，常用的属性有以下四个：</p>
+<h5 id="NOTFOUND"><a href="#NOTFOUND" class="headerlink" title="%NOTFOUND"></a>%NOTFOUND</h5><p>当游标获取数据时没有值时，返回TRUE；有数据则返回FALSE。经常用来判断游标是否全部循环完毕。</p>
+<h5 id="FOUND"><a href="#FOUND" class="headerlink" title="%FOUND"></a>%FOUND</h5><p>正好和%NOTFOUND相反，当游标提取数据值时有值，返回TRUE；否则返回FALSE。</p>
+<h5 id="ISOPEN"><a href="#ISOPEN" class="headerlink" title="%ISOPEN"></a>%ISOPEN</h5><p>用来判断游标是否打开，打开返回TRUE；关闭返回FALSE。</p>
+<h5 id="ROWCOUNT"><a href="#ROWCOUNT" class="headerlink" title="%ROWCOUNT"></a>%ROWCOUNT</h5><p>表示当前游标<code>FETCH...INTO</code>获取了多少行的记录值，用来做计数的。</p>
+<h4 id="1-3-游标的个数限制"><a href="#1-3-游标的个数限制" class="headerlink" title="1.3 游标的个数限制"></a>1.3 游标的个数限制</h4><p>默认情况下，Oracle数据库只允许在同一个会话中打开300个游标。</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">SQL&gt; SHOW PARAMETER cursor;</span><br><span class="line">NAME                   TYPE    VALUE </span><br><span class="line">---------------------- ------- ----- </span><br><span class="line">cursor_sharing         string  EXACT </span><br><span class="line">cursor_space_for_time  boolean FALSE </span><br><span class="line">open_cursors           integer 300   </span><br><span class="line">session_cached_cursors integer 50</span><br></pre></td></tr></table></figure>
+
+<p>实际生产环境中，默认300个游标肯定是不够的，可以修改默认游标数：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">SQL&gt; ALTER SYSTEM SET open_cursors=400 SCOPE=BOTH;</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>其中，<code>SCOPE</code>是范围的意思，其取值有三个：</p>
+<ul>
+<li>BOTH：既更改当前实例，又更改参数文件</li>
+<li>MEMORY：只更改当前实例，不更改参数文件</li>
+<li>SPFILE：只更改参数文件，不更改当前实例。并且数据库需要重启</li>
+</ul>
+</blockquote>
+<h4 id="1-4-单条提取数据案例"><a href="#1-4-单条提取数据案例" class="headerlink" title="1.4 单条提取数据案例"></a>1.4 单条提取数据案例</h4><p>不带参数游标：按照员工的工种job进行涨工资，BOSS涨1000，MANAGER涨800，其他人涨500</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">DECLARE</span><br><span class="line">    --1.声明游标</span><br><span class="line">    CURSOR cur_emp IS</span><br><span class="line">        SELECT empno,job FROM emp;</span><br><span class="line">    --为游标定义对应的变量</span><br><span class="line">    pempno emp.empno%TYPE;</span><br><span class="line">    pjob emp.job%TYPE;</span><br><span class="line">BEGIN</span><br><span class="line">    --2.打开游标</span><br><span class="line">    OPEN cur_emp;</span><br><span class="line">    </span><br><span class="line">    --循环获取游标内的记录</span><br><span class="line">    LOOP</span><br><span class="line">        --3.获取一条记录</span><br><span class="line">        FETCH cur_emp INTO pempno,pjob;</span><br><span class="line">        --取不到记录就退出循环</span><br><span class="line">        EXIT WHEN cur_emp%NOTFOUND;</span><br><span class="line">        </span><br><span class="line">        IF(pjob=&apos;BOSS&apos;) THEN </span><br><span class="line">            UPDATE emp SET sal=sal+1000 WHERE empno=pempno;</span><br><span class="line">        ELSIF(pjob=&apos;MANAGER&apos;) THEN </span><br><span class="line">            UPDATE emp SET sal=sal+800 WHERE empno=pempno;</span><br><span class="line">        ELSE</span><br><span class="line">            UPDATE emp SET sal=sal+500 WHERE empno=pempno;</span><br><span class="line">        END IF;</span><br><span class="line">    END LOOP;</span><br><span class="line">    </span><br><span class="line">    --4.关闭游标</span><br><span class="line">    CLOSE cur_emp;</span><br><span class="line">    </span><br><span class="line">    --提交事物</span><br><span class="line">    COMMIT;</span><br><span class="line">END;</span><br></pre></td></tr></table></figure>
+
+<p>带参数游标：查询某个部门中员工的姓名</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">--使用%TYPE</span><br><span class="line">DECLARE</span><br><span class="line">    CURSOR cur_emp(pdeptno NUMBER) IS </span><br><span class="line">        SELECT ename FROM emp WHERE deptno=pdeptno;</span><br><span class="line">    pename emp.ename%TYPE;</span><br><span class="line">BEGIN</span><br><span class="line">    OPEN cur_emp(10);</span><br><span class="line">    </span><br><span class="line">    LOOP</span><br><span class="line">        FETCH cur_emp INTO pename;</span><br><span class="line">        EXIT WHEN cur_emp%NOTFOUND;</span><br><span class="line">        </span><br><span class="line">        DBMS_OUTPUT.PUT_LINE(pename);</span><br><span class="line">        </span><br><span class="line">    END LOOP;</span><br><span class="line">    </span><br><span class="line">    CLOSE cur_emp;</span><br><span class="line"></span><br><span class="line">END;</span><br><span class="line">--使用%ROWTYPE</span><br><span class="line">DECLARE</span><br><span class="line">    CURSOR cur_emp(pdeptno NUMBER) IS </span><br><span class="line">        SELECT * FROM emp WHERE deptno=pdeptno;</span><br><span class="line">    pemp emp%ROWTYPE;</span><br><span class="line">BEGIN</span><br><span class="line">    OPEN cur_emp(10);</span><br><span class="line">    </span><br><span class="line">    LOOP</span><br><span class="line">        FETCH cur_emp INTO pemp;</span><br><span class="line">        EXIT WHEN cur_emp%NOTFOUND;</span><br><span class="line">        </span><br><span class="line">        DBMS_OUTPUT.PUT_LINE(pemp.ename);</span><br><span class="line">        </span><br><span class="line">    END LOOP;</span><br><span class="line">    </span><br><span class="line">    CLOSE cur_emp;</span><br><span class="line"></span><br><span class="line">END;</span><br><span class="line">------</span><br><span class="line">CLARK</span><br><span class="line">MILLER</span><br><span class="line">MINMIN</span><br></pre></td></tr></table></figure>
+
+<h4 id="1-5-批量提取数据案例"><a href="#1-5-批量提取数据案例" class="headerlink" title="1.5 批量提取数据案例"></a>1.5 批量提取数据案例</h4><blockquote>
+<p>由于<code>BULK COLLECT</code>的批量特性，如果数据量较大，而集合在此时又自动扩展，为避免过大的数据集造成性能下降，因此可以使用LIMIT子句来限制一次提取的数据量。LIMIT子句只允许出现在FETCH操作语句的批量中。</p>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">DECLARE</span><br><span class="line">    CURSOR cur_emp IS </span><br><span class="line">        SELECT empno,ename,hiredate FROM emp;</span><br><span class="line">    --将记录包装一下</span><br><span class="line">    TYPE emp_rec_type IS RECORD(</span><br><span class="line">        pempno emp.empno%TYPE,</span><br><span class="line">        pename emp.ename%TYPE,</span><br><span class="line">        phiredate emp.hiredate%TYPE);</span><br><span class="line">    --定义基于记录的嵌套表</span><br><span class="line">    TYPE nested_emp_type IS TABLE OF emp_rec_type;</span><br><span class="line">    --声明集合变量</span><br><span class="line">    emp_tab nested_emp_type;</span><br><span class="line">    </span><br><span class="line">    --记录FETCH次数</span><br><span class="line">    v_counter NUMBER:=0;</span><br><span class="line">    </span><br><span class="line">BEGIN</span><br><span class="line">    OPEN cur_emp;</span><br><span class="line">    </span><br><span class="line">    LOOP</span><br><span class="line">        FETCH cur_emp BULK COLLECT INTO emp_tab LIMIT 5;</span><br><span class="line">        EXIT WHEN emp_tab.COUNT=0; --注意：这里退出游标不是使用cur_emp%NOTFOUND！</span><br><span class="line">        v_counter:=v_counter+1;</span><br><span class="line">        </span><br><span class="line">        FOR I IN emp_tab.FIRST..emp_tab.LAST LOOP</span><br><span class="line">            DBMS_OUTPUT.PUT_LINE (emp_tab(I).pempno||&apos;,&apos;</span><br><span class="line">                                ||emp_tab(I).pename||&apos;,&apos;</span><br><span class="line">                                ||TO_CHAR(emp_tab(I).phiredate,&apos;YYYY-MM-DD HH24:MI:SS&apos;));</span><br><span class="line">        END LOOP;</span><br><span class="line">        </span><br><span class="line">    END LOOP;</span><br><span class="line">    </span><br><span class="line">    CLOSE cur_emp;</span><br><span class="line">    </span><br><span class="line">    DBMS_OUTPUT.PUT_LINE(&apos;总共拉取次数：&apos;||v_counter);</span><br><span class="line"></span><br><span class="line">END;</span><br><span class="line">------</span><br><span class="line">7369,SMITH,1980-12-17 00:00:00</span><br><span class="line">7499,allen,1981-02-28 00:00:00</span><br><span class="line">7521,WARD,1981-02-22 00:00:00</span><br><span class="line">7566,JONES,1981-04-02 00:00:00</span><br><span class="line">7654,MARTIN,1981-09-28 00:00:00</span><br><span class="line">7698,BLAKE,1981-05-01 00:00:00</span><br><span class="line">7782,CLARK,1981-06-09 00:00:00</span><br><span class="line">7788,SCOTT,1982-12-09 00:00:00</span><br><span class="line">7844,TURNER,1981-09-08 00:00:00</span><br><span class="line">7876,ADAMS,1983-01-12 00:00:00</span><br><span class="line">7900,JAMES,1981-12-03 00:00:00</span><br><span class="line">7902,FORD,1981-12-03 00:00:00</span><br><span class="line">7934,MILLER,1982-01-23 00:00:00</span><br><span class="line">9999,MINMIN,2020-01-03 15:19:53</span><br><span class="line">总共拉取次数：3</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h3 id="2-隐式游标"><a href="#2-隐式游标" class="headerlink" title="2. 隐式游标"></a>2. 隐式游标</h3><p>在PL/SQL中使用<strong>DML</strong>和<strong>SELECT…INTO查询</strong>时，会自动创建隐式游标。隐式游标自动声明、打开和关闭（无法手动查看），其名为<code>SQL</code>，通过检查隐式游标的属性可以获得<strong>最近</strong>执行的DML和SELECT…INTO语句的信息。</p>
+<h4 id="2-1-隐式游标的属性"><a href="#2-1-隐式游标的属性" class="headerlink" title="2.1 隐式游标的属性"></a>2.1 隐式游标的属性</h4><h5 id="ISOPEN-1"><a href="#ISOPEN-1" class="headerlink" title="%ISOPEN"></a>%ISOPEN</h5><p>对于隐式游标而言<code>SQL%ISOPEN</code>总是<strong>FALSE</strong>，这是因为隐式游标在DML语句执行时打开，结束时就立即关闭。</p>
+<h5 id="FOUND-1"><a href="#FOUND-1" class="headerlink" title="%FOUND"></a>%FOUND</h5><p>反映DML操作（INSERT、UPDATE、DELETE）是否对数据有影响，如果有影响返回TRUE；没有影响返回FALSE。也可以反映出SELECT…INTO查询是否返回了数据，只要有数据返回则为TRUE。</p>
+<h5 id="NOTFOUND-1"><a href="#NOTFOUND-1" class="headerlink" title="%NOTFOUND"></a>%NOTFOUND</h5><p>与%FOUND相反。当DML操作没有影响数据，以及SELECT…INTO查询没有返回数据时，该属性为TRUE；其它为FALSE。</p>
+<h5 id="ROWCOUNT-1"><a href="#ROWCOUNT-1" class="headerlink" title="%ROWCOUNT"></a>%ROWCOUNT</h5><p>反映DML操作影响的数据数量，SELECT…INTO查询发生TOO_MANY_ROWS异常，<code>SQL%ROWCOUNT</code>属性依然是1。</p>
+<blockquote>
+<p>⚠️注意：在执行任何DML语句之前，<code>SQL%ROWCOUNT</code>的值是NULL。</p>
+</blockquote>
+<h4 id="2-2-隐式游标的异常处理"><a href="#2-2-隐式游标的异常处理" class="headerlink" title="2.2 隐式游标的异常处理"></a>2.2 隐式游标的异常处理</h4><p>由于隐式游标是返回单行数据的<strong>SELECT…INTO查询</strong>，所以一般只有下面两种异常：</p>
+<ul>
+<li>NO_DATA_FOUND：找不到匹配行</li>
+<li>TOO_MANY_ROWS：返回结果超过一行</li>
+</ul>
+<blockquote>
+<p>所以在编写隐式查询时，最好总是要带上NO_DATA_FOUND和TOO_MANY_ROWS异常处理句柄！</p>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">DECLARE</span><br><span class="line">    pename emp.ename%TYPE;</span><br><span class="line">    psal emp.sal%TYPE;</span><br><span class="line">    counter NUMBER;</span><br><span class="line">BEGIN</span><br><span class="line">    --DML之INSERT插入</span><br><span class="line">    INSERT INTO EMP VALUES(&apos;6666&apos;,&apos;ASHER&apos;,&apos;BOSS&apos;,&apos;6666&apos;,SYSDATE,&apos;6666&apos;,&apos;6666&apos;,&apos;10&apos;);</span><br><span class="line">    IF SQL%FOUND THEN</span><br><span class="line">        DBMS_OUTPUT.PUT_LINE(&apos;插入影响数据行数：&apos;||SQL%ROWCOUNT);</span><br><span class="line">    END IF;</span><br><span class="line">    --DML之UPDATE更新</span><br><span class="line">    UPDATE EMP SET ename=&apos;MIN&apos; WHERE empno=6666;</span><br><span class="line">    IF SQL%FOUND THEN</span><br><span class="line">        DBMS_OUTPUT.PUT_LINE(&apos;更新影响数据行数：&apos;||SQL%ROWCOUNT);</span><br><span class="line">    END IF;</span><br><span class="line">    --DML之DELETE删除</span><br><span class="line">    DELETE FROM EMP WHERE empno=6666;</span><br><span class="line">    IF SQL%FOUND THEN</span><br><span class="line">        DBMS_OUTPUT.PUT_LINE(&apos;删除影响数据行数：&apos;||SQL%ROWCOUNT);</span><br><span class="line">    END IF;</span><br><span class="line">    </span><br><span class="line">    --SELECT...INTO查询</span><br><span class="line">    SELECT ename,sal INTO pename,psal FROM EMP;</span><br><span class="line">    </span><br><span class="line">EXCEPTION</span><br><span class="line">    WHEN NO_DATA_FOUND THEN</span><br><span class="line">        DBMS_OUTPUT.PUT_LINE(&apos;没有数据：&apos;||SQL%ROWCOUNT);</span><br><span class="line">    WHEN TOO_MANY_ROWS THEN</span><br><span class="line">        counter:=SQL%ROWCOUNT;</span><br><span class="line">        DBMS_OUTPUT.PUT_LINE(&apos;SQL%ROWCOUNT的值为：&apos;||SQL%ROWCOUNT);</span><br><span class="line">        UPDATE EMP SET emp.ename=&apos;&apos;;</span><br><span class="line">        DBMS_OUTPUT.PUT_LINE(&apos;更新影响数据行数：&apos;||SQL%ROWCOUNT);</span><br><span class="line">        ROLLBACK;</span><br><span class="line">        DBMS_OUTPUT.PUT_LINE(&apos;ROLLBACK后影响数据行数：&apos;||SQL%ROWCOUNT);</span><br><span class="line">END;</span><br><span class="line">------</span><br><span class="line">插入影响数据行数：1</span><br><span class="line">更新影响数据行数：1</span><br><span class="line">删除影响数据行数：1</span><br><span class="line">SQL%ROWCOUNT的值为：1</span><br><span class="line">更新影响数据行数：14</span><br><span class="line">ROLLBACK后影响数据行数：0</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>即使ROLLBACK回滚后，<code>SQL%ROWCOUNT</code>的值不会变成上次操作的值。</p>
+</blockquote>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Oracle/" rel="tag"># Oracle</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-next post-nav-item">
+                <a href="/2020/01/08/Oracle-PL-SQL/" rel="next" title="Oracle PL/SQL">
+                  <i class="fa fa-chevron-left"></i> Oracle PL/SQL
+                </a>
+            </div>
+
+            <span class="post-nav-divider"></span>
+
+            <div class="post-nav-prev post-nav-item">
+                <a href="/2020/01/13/Oracle-%E8%A7%86%E5%9B%BE/" rel="prev" title="Oracle 视图">
+                  Oracle 视图 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-显式游标"><span class="nav-number">1.</span> <span class="nav-text">1. 显式游标</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-1-显式游标的使用步骤"><span class="nav-number">1.1.</span> <span class="nav-text">1.1 显式游标的使用步骤</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#声明游标"><span class="nav-number">1.1.1.</span> <span class="nav-text">声明游标</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#打开游标"><span class="nav-number">1.1.2.</span> <span class="nav-text">打开游标</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#读取游标中数据"><span class="nav-number">1.1.3.</span> <span class="nav-text">读取游标中数据</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#关闭游标"><span class="nav-number">1.1.4.</span> <span class="nav-text">关闭游标</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#1-2-显式游标的属性"><span class="nav-number">1.2.</span> <span class="nav-text">1.2 显式游标的属性</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#NOTFOUND"><span class="nav-number">1.2.1.</span> <span class="nav-text">%NOTFOUND</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#FOUND"><span class="nav-number">1.2.2.</span> <span class="nav-text">%FOUND</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#ISOPEN"><span class="nav-number">1.2.3.</span> <span class="nav-text">%ISOPEN</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#ROWCOUNT"><span class="nav-number">1.2.4.</span> <span class="nav-text">%ROWCOUNT</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#1-3-游标的个数限制"><span class="nav-number">1.3.</span> <span class="nav-text">1.3 游标的个数限制</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#1-4-单条提取数据案例"><span class="nav-number">1.4.</span> <span class="nav-text">1.4 单条提取数据案例</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#1-5-批量提取数据案例"><span class="nav-number">1.5.</span> <span class="nav-text">1.5 批量提取数据案例</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-隐式游标"><span class="nav-number">2.</span> <span class="nav-text">2. 隐式游标</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#2-1-隐式游标的属性"><span class="nav-number">2.1.</span> <span class="nav-text">2.1 隐式游标的属性</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#ISOPEN-1"><span class="nav-number">2.1.1.</span> <span class="nav-text">%ISOPEN</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#FOUND-1"><span class="nav-number">2.1.2.</span> <span class="nav-text">%FOUND</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#NOTFOUND-1"><span class="nav-number">2.1.3.</span> <span class="nav-text">%NOTFOUND</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#ROWCOUNT-1"><span class="nav-number">2.1.4.</span> <span class="nav-text">%ROWCOUNT</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-2-隐式游标的异常处理"><span class="nav-number">2.2.</span> <span class="nav-text">2.2 隐式游标的异常处理</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <img class="site-author-image" itemprop="image" alt="MIN MIN"
+    src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">MIN MIN</p>
+  <div class="site-description" itemprop="description">即使最后没有人为你鼓掌，也要优雅地谢幕，感谢自己的认真付出。</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">54</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">13</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+        <span class="site-state-item-count">32</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/ashermin" title="GitHub &amp;rarr; https:&#x2F;&#x2F;github.com&#x2F;ashermin" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+<div class="copyright">
+  
+  &copy; 2019 – 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user-circle"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">MIN MIN</span>
+</div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+<script src="/js/utils.js"></script>
+<script src="/js/schemes/pisces.js"></script>
+<script src="/js/next-boot.js"></script>
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+</body>
+</html>

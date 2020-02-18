@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.0.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/avatar.jpg">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/avatar.jpg">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/avatar.jpg">
+  <link rel="mask-icon" href="/images/avatar.jpg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+
+
+<script id="hexo-configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '7.4.2',
+    exturl: false,
+    sidebar: {"position":"left","width":260,"display":"post","offset":12,"onmobile":false},
+    copycode: {"enable":true,"show_result":true,"style":"default"},
+    back2top: {"enable":true,"sidebar":false,"scrollpercent":true},
+    bookmark: {"enable":false,"color":"#222","save":"auto"},
+    fancybox: false,
+    mediumzoom: false,
+    lazyload: false,
+    pangu: false,
+    algolia: {
+      appID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    localsearch: {"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},
+    path: '',
+    motion: {"enable":false,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    translation: {
+      copy_button: '复制',
+      copy_success: '复制成功',
+      copy_failure: '复制失败'
+    },
+    sidebarPadding: 40
+  };
+</script>
+
+  <meta name="description" content="这里我使用的是hive-1.1.0-cdh5.10.2添加用户环境变量$ vi ~&#x2F;.bashrc##Hiveexport HIVE_HOME=&#x2F;opt&#x2F;applications&#x2F;hive-1.1.0-cdh5.10.2export PATH=$HIVE_HOME&#x2F;bin:$PATH$ source ~&#x2F;.bashrc">
+<meta name="keywords" content="Hive">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Hive环境部署">
+<meta property="og:url" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2019&#x2F;11&#x2F;30&#x2F;Hive%E7%8E%AF%E5%A2%83%E9%83%A8%E7%BD%B2&#x2F;index.html">
+<meta property="og:site_name" content="MIN MIN">
+<meta property="og:description" content="这里我使用的是hive-1.1.0-cdh5.10.2添加用户环境变量$ vi ~&#x2F;.bashrc##Hiveexport HIVE_HOME=&#x2F;opt&#x2F;applications&#x2F;hive-1.1.0-cdh5.10.2export PATH=$HIVE_HOME&#x2F;bin:$PATH$ source ~&#x2F;.bashrc">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;images&#x2F;Hive%E5%9F%BA%E7%A1%80&#x2F;image-20191201130648736.png">
+<meta property="og:updated_time" content="2020-02-02T04:59:00.951Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;images&#x2F;Hive%E5%9F%BA%E7%A1%80&#x2F;image-20191201130648736.png">
+
+<link rel="canonical" href="http://yoursite.com/2019/11/30/Hive%E7%8E%AF%E5%A2%83%E9%83%A8%E7%BD%B2/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true,
+    isPage: false,
+    isArchive: false
+  };
+</script>
+
+  <title>Hive环境部署 | MIN MIN</title>
+  
+
+
+  <script>
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?cad2a7930afd095772e571e6eab3628f";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+  <!--  -->
+<link href='//fonts.googleapis.com/css?family=Kaushan+Script' rel='stylesheet' type='text/css'>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">MIN MIN</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+        <p class="site-subtitle">BLOG</p>
+  </div>
+
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档</a>
+
+  </li>
+  </ul>
+
+</nav>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/11/30/Hive%E7%8E%AF%E5%A2%83%E9%83%A8%E7%BD%B2/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="MIN MIN">
+      <meta itemprop="description" content="即使最后没有人为你鼓掌，也要优雅地谢幕，感谢自己的认真付出。">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="MIN MIN">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Hive环境部署
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2019-11-30 20:46:46" itemprop="dateCreated datePublished" datetime="2019-11-30T20:46:46+08:00">2019-11-30</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-02-02 12:59:00" itemprop="dateModified" datetime="2020-02-02T12:59:00+08:00">2020-02-02</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Hive/" itemprop="url" rel="index">
+                    <span itemprop="name">Hive</span>
+                  </a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>这里我使用的是<code>hive-1.1.0-cdh5.10.2</code></p><h4 id="添加用户环境变量"><a href="#添加用户环境变量" class="headerlink" title="添加用户环境变量"></a>添加用户环境变量</h4><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> vi ~/.bashrc</span></span><br><span class="line"><span class="meta">#</span><span class="bash"><span class="comment">#Hive</span></span></span><br><span class="line">export HIVE_HOME=/opt/applications/hive-1.1.0-cdh5.10.2</span><br><span class="line">export PATH=$HIVE_HOME/bin:$PATH</span><br><span class="line"><span class="meta">$</span><span class="bash"> <span class="built_in">source</span> ~/.bashrc</span></span><br></pre></td></tr></table></figure><a id="more"></a>
+
+
+<h4 id="配置Hadoop"><a href="#配置Hadoop" class="headerlink" title="配置Hadoop"></a>配置Hadoop</h4><p>因为Hive强依赖HDFS，所以要在<em>conf/hive-env.sh</em>中添加<code>HADOOP_HOME</code>路径</p>
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="string">HADOOP_HOME=/opt/applications/hadoop-2.6.0-cdh5.10.2</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="修改Derby为MySQL"><a href="#修改Derby为MySQL" class="headerlink" title="修改Derby为MySQL"></a>修改Derby为MySQL</h4><blockquote>
+<p>Hive元数据包括：表名、表所属的数据库（默认是default）、表的拥有者、列、分区字段、表的类型（是否是外部表）、表的数据所在的目录等。</p>
+<p>默认元数据存储在自带的<code>Derby</code>数据库中，推荐使用采用<strong><code>MySQL</code></strong>存储Metastore。</p>
+<p>附：MySQL的安装可以参考我的笔记——<a href="https://ashermin.github.io/2019/11/30/CentOS-7%E5%AE%89%E8%A3%85MySQL/#more" target="_blank" rel="noopener">《CentOS 7安装MySQL》</a></p>
+</blockquote>
+<p>在conf下新建<em>hive-site.xml</em>，配置四个属性：</p>
+<ol>
+<li>连接MySQL数据库的主机名称及端口号，还有新建数据库的名称</li>
+<li>MySQL的链接驱动</li>
+<li>MySQL的登录用户名</li>
+<li>MySQL的登录密码</li>
+</ol>
+<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version="1.0"?&gt;</span></span><br><span class="line"><span class="meta">&lt;?xml-stylesheet type="text/xsl" href="configuration.xsl"?&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">configuration</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">property</span>&gt;</span></span><br><span class="line">		<span class="tag">&lt;<span class="name">name</span>&gt;</span>javax.jdo.option.ConnectionURL<span class="tag">&lt;/<span class="name">name</span>&gt;</span></span><br><span class="line">		<span class="tag">&lt;<span class="name">value</span>&gt;</span>jdbc:mysql://min01:3306/hadoop_metastore?createDatabaseIfNotExist=true<span class="tag">&lt;/<span class="name">value</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;/<span class="name">property</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">property</span>&gt;</span></span><br><span class="line">		<span class="tag">&lt;<span class="name">name</span>&gt;</span>javax.jdo.option.ConnectionDriverName<span class="tag">&lt;/<span class="name">name</span>&gt;</span></span><br><span class="line">		<span class="tag">&lt;<span class="name">value</span>&gt;</span>com.mysql.jdbc.Driver<span class="tag">&lt;/<span class="name">value</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;/<span class="name">property</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">property</span>&gt;</span></span><br><span class="line">		<span class="tag">&lt;<span class="name">name</span>&gt;</span>javax.jdo.option.ConnectionUserName<span class="tag">&lt;/<span class="name">name</span>&gt;</span></span><br><span class="line">		<span class="tag">&lt;<span class="name">value</span>&gt;</span>root<span class="tag">&lt;/<span class="name">value</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;/<span class="name">property</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">property</span>&gt;</span></span><br><span class="line">		<span class="tag">&lt;<span class="name">name</span>&gt;</span>javax.jdo.option.ConnectionPassword<span class="tag">&lt;/<span class="name">name</span>&gt;</span></span><br><span class="line">		<span class="tag">&lt;<span class="name">value</span>&gt;</span>123456<span class="tag">&lt;/<span class="name">value</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;/<span class="name">property</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">configuration</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>将MySQL的驱动包<em>mysql-connector-java-5.1.27-bin.jar</em>放在<em>lib</em>目录下</p>
+ <figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> cp mysql-connector-java-5.1.27-bin.jar /opt/applications/hive-1.1.0-cdh5.10.2/lib/</span></span><br></pre></td></tr></table></figure>
+
+<p>进入MySQL，设置用户连接权限</p>
+<ol>
+<li>查询用户信息，在<code>mysql</code>数据库：</li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">mysql&gt; use mysql;</span><br><span class="line">mysql&gt; select user,host from user;</span><br><span class="line">+------+-----------+</span><br><span class="line">| user | host      |</span><br><span class="line">+------+-----------+</span><br><span class="line">| root | 127.0.0.1 |</span><br><span class="line">| root | ::1       |</span><br><span class="line">|      | localhost |</span><br><span class="line">| root | localhost |</span><br><span class="line">|      | min01     |</span><br><span class="line">| root | min01     |</span><br><span class="line">+------+-----------+</span><br></pre></td></tr></table></figure>
+
+<ol start="2">
+<li>设置远程登录权限，其中第一个<code>*</code>表示数据库，第二个<code>*</code>表示表名，<code>@</code>表示主机名，<code>%</code>表示主机：</li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">mysql&gt; grant all privileges on *.* to &apos;root&apos;@&apos;%&apos; identified by &apos;123456&apos; with grant option;</span><br></pre></td></tr></table></figure>
+
+<ol start="3">
+<li>删除用户信息</li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">mysql&gt; delete from user where host=&apos;127.0.0.1&apos;;</span><br><span class="line">mysql&gt; delete from user where host=&apos;min01&apos;;</span><br><span class="line">mysql&gt; delete from user where host=&apos;localhost&apos;;</span><br></pre></td></tr></table></figure>
+
+<ol start="4">
+<li>刷新信息并退出</li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">mysql&gt; flush privileges;</span><br><span class="line">mysql&gt; quit;</span><br></pre></td></tr></table></figure>
+
+<ol start="5">
+<li>重启MySQL</li>
+</ol>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> systemctl restart mysqld.service</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="查看MySQL中的Hive元数据信息"><a href="#查看MySQL中的Hive元数据信息" class="headerlink" title="查看MySQL中的Hive元数据信息"></a>查看MySQL中的Hive元数据信息</h4><p>进入Hive，并创建数据库test_db：</p>
+<figure class="highlight"><table><tr><td class="code"><pre><span class="line">hive&gt; create database test_db;</span><br></pre></td></tr></table></figure>
+
+<p>进入MySQL，查看数据库：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">mysql&gt; show databases;</span><br><span class="line">+--------------------+</span><br><span class="line">| Database           |</span><br><span class="line">+--------------------+</span><br><span class="line">| information_schema |</span><br><span class="line">| hadoop_metastore   |</span><br><span class="line">| mysql              |</span><br><span class="line">| performance_schema |</span><br><span class="line">+--------------------+</span><br></pre></td></tr></table></figure>
+
+<p>发现MySQL中自动创建了存放了Hive元数据的数据库hadoop_metastore，这个库名就刚刚在<em>hive-site.xml</em>中定义的：</p>
+<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">property</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">name</span>&gt;</span>javax.jdo.option.ConnectionURL<span class="tag">&lt;/<span class="name">name</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">value</span>&gt;</span>jdbc:mysql://min01:3306/hadoop_metastore?createDatabaseIfNotExist=true<span class="tag">&lt;/<span class="name">value</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">property</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>进入<code>hadoop_metastore</code>数据库，并浏览所有表：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">mysql&gt; use hadoop_metastore;</span><br><span class="line">mysql&gt; show tables;</span><br><span class="line">+----------------------------+</span><br><span class="line">| Tables_in_hadoop_metastore |</span><br><span class="line">+----------------------------+</span><br><span class="line">| BUCKETING_COLS             |</span><br><span class="line">| CDS                        |</span><br><span class="line">| COLUMNS_V2                 |</span><br><span class="line">| DATABASE_PARAMS            |</span><br><span class="line">| DBS（数据库信息）             |</span><br><span class="line">| FUNCS                      |</span><br><span class="line">| FUNC_RU                    |</span><br><span class="line">| GLOBAL_PRIVS               |</span><br><span class="line">| PARTITIONS                 |</span><br><span class="line">| PARTITION_KEYS             |</span><br><span class="line">| PARTITION_KEY_VALS         |</span><br><span class="line">| PARTITION_PARAMS           |</span><br><span class="line">| PART_COL_STATS             |</span><br><span class="line">| ROLES                      |</span><br><span class="line">| SDS                        |</span><br><span class="line">| SD_PARAMS                  |</span><br><span class="line">| SEQUENCE_TABLE             |</span><br><span class="line">| SERDES                     |</span><br><span class="line">| SERDE_PARAMS               |</span><br><span class="line">| SKEWED_COL_NAMES           |</span><br><span class="line">| SKEWED_COL_VALUE_LOC_MAP   |</span><br><span class="line">| SKEWED_STRING_LIST         |</span><br><span class="line">| SKEWED_STRING_LIST_VALUES  |</span><br><span class="line">| SKEWED_VALUES              |</span><br><span class="line">| SORT_COLS                  |</span><br><span class="line">| TABLE_PARAMS               |</span><br><span class="line">| TAB_COL_STATS              |</span><br><span class="line">| TBLS（数据表信息）            |</span><br><span class="line">| VERSION                    |</span><br><span class="line">+----------------------------+</span><br></pre></td></tr></table></figure>
+
+<p>查看其中的<code>DBS</code>表，这个表存放了Hive数据库的信息，里面就有刚刚创建的<code>test_db</code>数据库：</p>
+<img src="/images/Hive%E5%9F%BA%E7%A1%80/image-20191201130648736.png" alt="image-20191201130648736" style="zoom:50%;">
+
+<p>根据上面的<code>DB_LOCATION_URI</code>地址可以进入HDFS查看<code>test_db</code>数据库文件：</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> hdfs dfs -ls /user/hive/warehouse/</span></span><br><span class="line">drwxr-xr-x   - minmin supergroup          0 2019-12-01 12:49 /user/hive/warehouse/test_db.db</span><br></pre></td></tr></table></figure>
+
+<h4 id="自定义log日志文件"><a href="#自定义log日志文件" class="headerlink" title="自定义log日志文件"></a>自定义log日志文件</h4><p>编辑<em>$HIVE_HOME/conf/hive-log4j.properties</em>文件：</p>
+<figure class="highlight properties"><table><tr><td class="code"><pre><span class="line"><span class="meta">hive.log.dir</span>=<span class="string">/opt/applications/hive-1.1.0-cdh5.10.2/logs</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="显示数据库名和数据表列名"><a href="#显示数据库名和数据表列名" class="headerlink" title="显示数据库名和数据表列名"></a>显示数据库名和数据表列名</h4><p>编辑<em>hive-site.xml</em>文件：</p>
+<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">property</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">name</span>&gt;</span>hive.cli.print.header<span class="tag">&lt;/<span class="name">name</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">value</span>&gt;</span>true<span class="tag">&lt;/<span class="name">value</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">property</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">property</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">name</span>&gt;</span>hive.cli.print.current.db<span class="tag">&lt;/<span class="name">name</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">value</span>&gt;</span>true<span class="tag">&lt;/<span class="name">value</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">property</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Hive/" rel="tag"># Hive</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-next post-nav-item">
+                <a href="/2019/11/29/YARN%E5%9F%BA%E7%A1%80/" rel="next" title="YARN基础">
+                  <i class="fa fa-chevron-left"></i> YARN基础
+                </a>
+            </div>
+
+            <span class="post-nav-divider"></span>
+
+            <div class="post-nav-prev post-nav-item">
+                <a href="/2019/11/30/CentOS-7%E5%AE%89%E8%A3%85MySQL/" rel="prev" title="CentOS 7安装MySQL">
+                  CentOS 7安装MySQL <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#添加用户环境变量"><span class="nav-number">1.</span> <span class="nav-text">添加用户环境变量</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#配置Hadoop"><span class="nav-number">2.</span> <span class="nav-text">配置Hadoop</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#修改Derby为MySQL"><span class="nav-number">3.</span> <span class="nav-text">修改Derby为MySQL</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#查看MySQL中的Hive元数据信息"><span class="nav-number">4.</span> <span class="nav-text">查看MySQL中的Hive元数据信息</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#自定义log日志文件"><span class="nav-number">5.</span> <span class="nav-text">自定义log日志文件</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#显示数据库名和数据表列名"><span class="nav-number">6.</span> <span class="nav-text">显示数据库名和数据表列名</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <img class="site-author-image" itemprop="image" alt="MIN MIN"
+    src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">MIN MIN</p>
+  <div class="site-description" itemprop="description">即使最后没有人为你鼓掌，也要优雅地谢幕，感谢自己的认真付出。</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">54</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">13</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+        <span class="site-state-item-count">32</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/ashermin" title="GitHub &amp;rarr; https:&#x2F;&#x2F;github.com&#x2F;ashermin" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+<div class="copyright">
+  
+  &copy; 2019 – 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user-circle"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">MIN MIN</span>
+</div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+<script src="/js/utils.js"></script>
+<script src="/js/schemes/pisces.js"></script>
+<script src="/js/next-boot.js"></script>
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+</body>
+</html>

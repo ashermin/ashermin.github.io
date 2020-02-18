@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.0.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/avatar.jpg">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/avatar.jpg">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/avatar.jpg">
+  <link rel="mask-icon" href="/images/avatar.jpg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+
+
+<script id="hexo-configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '7.4.2',
+    exturl: false,
+    sidebar: {"position":"left","width":260,"display":"post","offset":12,"onmobile":false},
+    copycode: {"enable":true,"show_result":true,"style":"default"},
+    back2top: {"enable":true,"sidebar":false,"scrollpercent":true},
+    bookmark: {"enable":false,"color":"#222","save":"auto"},
+    fancybox: false,
+    mediumzoom: false,
+    lazyload: false,
+    pangu: false,
+    algolia: {
+      appID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    localsearch: {"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},
+    path: '',
+    motion: {"enable":false,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    translation: {
+      copy_button: '复制',
+      copy_success: '复制成功',
+      copy_failure: '复制失败'
+    },
+    sidebarPadding: 40
+  };
+</script>
+
+  <meta name="description" content="查看端口占用情况lsoflsof（list open files）是一个列出当前系统打开文件的工具。lsof 查看端口占用语法格式：$ lsof -i:端口号查看5432端口的占用情况：$ lsof -i:5432COMMAND    PID    USER   FD   TYPE DEVICE SIZE&#x2F;OFF NODE NAMEpostgres 35061 gpadmin    3u  IPv">
+<meta name="keywords" content="Linux">
+<meta property="og:type" content="article">
+<meta property="og:title" content="常用的Linux命令">
+<meta property="og:url" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2019&#x2F;12&#x2F;19&#x2F;%E5%B8%B8%E7%94%A8%E7%9A%84Linux%E5%91%BD%E4%BB%A4&#x2F;index.html">
+<meta property="og:site_name" content="MIN MIN">
+<meta property="og:description" content="查看端口占用情况lsoflsof（list open files）是一个列出当前系统打开文件的工具。lsof 查看端口占用语法格式：$ lsof -i:端口号查看5432端口的占用情况：$ lsof -i:5432COMMAND    PID    USER   FD   TYPE DEVICE SIZE&#x2F;OFF NODE NAMEpostgres 35061 gpadmin    3u  IPv">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;images&#x2F;%E5%B7%A5%E4%BD%9C%E4%B8%AD%E5%B8%B8%E7%94%A8%E5%88%B0%E7%9A%84Linux%E5%91%BD%E4%BB%A4&#x2F;image-20191220101511023.png">
+<meta property="og:updated_time" content="2020-01-02T07:30:31.488Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;images&#x2F;%E5%B7%A5%E4%BD%9C%E4%B8%AD%E5%B8%B8%E7%94%A8%E5%88%B0%E7%9A%84Linux%E5%91%BD%E4%BB%A4&#x2F;image-20191220101511023.png">
+
+<link rel="canonical" href="http://yoursite.com/2019/12/19/%E5%B8%B8%E7%94%A8%E7%9A%84Linux%E5%91%BD%E4%BB%A4/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true,
+    isPage: false,
+    isArchive: false
+  };
+</script>
+
+  <title>常用的Linux命令 | MIN MIN</title>
+  
+
+
+  <script>
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?cad2a7930afd095772e571e6eab3628f";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+  <!--  -->
+<link href='//fonts.googleapis.com/css?family=Kaushan+Script' rel='stylesheet' type='text/css'>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">MIN MIN</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+        <p class="site-subtitle">BLOG</p>
+  </div>
+
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档</a>
+
+  </li>
+  </ul>
+
+</nav>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/12/19/%E5%B8%B8%E7%94%A8%E7%9A%84Linux%E5%91%BD%E4%BB%A4/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="MIN MIN">
+      <meta itemprop="description" content="即使最后没有人为你鼓掌，也要优雅地谢幕，感谢自己的认真付出。">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="MIN MIN">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          常用的Linux命令
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2019-12-19 22:12:57" itemprop="dateCreated datePublished" datetime="2019-12-19T22:12:57+08:00">2019-12-19</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-01-02 15:30:31" itemprop="dateModified" datetime="2020-01-02T15:30:31+08:00">2020-01-02</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Linux/" itemprop="url" rel="index">
+                    <span itemprop="name">Linux</span>
+                  </a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h3 id="查看端口占用情况"><a href="#查看端口占用情况" class="headerlink" title="查看端口占用情况"></a>查看端口占用情况</h3><h4 id="lsof"><a href="#lsof" class="headerlink" title="lsof"></a>lsof</h4><p>lsof（list open files）是一个列出当前系统打开文件的工具。</p><p>lsof 查看端口占用语法格式：</p><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> lsof -i:端口号</span></span><br></pre></td></tr></table></figure><p>查看5432端口的占用情况：</p><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> lsof -i:5432</span></span><br><span class="line">COMMAND    PID    USER   FD   TYPE DEVICE SIZE/OFF NODE NAME</span><br><span class="line">postgres 35061 gpadmin    3u  IPv4 320198      0t0  TCP *:postgres (LISTEN)</span><br><span class="line">postgres 35061 gpadmin    4u  IPv6 320199      0t0  TCP *:postgres (LISTEN)</span><br></pre></td></tr></table></figure><a id="more"></a>
+
+
+
+
+
+
+<p>其中各列信息的解释：</p>
+<table>
+<thead>
+<tr>
+<th>COMMAND</th>
+<th>PID</th>
+<th>USER</th>
+<th>FD</th>
+<th>TYPE</th>
+<th>DEVICE</th>
+<th>SIZE/OFF</th>
+<th>NODE</th>
+<th>NAME</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>进程名称</td>
+<td>进程标识符</td>
+<td>进程所有者</td>
+<td>文件描述符，应用程序通过文件描述符识别该文件，如：cwd、txt等</td>
+<td>文件类型，如DIR、REG等</td>
+<td>指定磁盘的名称</td>
+<td>文件大小</td>
+<td>索引节点（文件在磁盘上的标识）</td>
+<td>打开文件的确切名称</td>
+</tr>
+</tbody></table>
+<p>更多 lsof 的命令如下：</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> lsof -i:8080：查看8080端口占用</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> lsof abc.txt：显示开启文件abc.txt的进程</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> lsof -c abc：显示abc进程现在打开的文件</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> lsof -c -p 1234：列出进程号为1234的进程所打开的文件</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> lsof -g gid：显示归属gid的进程情况</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> lsof +d /usr/<span class="built_in">local</span>/：显示目录下被进程开启的文件</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> lsof +D /usr/<span class="built_in">local</span>/：同上，但是会搜索目录下的目录，时间较长</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> lsof -d 4：显示使用fd为4的进程</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> lsof -i -U：显示所有打开的端口和UNIX domain文件</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="netstat"><a href="#netstat" class="headerlink" title="netstat"></a>netstat</h4><p><code>netstat -tunlp</code>用于显示TCP和UDP的端口和进程等相关情况。</p>
+<p>netstat查看端口占用语法格式：</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> netstat -tunlp | grep 端口号</span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>-t：仅显示TCP相关选项</li>
+<li>-u：仅显示UDP相关选项</li>
+<li>-n：拒绝显示别名，能显示数字的全部转化为数字</li>
+<li>-l：仅列出在Listen（监听）的服务状态</li>
+<li>-p：显示建立相关链接的程序名</li>
+</ul>
+<p>查看5432端口的情况：</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> netstat -tunlp | grep 5432</span></span><br><span class="line">tcp     0     0 0.0.0.0:5432     0.0.0.0:*     LISTEN     35061/postgres      </span><br><span class="line">tcp6    0     0 :::5432          :::*          LISTEN     35061/postgres</span><br></pre></td></tr></table></figure>
+
+<p>更多命令：</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> netstat -ntlp   //查看当前所有tcp端口</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> netstat -ntulp | grep 80   //查看所有80端口使用情况</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> netstat -ntulp | grep 3306   //查看所有3306端口使用情况</span></span><br></pre></td></tr></table></figure>
+
+<hr>
+<h3 id="查看系统进程——ps"><a href="#查看系统进程——ps" class="headerlink" title="查看系统进程——ps"></a>查看系统进程——ps</h3><p>ps命令时Process Status的缩写，用于查看系统进程状态。</p>
+<h4 id="显示所有当前进程"><a href="#显示所有当前进程" class="headerlink" title="显示所有当前进程"></a>显示所有当前进程</h4><p>使用<code>-a</code>参数，-a代表all。同时加上<code>x</code>参数会显示没有控制终端的进程。为了便于查看，可以结合<code>less</code>命令和管道来使用：</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> ps -ax | grep less</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="根据用户过滤进程"><a href="#根据用户过滤进程" class="headerlink" title="根据用户过滤进程"></a>根据用户过滤进程</h4><p>在需要查看特定用户进程的情况下，我们可以使用<code>-u</code>参数。比如要查看用户“gpadmin”的进程，可以通过下面的命令：</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> ps -u gpadmin</span></span><br></pre></td></tr></table></figure>
+
+<img src="/images/%E5%B7%A5%E4%BD%9C%E4%B8%AD%E5%B8%B8%E7%94%A8%E5%88%B0%E7%9A%84Linux%E5%91%BD%E4%BB%A4/image-20191220101511023.png" alt="image-20191220101511023" style="zoom:50%;">
+
+<h4 id="通过cpu和内存使用来过滤进程"><a href="#通过cpu和内存使用来过滤进程" class="headerlink" title="通过cpu和内存使用来过滤进程"></a>通过cpu和内存使用来过滤进程</h4><p>如果你想把结果按照CPU或者内存用量来筛选，这样你就找到哪个进程占用了你的资源。可以使用<code>-aux</code>参数，来显示全面的信息：</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> ps -aux</span></span><br></pre></td></tr></table></figure>
+
+<p>可以使用<code>--sort</code>来排序，如根据CPU来升序排序：</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> ps -aux --sort -pcpu  <span class="comment">#根据CPU来升序排序</span></span></span><br><span class="line"><span class="meta">$</span><span class="bash"> ps -aux --sort -pmem  <span class="comment">#根据内存来升序排序</span></span></span><br><span class="line"><span class="meta">$</span><span class="bash"> ps -aux --sort -pcpu,+pmem | head -n 10  <span class="comment">#将它们合并到一个命令，并通过管道显示前10个结果</span></span></span><br></pre></td></tr></table></figure>
+
+<hr>
+<h3 id="查看系统信息"><a href="#查看系统信息" class="headerlink" title="查看系统信息"></a>查看系统信息</h3><h4 id="硬盘"><a href="#硬盘" class="headerlink" title="硬盘"></a>硬盘</h4><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> df -h</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="内存"><a href="#内存" class="headerlink" title="内存"></a>内存</h4><p>按MB或GB显示内存信息：</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> free [-m|g]</span></span><br></pre></td></tr></table></figure>
+
+<p>查看系统内存：</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> cat /proc/meminfo</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="CPU"><a href="#CPU" class="headerlink" title="CPU"></a>CPU</h4><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> cat /proc/cpuinfo</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="Linux内核版本"><a href="#Linux内核版本" class="headerlink" title="Linux内核版本"></a>Linux内核版本</h4><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> cat /proc/version </span></span><br><span class="line">Linux version 3.10.0-327.el7.x86_64 (builder@kbuilder.dev.centos.org) (gcc version 4.8.3 20140911 (Red Hat 4.8.3-9) (GCC) ) #1 SMP Thu Nov 19 22:10:57 UTC 2015</span><br><span class="line"><span class="meta">$</span><span class="bash"> uname -a</span></span><br><span class="line">Linux min01 3.10.0-327.el7.x86_64 #1 SMP Thu Nov 19 22:10:57 UTC 2015 x86_64 x86_64 x86_64 GNU/Linux</span><br></pre></td></tr></table></figure>
+
+<h4 id="Linux系统版本"><a href="#Linux系统版本" class="headerlink" title="Linux系统版本"></a>Linux系统版本</h4><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> cat /etc/redhat-release </span></span><br><span class="line">CentOS Linux release 7.2.1511 (Core)</span><br></pre></td></tr></table></figure>
+
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Linux/" rel="tag"># Linux</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-next post-nav-item">
+                <a href="/2019/12/19/Greenplum%E6%95%B0%E6%8D%AE%E5%BA%93%E4%B9%8BDDL/" rel="next" title="Greenplum数据库之DDL">
+                  <i class="fa fa-chevron-left"></i> Greenplum数据库之DDL
+                </a>
+            </div>
+
+            <span class="post-nav-divider"></span>
+
+            <div class="post-nav-prev post-nav-item">
+                <a href="/2019/12/23/Greenplum%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4/" rel="prev" title="Greenplum常用命令">
+                  Greenplum常用命令 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#查看端口占用情况"><span class="nav-number">1.</span> <span class="nav-text">查看端口占用情况</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#lsof"><span class="nav-number">1.1.</span> <span class="nav-text">lsof</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#netstat"><span class="nav-number">1.2.</span> <span class="nav-text">netstat</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#查看系统进程——ps"><span class="nav-number">2.</span> <span class="nav-text">查看系统进程——ps</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#显示所有当前进程"><span class="nav-number">2.1.</span> <span class="nav-text">显示所有当前进程</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#根据用户过滤进程"><span class="nav-number">2.2.</span> <span class="nav-text">根据用户过滤进程</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#通过cpu和内存使用来过滤进程"><span class="nav-number">2.3.</span> <span class="nav-text">通过cpu和内存使用来过滤进程</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#查看系统信息"><span class="nav-number">3.</span> <span class="nav-text">查看系统信息</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#硬盘"><span class="nav-number">3.1.</span> <span class="nav-text">硬盘</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#内存"><span class="nav-number">3.2.</span> <span class="nav-text">内存</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#CPU"><span class="nav-number">3.3.</span> <span class="nav-text">CPU</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Linux内核版本"><span class="nav-number">3.4.</span> <span class="nav-text">Linux内核版本</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Linux系统版本"><span class="nav-number">3.5.</span> <span class="nav-text">Linux系统版本</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <img class="site-author-image" itemprop="image" alt="MIN MIN"
+    src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">MIN MIN</p>
+  <div class="site-description" itemprop="description">即使最后没有人为你鼓掌，也要优雅地谢幕，感谢自己的认真付出。</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">54</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">13</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+        <span class="site-state-item-count">32</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/ashermin" title="GitHub &amp;rarr; https:&#x2F;&#x2F;github.com&#x2F;ashermin" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+<div class="copyright">
+  
+  &copy; 2019 – 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user-circle"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">MIN MIN</span>
+</div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+<script src="/js/utils.js"></script>
+<script src="/js/schemes/pisces.js"></script>
+<script src="/js/next-boot.js"></script>
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+</body>
+</html>

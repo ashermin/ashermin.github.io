@@ -1,0 +1,609 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.0.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/avatar.jpg">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/avatar.jpg">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/avatar.jpg">
+  <link rel="mask-icon" href="/images/avatar.jpg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+
+
+<script id="hexo-configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '7.4.2',
+    exturl: false,
+    sidebar: {"position":"left","width":260,"display":"post","offset":12,"onmobile":false},
+    copycode: {"enable":true,"show_result":true,"style":"default"},
+    back2top: {"enable":true,"sidebar":false,"scrollpercent":true},
+    bookmark: {"enable":false,"color":"#222","save":"auto"},
+    fancybox: false,
+    mediumzoom: false,
+    lazyload: false,
+    pangu: false,
+    algolia: {
+      appID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    localsearch: {"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},
+    path: '',
+    motion: {"enable":false,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    translation: {
+      copy_button: '复制',
+      copy_success: '复制成功',
+      copy_failure: '复制失败'
+    },
+    sidebarPadding: 40
+  };
+</script>
+
+  <meta name="description" content="一、HelloWorld程序 编写HelloWorld.java，并以ANSI编码保存 public class HelloWorld&amp;#123;	public static void main(String[] args)&amp;#123;		System.out.println(&quot;Hello world!&quot;);	&amp;#125;&amp;#125;">
+<meta name="keywords" content="基础">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Java基本概念">
+<meta property="og:url" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2019&#x2F;10&#x2F;24&#x2F;Java%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5&#x2F;index.html">
+<meta property="og:site_name" content="MIN MIN">
+<meta property="og:description" content="一、HelloWorld程序 编写HelloWorld.java，并以ANSI编码保存 public class HelloWorld&amp;#123;	public static void main(String[] args)&amp;#123;		System.out.println(&quot;Hello world!&quot;);	&amp;#125;&amp;#125;">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2019-10-27T12:44:50.000Z">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://yoursite.com/2019/10/24/Java%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true,
+    isPage: false,
+    isArchive: false
+  };
+</script>
+
+  <title>Java基本概念 | MIN MIN</title>
+  
+
+
+  <script>
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?cad2a7930afd095772e571e6eab3628f";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+  <!--  -->
+<link href='//fonts.googleapis.com/css?family=Kaushan+Script' rel='stylesheet' type='text/css'>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">MIN MIN</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+        <p class="site-subtitle">BLOG</p>
+  </div>
+
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档</a>
+
+  </li>
+  </ul>
+
+</nav>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/10/24/Java%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="MIN MIN">
+      <meta itemprop="description" content="即使最后没有人为你鼓掌，也要优雅地谢幕，感谢自己的认真付出。">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="MIN MIN">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Java基本概念
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2019-10-24 20:33:44" itemprop="dateCreated datePublished" datetime="2019-10-24T20:33:44+08:00">2019-10-24</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2019-10-27 20:44:50" itemprop="dateModified" datetime="2019-10-27T20:44:50+08:00">2019-10-27</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Java/" itemprop="url" rel="index">
+                    <span itemprop="name">Java</span>
+                  </a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h4 id="一、HelloWorld程序"><a href="#一、HelloWorld程序" class="headerlink" title="一、HelloWorld程序"></a>一、HelloWorld程序</h4><ol>
+<li>编写<code>HelloWorld.java</code>，并以ANSI编码保存</li>
+</ol><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">HelloWorld</span></span>&#123;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span></span>&#123;</span><br><span class="line">		System.out.println(<span class="string">"Hello world!"</span>);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><a id="more"></a>
+
+
+<ol start="2">
+<li>在shell中使用<code>javac</code>指令把<code>HelloWorld.java</code>编译成字节码文件<code>HelloWorld.class</code></li>
+</ol>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">C:\Users\Administrator\Desktop\Java&gt; javac HelloWorld.java</span><br></pre></td></tr></table></figure>
+
+<ol start="3">
+<li>最后使用<code>java</code>指令执行自动生成的字节码文件<code>HelloWorld.class</code>（注意：不要加<code>.class</code>）</li>
+</ol>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">C:\Users\Administrator\Desktop\Java&gt; java HelloWorld</span><br><span class="line">Hello world!</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h4 id="二、基本数据类型"><a href="#二、基本数据类型" class="headerlink" title="二、基本数据类型"></a>二、基本数据类型</h4><blockquote>
+<p>计算机内存的最小存储单元是字节（byte），一个字节就是8位二进制数（bit），即从<code>00000000</code>至<code>11111111</code>或0至255。（注：1024byte=1K，1024K=1M）</p>
+</blockquote>
+<p>Java定义了以下几种基本数据类型（所占的<code>字节数</code>用括号表示）：</p>
+<ul>
+<li><p>整数类型：byte(1)，short(2)，int(4)，long(8)</p>
+</li>
+<li><p>浮点数类型：float(4)，double(8)</p>
+</li>
+<li><p>字符类型：char(2)</p>
+</li>
+<li><p>布尔类型：boolean</p>
+</li>
+</ul>
+<h5 id="1-整型"><a href="#1-整型" class="headerlink" title="1. 整型"></a>1. 整型</h5><p>由于符号，所以最高位的bit为符号位（0+，1-）。各种整型的范围如下：</p>
+<ul>
+<li>byte：-128 ~ 127</li>
+<li>short: -32768 ~ 32767</li>
+<li>int: -2147483648 ~ 2147483647</li>
+<li>long: -9223372036854775808 ~ 9223372036854775807（结尾需要加<strong><code>L</code></strong>）</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">System.out.println(Integer.toHexString(<span class="number">123456</span>)); <span class="comment">//转为十六进制</span></span><br><span class="line">System.out.println(Integer.toBinaryString(<span class="number">123456</span>)); <span class="comment">//转为二进制</span></span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>注意：Java中求幂不能用<code>a^b</code>（a与b异或运算，同位取0不同取1），应该是<code>Math.pow(a,b)</code>。</p>
+</blockquote>
+<p><strong>2. 浮点型</strong></p>
+<ul>
+<li>float：32位，4字节（结尾需要添加<strong><code>f</code></strong>）</li>
+<li>double：64位，8字节</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">float</span> f1 = <span class="number">1.234e5f</span>; <span class="comment">//123400.0</span></span><br><span class="line"><span class="keyword">float</span> f2 = <span class="number">12.34e4f</span>; <span class="comment">//123400.0</span></span><br></pre></td></tr></table></figure>
+
+<h5 id="3-布尔类型-boolean"><a href="#3-布尔类型-boolean" class="headerlink" title="3. 布尔类型 boolean"></a>3. 布尔类型 boolean</h5><ul>
+<li>true</li>
+<li>false</li>
+</ul>
+<h5 id="4-字符类型-char"><a href="#4-字符类型-char" class="headerlink" title="4. 字符类型 char"></a>4. 字符类型 char</h5><p>用<strong>单引号</strong>表示，并且只能保存一个字符。</p>
+<ul>
+<li>char：保存一个字符</li>
+</ul>
+<h5 id="5-常量-final"><a href="#5-常量-final" class="headerlink" title="5. 常量 final"></a>5. 常量 final</h5><p>初始化后不可再赋值，通常全部大写。</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">final</span> <span class="keyword">double</span> PI = <span class="number">3.14</span>;</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h4 id="三、流程控制"><a href="#三、流程控制" class="headerlink" title="三、流程控制"></a>三、流程控制</h4><p><strong>1. 输入输出</strong></p>
+<p>（1）输入</p>
+<p>从控制台读取字符串和整数：</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">Scanner scanner = <span class="keyword">new</span> Scanner(System.in); <span class="comment">//创建Scanner对象，并传入System.in</span></span><br><span class="line">System.out.println(<span class="string">"What's your name:"</span>);</span><br><span class="line">String name = scanner.nextLine(); <span class="comment">//读取一行字符串</span></span><br><span class="line">System.out.println(<span class="string">"How old are you:"</span>);</span><br><span class="line"><span class="keyword">int</span> age = scanner.nextInt(); <span class="comment">//读取整数</span></span><br><span class="line">System.out.println(<span class="string">"Hi "</span>+ name + <span class="string">", your age is "</span>+ age);</span><br></pre></td></tr></table></figure>
+
+<p>（2）格式化输出</p>
+<p>如果不用格式化输出，那么计算机表示的数字不适合阅读，如：</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">double</span> d = <span class="number">12900000</span>;</span><br><span class="line">System.out.println(d); <span class="comment">//1.29E7</span></span><br></pre></td></tr></table></figure>
+
+<p>格式化输出使用<code>System.out.printf()</code>，占位符<code>%xxx</code>；也可以指定传入哪个参数，不一定按照顺序来。</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">double</span> d = <span class="number">3.1415926</span>;</span><br><span class="line">System.out.println(d); <span class="comment">//3.1415926</span></span><br><span class="line">System.out.printf(<span class="string">"PI is %.2f\n"</span> , d); <span class="comment">//PI is 3.14</span></span><br><span class="line">System.out.printf(<span class="string">"%s is %.3f\n"</span>, <span class="string">"PI"</span> , d); <span class="comment">//PI is 3.142</span></span><br><span class="line">System.out.printf(<span class="string">"%2$s is %1$s, and %1$s is %3$.2f\n"</span> , <span class="string">"PI"</span> , <span class="string">"c/(2*r)"</span> , d); </span><br><span class="line"><span class="comment">//c/(2*r) is PI, and PI is 3.14</span></span><br></pre></td></tr></table></figure>
+
+<table>
+<thead>
+<tr>
+<th align="left">常用占位符</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">%d</td>
+<td>整数</td>
+</tr>
+<tr>
+<td align="left">%x</td>
+<td>十六进制</td>
+</tr>
+<tr>
+<td align="left">%f</td>
+<td>浮点数</td>
+</tr>
+<tr>
+<td align="left">%e</td>
+<td>科学计数法表示的浮点数</td>
+</tr>
+<tr>
+<td align="left">%s</td>
+<td>字符串</td>
+</tr>
+<tr>
+<td align="left">%%</td>
+<td>%本身</td>
+</tr>
+</tbody></table>
+<p>常见的转义字符：</p>
+<ul>
+<li><code>\n</code>表示换行符</li>
+<li><code>\r</code>表示回车符</li>
+<li><code>\t</code>表示Tab</li>
+<li><code>\u###</code>表示一个Unicode编码的字符</li>
+</ul>
+<p><strong>2. if 条件判断</strong></p>
+<p>（1）注意点1</p>
+<ul>
+<li>判断浮点数相等不能直接用<code>==</code>，很不靠谱</li>
+<li>而应该用<strong>差值小于某个临界值</strong>来判断。</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">double</span> a = <span class="number">1</span> - <span class="number">9.0</span> / <span class="number">10</span>; <span class="comment">//0.09999999999999998</span></span><br><span class="line"><span class="keyword">if</span>(Math.abs(a-<span class="number">0.1</span>)&lt;<span class="number">0.00001</span>)&#123;</span><br><span class="line">    System.out.println(<span class="string">"true"</span>);</span><br><span class="line">&#125;<span class="keyword">else</span>&#123;</span><br><span class="line">    System.out.println(<span class="string">"false"</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>true</p>
+</blockquote>
+<p>（2）注意点2</p>
+<ul>
+<li>引用类型<code>==</code>判断是否指向<strong>同一对象</strong></li>
+<li><code>.equals()</code>判断<strong>内容</strong>是否一致</li>
+</ul>
+<p>（3）注意点3</p>
+<ul>
+<li><p>如果变量为null，调用<code>.equals()</code>会报错</p>
+</li>
+<li><p>可以利用<code>&amp;&amp;</code>来解决或者把非null对象放前面</p>
+</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">String a = <span class="keyword">null</span>;</span><br><span class="line"><span class="keyword">if</span>(a != <span class="keyword">null</span> &amp;&amp; a.equals(<span class="string">"hello"</span>))&#123; <span class="comment">//或if("hello".equals(a))</span></span><br><span class="line">    System.out.println(<span class="string">"hello"</span>);</span><br><span class="line">&#125;<span class="keyword">else</span>&#123;</span><br><span class="line">    System.out.println(<span class="string">"null"</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>null</p>
+</blockquote>
+<p><strong>3. switch 多重选择</strong>（少用）</p>
+<ul>
+<li>case语句没有花括号<code>{}</code></li>
+<li>不要漏写break，不写break会执行下一个case</li>
+<li>执行相同的内容可以把case写在一起</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">String a = <span class="string">"world"</span>;</span><br><span class="line"><span class="keyword">switch</span>(a)&#123;</span><br><span class="line">    <span class="keyword">case</span> <span class="string">"hello"</span>:</span><br><span class="line">        System.out.println(<span class="string">"It's hello."</span>);</span><br><span class="line">        <span class="keyword">break</span>;</span><br><span class="line">    <span class="keyword">case</span> <span class="string">"world"</span>:</span><br><span class="line">    <span class="keyword">case</span> <span class="string">"hello world"</span>:</span><br><span class="line">        System.out.println(<span class="string">"It's world or hello world"</span>);</span><br><span class="line">        <span class="keyword">break</span>;</span><br><span class="line">    <span class="keyword">default</span>:</span><br><span class="line">        System.out.println(<span class="string">"It's other"</span>);</span><br><span class="line">        <span class="keyword">break</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>It’s world or hello world</p>
+</blockquote>
+<hr>
+<h4 id="四、数组"><a href="#四、数组" class="headerlink" title="四、数组"></a>四、数组</h4><p><strong>1. 遍历数组</strong></p>
+<p>除了用for/foreach，可以直接用<code>Arrays.toString(xx)</code>快速获取数组内容。</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">int</span>[] an = &#123;<span class="number">1</span>,<span class="number">3</span>,<span class="number">5</span>,<span class="number">7</span>,<span class="number">9</span>&#125;;</span><br><span class="line">System.out.println(Arrays.toString(an)); <span class="comment">//[1, 3, 5, 7, 9]</span></span><br></pre></td></tr></table></figure>
+
+<p>*<em>2. 数组排序 *</em></p>
+<p><code>Arrays.sort()</code> 可以实现对数组的排序，默认为<strong>升序</strong>。</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">Integer[] an = &#123; <span class="number">28</span>, <span class="number">12</span>, <span class="number">89</span>, <span class="number">73</span>, <span class="number">65</span>, <span class="number">18</span>, <span class="number">96</span>, <span class="number">50</span>, <span class="number">8</span>, <span class="number">36</span> &#125;;</span><br></pre></td></tr></table></figure>
+
+<p>（1）<code>Arrays.sort(an)</code>（默认升序）</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">Arrays.sort(an); <span class="comment">//[8, 12, 18, 28, 36, 50, 65, 73, 89, 96]</span></span><br></pre></td></tr></table></figure>
+
+<p>（2）<code>Arrays.sort(an,fromIndex,toIndex)</code> 在区间<strong>[ fromIndex , toIndex )</strong>的范围内对数组进行升序排序</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">Arrays.sort(an,<span class="number">0</span>,<span class="number">5</span>); <span class="comment">//[12, 28, 65, 73, 89, 18, 96, 50, 8, 36]</span></span><br></pre></td></tr></table></figure>
+
+<p>（3）<code>Arrays.sort(an,C)</code> 如需降序排列，则要实现Comparator接口的类的对象C。这里我用的是匿名内部类</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">Arrays.sort(an,<span class="keyword">new</span> Comparator&lt;Integer&gt;()&#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">compare</span><span class="params">(Integer o1, Integer o2)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> o2-o1;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;); <span class="comment">//[96, 89, 73, 65, 50, 36, 28, 18, 12, 8]</span></span><br></pre></td></tr></table></figure>
+
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E5%9F%BA%E7%A1%80/" rel="tag"># 基础</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-next post-nav-item">
+            </div>
+
+            <span class="post-nav-divider"></span>
+
+            <div class="post-nav-prev post-nav-item">
+                <a href="/2019/10/24/Java%E9%9D%A2%E5%90%91%E5%AF%B9%E8%B1%A1%E2%80%94%E2%80%94%E5%9F%BA%E7%A1%80/" rel="prev" title="Java面向对象——基础">
+                  Java面向对象——基础 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#一、HelloWorld程序"><span class="nav-number">1.</span> <span class="nav-text">一、HelloWorld程序</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#二、基本数据类型"><span class="nav-number">2.</span> <span class="nav-text">二、基本数据类型</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#1-整型"><span class="nav-number">2.1.</span> <span class="nav-text">1. 整型</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#3-布尔类型-boolean"><span class="nav-number">2.2.</span> <span class="nav-text">3. 布尔类型 boolean</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#4-字符类型-char"><span class="nav-number">2.3.</span> <span class="nav-text">4. 字符类型 char</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#5-常量-final"><span class="nav-number">2.4.</span> <span class="nav-text">5. 常量 final</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#三、流程控制"><span class="nav-number">3.</span> <span class="nav-text">三、流程控制</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#四、数组"><span class="nav-number">4.</span> <span class="nav-text">四、数组</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <img class="site-author-image" itemprop="image" alt="MIN MIN"
+    src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">MIN MIN</p>
+  <div class="site-description" itemprop="description">即使最后没有人为你鼓掌，也要优雅地谢幕，感谢自己的认真付出。</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">54</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">13</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+        <span class="site-state-item-count">32</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/ashermin" title="GitHub &amp;rarr; https:&#x2F;&#x2F;github.com&#x2F;ashermin" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+<div class="copyright">
+  
+  &copy; 2019 – 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user-circle"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">MIN MIN</span>
+</div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+<script src="/js/utils.js"></script>
+<script src="/js/schemes/pisces.js"></script>
+<script src="/js/next-boot.js"></script>
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+</body>
+</html>

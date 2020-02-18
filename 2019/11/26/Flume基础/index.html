@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.0.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/avatar.jpg">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/avatar.jpg">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/avatar.jpg">
+  <link rel="mask-icon" href="/images/avatar.jpg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+
+
+<script id="hexo-configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '7.4.2',
+    exturl: false,
+    sidebar: {"position":"left","width":260,"display":"post","offset":12,"onmobile":false},
+    copycode: {"enable":true,"show_result":true,"style":"default"},
+    back2top: {"enable":true,"sidebar":false,"scrollpercent":true},
+    bookmark: {"enable":false,"color":"#222","save":"auto"},
+    fancybox: false,
+    mediumzoom: false,
+    lazyload: false,
+    pangu: false,
+    algolia: {
+      appID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    localsearch: {"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},
+    path: '',
+    motion: {"enable":false,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    translation: {
+      copy_button: '复制',
+      copy_success: '复制成功',
+      copy_failure: '复制失败'
+    },
+    sidebarPadding: 40
+  };
+</script>
+
+  <meta name="description" content="Flume是分布式日志收集框架，用于分布式的海量日志的高效收集、聚合和移动系统。 这里我使用的版本是flume-ng-1.6.0-cdh5.7.6 官方用户手册 1. Flume架构及核心组件Flume由三大核心组件构成：Source、Channel、Sink Source：收集。指定数据的来源，比如：Web Server Channel：聚集。为数据提供临时存放的缓存通道，Source来的数据">
+<meta name="keywords" content="Flume,Hadoop">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Flume基础">
+<meta property="og:url" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2019&#x2F;11&#x2F;26&#x2F;Flume%E5%9F%BA%E7%A1%80&#x2F;index.html">
+<meta property="og:site_name" content="MIN MIN">
+<meta property="og:description" content="Flume是分布式日志收集框架，用于分布式的海量日志的高效收集、聚合和移动系统。 这里我使用的版本是flume-ng-1.6.0-cdh5.7.6 官方用户手册 1. Flume架构及核心组件Flume由三大核心组件构成：Source、Channel、Sink Source：收集。指定数据的来源，比如：Web Server Channel：聚集。为数据提供临时存放的缓存通道，Source来的数据">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;images&#x2F;Flume%E5%9F%BA%E7%A1%80&#x2F;UserGuide_image00.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;flume.apache.org&#x2F;_images&#x2F;UserGuide_image01.png">
+<meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;images&#x2F;Flume%E5%9F%BA%E7%A1%80&#x2F;UserGuide_image03.png">
+<meta property="og:updated_time" content="2020-01-01T06:47:09.140Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;images&#x2F;Flume%E5%9F%BA%E7%A1%80&#x2F;UserGuide_image00.png">
+
+<link rel="canonical" href="http://yoursite.com/2019/11/26/Flume%E5%9F%BA%E7%A1%80/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true,
+    isPage: false,
+    isArchive: false
+  };
+</script>
+
+  <title>Flume基础 | MIN MIN</title>
+  
+
+
+  <script>
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?cad2a7930afd095772e571e6eab3628f";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+  <!--  -->
+<link href='//fonts.googleapis.com/css?family=Kaushan+Script' rel='stylesheet' type='text/css'>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">MIN MIN</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+        <p class="site-subtitle">BLOG</p>
+  </div>
+
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档</a>
+
+  </li>
+  </ul>
+
+</nav>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/11/26/Flume%E5%9F%BA%E7%A1%80/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="MIN MIN">
+      <meta itemprop="description" content="即使最后没有人为你鼓掌，也要优雅地谢幕，感谢自己的认真付出。">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="MIN MIN">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Flume基础
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2019-11-26 09:40:28" itemprop="dateCreated datePublished" datetime="2019-11-26T09:40:28+08:00">2019-11-26</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-01-01 14:47:09" itemprop="dateModified" datetime="2020-01-01T14:47:09+08:00">2020-01-01</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Flume/" itemprop="url" rel="index">
+                    <span itemprop="name">Flume</span>
+                  </a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <blockquote>
+<p><a href="https://flume.apache.org/" target="_blank" rel="noopener">Flume</a>是分布式<strong>日志收集</strong>框架，用于分布式的海量日志的高效收集、聚合和移动系统。</p>
+<p>这里我使用的版本是<em>flume-ng-1.6.0-cdh5.7.6</em> <a href="https://flume.apache.org/releases/content/1.6.0/FlumeUserGuide.html" target="_blank" rel="noopener">官方用户手册</a></p>
+</blockquote><h3 id="1-Flume架构及核心组件"><a href="#1-Flume架构及核心组件" class="headerlink" title="1. Flume架构及核心组件"></a>1. Flume架构及核心组件</h3><p>Flume由三大核心组件构成：Source、Channel、Sink</p><ul>
+<li>Source：收集。指定数据的来源，比如：Web Server</li>
+<li>Channel：聚集。为数据提供临时存放的缓存通道，Source来的数据存到Channel满了以后再发送到Sink</li>
+<li>Sink：输出。把数据写到某个地方去，比如：HDFS</li>
+</ul><a id="more"></a>
+
+
+<img src="/images/Flume%E5%9F%BA%E7%A1%80/UserGuide_image00.png" alt="Agent component diagram" style="zoom: 67%;">
+
+<hr>
+<h3 id="2-Flume环境部署"><a href="#2-Flume环境部署" class="headerlink" title="2. Flume环境部署"></a>2. Flume环境部署</h3><h4 id="2-1-配置环境变量"><a href="#2-1-配置环境变量" class="headerlink" title="2.1 配置环境变量"></a>2.1 配置环境变量</h4><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> vi ~/.bashrc</span></span><br><span class="line"><span class="meta">#</span><span class="bash"><span class="comment">#Flume</span></span></span><br><span class="line">export FLUME_HOME=/opt/applications/flume-1.6.0-cdh5.7.6-bin</span><br><span class="line">export PATH=$FLUME_HOME/bin:$PATH</span><br><span class="line"><span class="meta">$</span><span class="bash"> <span class="built_in">source</span> ~/.bashrc</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="2-2-修改conf下的配置文件"><a href="#2-2-修改conf下的配置文件" class="headerlink" title="2.2 修改conf下的配置文件"></a>2.2 修改conf下的配置文件</h4><p>（1）先拷贝一份系统自带的环境脚本文件</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> cp flume-env.sh.template flume-env.sh</span></span><br></pre></td></tr></table></figure>
+
+<p>（2）编辑<em>flume-env.sh</em></p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">export JAVA_HOME=/opt/applications/jdk1.8.0_121</span><br></pre></td></tr></table></figure>
+
+<p>（3）查看Flume版本以检测是否安装成功</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> bin/flume-ng version</span></span><br><span class="line">Flume 1.6.0-cdh5.7.6</span><br><span class="line">Source code repository: https://git-wip-us.apache.org/repos/asf/flume.git</span><br><span class="line">Revision: 8d34b4fee98bac1b6ccda2baeb37cb1d25843a33</span><br><span class="line">Compiled by jenkins on Tue Feb 21 15:13:44 PST 2017</span><br><span class="line">From source with checksum 881902af0af197676eec4c7bcb2cacbe</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h3 id="3-从指定网络端口采集数据输出到控制台"><a href="#3-从指定网络端口采集数据输出到控制台" class="headerlink" title="3. 从指定网络端口采集数据输出到控制台"></a>3. 从指定网络端口采集数据输出到控制台</h3><p>要使用Flume，其实就是写配置文件，主要就是以下四步：</p>
+<ol>
+<li>配置Source</li>
+<li>配置Channel</li>
+<li>配置Sink</li>
+<li>把以上三个组件串起来</li>
+</ol>
+<h4 id="3-1-脚本编写"><a href="#3-1-脚本编写" class="headerlink" title="3.1 脚本编写"></a>3.1 脚本编写</h4><p>这里使用<a href="https://flume.apache.org/releases/content/1.6.0/FlumeUserGuide.html#a-simple-example" target="_blank" rel="noopener">官方案例</a>：从指定网络端口采集数据输出到控制台</p>
+<p>实现：单节点，采用NetCat Source来监听端口，把里面每一行的数据转换为一个Event，输出到控制台。</p>
+<figure class="highlight properties"><table><tr><td class="code"><pre><span class="line"><span class="comment"># agent中三个组件的定义 a1：agent的名称</span></span><br><span class="line"><span class="comment"># source名称</span></span><br><span class="line"><span class="meta">a1.sources</span> = <span class="string">r1</span></span><br><span class="line"><span class="comment"># sink名称</span></span><br><span class="line"><span class="meta">a1.sinks</span> = <span class="string">k1</span></span><br><span class="line"><span class="comment"># channel名称</span></span><br><span class="line"><span class="meta">a1.channels</span> = <span class="string">c1</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># source的配置</span></span><br><span class="line"><span class="comment"># source类型</span></span><br><span class="line"><span class="meta">a1.sources.r1.type</span> = <span class="string">netcat</span></span><br><span class="line"><span class="comment"># 绑定的IP或hostname</span></span><br><span class="line"><span class="meta">a1.sources.r1.bind</span> = <span class="string">min01</span></span><br><span class="line"><span class="comment"># 绑定的端口号</span></span><br><span class="line"><span class="meta">a1.sources.r1.port</span> = <span class="string">44444</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># sink的配置</span></span><br><span class="line"><span class="comment">#sink的类型为日志模式</span></span><br><span class="line"><span class="meta">a1.sinks.k1.type</span> = <span class="string">logger</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># channel的配置</span></span><br><span class="line"><span class="meta">a1.channels.c1.type</span> = <span class="string">memory</span></span><br><span class="line"><span class="meta">a1.channels.c1.capacity</span> = <span class="string">1000</span></span><br><span class="line"><span class="meta">a1.channels.c1.transactionCapacity</span> = <span class="string">100</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 将source和sink连接到channel</span></span><br><span class="line"><span class="meta">a1.sources.r1.channels</span> = <span class="string">c1</span></span><br><span class="line"><span class="meta">a1.sinks.k1.channel</span> = <span class="string">c1</span></span><br></pre></td></tr></table></figure>
+
+<p>⚠️注意：一个Source可以输出到多个Channel；但是一个Channel只能输出到一个Sink</p>
+<p><img src="https://flume.apache.org/_images/UserGuide_image01.png" alt="A fan-out flow using a (/images/Flume%E5%9F%BA%E7%A1%80/UserGuide_image01.png) channel selector"></p>
+<h4 id="3-2-执行脚本"><a href="#3-2-执行脚本" class="headerlink" title="3.2 执行脚本"></a>3.2 执行脚本</h4><p>（1）我在<em>conf</em>目录下新建了个<em>script</em>文件夹用来存放脚本，然后把上面写的代码粘贴至新建的<code>example.conf</code></p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> mkdir script</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> vi script/example.conf</span></span><br></pre></td></tr></table></figure>
+
+<p>（2）启动Agent</p>
+<ul>
+<li>agent：启动一个Flume的agent</li>
+<li>–name,-n <name>：agent的名称（必填）</name></li>
+<li>–conf,-c <conf>：指定conf文件夹路径</conf></li>
+<li>–conf-file,-f <file>：指定一个配置文件</file></li>
+<li>-Dflume.root.logger：指定打印日志的种类和位置</li>
+</ul>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> bin/flume-ng agent \</span></span><br><span class="line">--name a1 \</span><br><span class="line">--conf $FLUME_HOME/conf \</span><br><span class="line">--conf-file $FLUME_HOME/conf/script/example.conf \</span><br><span class="line">-Dflume.root.logger=INFO,console</span><br></pre></td></tr></table></figure>
+
+<p>（3）使用<code>telnet min01 44444</code>连接本机的44444端口，发送给Flume一个Event（需要安装Telnet<code>$ sudo yum install telnet</code>）</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> telnet min01 44444</span></span><br><span class="line">Trying 192.168.1.188...</span><br><span class="line">Connected to min01.</span><br><span class="line">Escape character is '^]'.</span><br><span class="line">Hello world!</span><br><span class="line">OK</span><br><span class="line">Hello flume~</span><br><span class="line">OK</span><br></pre></td></tr></table></figure>
+
+<p>然后在启动Flume的控制台可以收到信息：</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">2019-11-26 13:54:12,622 (SinkRunner-PollingRunner-DefaultSinkProcessor) [INFO - org.apache.flume.sink.LoggerSink.process(LoggerSink.java:94)] Event: &#123; headers:&#123;&#125; body: 48 65 6C 6C 6F 20 77 6F 72 6C 64 21 0D          Hello world!. &#125;</span><br><span class="line">2019-11-26 14:04:28,770 (SinkRunner-PollingRunner-DefaultSinkProcessor) [INFO - org.apache.flume.sink.LoggerSink.process(LoggerSink.java:94)] Event: &#123; headers:&#123;&#125; body: 48 65 6C 6C 6F 20 66 6C 75 6D 65 7E 0D          Hello flume~. &#125;</span><br></pre></td></tr></table></figure>
+
+<p>这里可以看到：</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">Event: &#123; headers:&#123;&#125; body: 48 65 6C 6C 6F 20 77 6F 72 6C 64 21 0D Hello world!. &#125;</span><br></pre></td></tr></table></figure>
+
+<p>可见Event是Flume数据传输的<strong>基本单元</strong>。（Event=可选的header+byte array）</p>
+<hr>
+<h3 id="4-监控一个文件，实时采集新增数据，并输出到控制台"><a href="#4-监控一个文件，实时采集新增数据，并输出到控制台" class="headerlink" title="4. 监控一个文件，实时采集新增数据，并输出到控制台"></a>4. 监控一个文件，实时采集新增数据，并输出到控制台</h3><p>需求：拿到一个文件后，只要文件中有新数据追加进来，就把它采集输出到控制台。</p>
+<p>Agent选型：<a href="https://flume.apache.org/releases/content/1.6.0/FlumeUserGuide.html#exec-source" target="_blank" rel="noopener">exec source</a>+<a href="https://flume.apache.org/releases/content/1.6.0/FlumeUserGuide.html#memory-channel" target="_blank" rel="noopener">memory channel</a>+<a href="https://flume.apache.org/releases/content/1.6.0/FlumeUserGuide.html#logger-sink" target="_blank" rel="noopener">logger sink</a></p>
+<h4 id="4-1-脚本编写"><a href="#4-1-脚本编写" class="headerlink" title="4.1 脚本编写"></a>4.1 脚本编写</h4><p>这里需要监控的文件为：<em>/opt/data/flume.log</em></p>
+<figure class="highlight properties"><table><tr><td class="code"><pre><span class="line"><span class="comment"># agent中三个组件的定义 a1：agent的名称</span></span><br><span class="line"><span class="comment"># source名称</span></span><br><span class="line"><span class="meta">a1.sources</span> = <span class="string">r1</span></span><br><span class="line"><span class="comment"># sink名称</span></span><br><span class="line"><span class="meta">a1.sinks</span> = <span class="string">k1</span></span><br><span class="line"><span class="comment"># channel名称</span></span><br><span class="line"><span class="meta">a1.channels</span> = <span class="string">c1</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># source的配置</span></span><br><span class="line"><span class="comment"># source类型</span></span><br><span class="line"><span class="meta">a1.sources.r1.type</span> = <span class="string">exec</span></span><br><span class="line"><span class="comment"># 执行的脚本</span></span><br><span class="line"><span class="meta">a1.sources.r1.command</span> = <span class="string">tail -F /opt/data/flume.log</span></span><br><span class="line"><span class="meta">a1.sources.r1.shell</span> = <span class="string">/bin/sh -c</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># sink的配置</span></span><br><span class="line"><span class="comment">#sink的类型为日志模式</span></span><br><span class="line"><span class="meta">a1.sinks.k1.type</span> = <span class="string">logger</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># channel的配置</span></span><br><span class="line"><span class="meta">a1.channels.c1.type</span> = <span class="string">memory</span></span><br><span class="line"><span class="meta">a1.channels.c1.capacity</span> = <span class="string">1000</span></span><br><span class="line"><span class="meta">a1.channels.c1.transactionCapacity</span> = <span class="string">100</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 将source和sink连接到channel</span></span><br><span class="line"><span class="meta">a1.sources.r1.channels</span> = <span class="string">c1</span></span><br><span class="line"><span class="meta">a1.sinks.k1.channel</span> = <span class="string">c1</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="4-2-执行脚本"><a href="#4-2-执行脚本" class="headerlink" title="4.2 执行脚本"></a>4.2 执行脚本</h4><p>（1）新建一个配置文件<em>exec-memory-logger.conf</em>，写入上述脚本</p>
+<p>（2）启动Agent</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> bin/flume-ng agent \</span></span><br><span class="line">--name a1 \</span><br><span class="line">--conf $FLUME_HOME/conf \</span><br><span class="line">--conf-file $FLUME_HOME/conf/script/exec-memory-logger.conf \</span><br><span class="line">-Dflume.root.logger=INFO,console</span><br></pre></td></tr></table></figure>
+
+<p>（3）向<em>flume.log</em>文件中写入两行数据：</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> <span class="built_in">echo</span> Hello world &gt;&gt; flume.log </span></span><br><span class="line"><span class="meta">$</span><span class="bash"> <span class="built_in">echo</span> Hello flume &gt;&gt; flume.log</span></span><br></pre></td></tr></table></figure>
+
+<p>可以看到Flume控制台可以实时显示刚刚写入的信息：</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">2019-11-26 14:43:36,917 (SinkRunner-PollingRunner-DefaultSinkProcessor) [INFO - org.apache.flume.sink.LoggerSink.process(LoggerSink.java:94)] Event: &#123; headers:&#123;&#125; body: 48 65 6C 6C 6F 20 77 6F 72 6C 64                Hello world &#125;</span><br><span class="line">2019-11-26 14:43:46,059 (SinkRunner-PollingRunner-DefaultSinkProcessor) [INFO - org.apache.flume.sink.LoggerSink.process(LoggerSink.java:94)] Event: &#123; headers:&#123;&#125; body: 48 65 6C 6C 6F 20 66 6C 75 6D 65                Hello flume &#125;</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h3 id="5-将A服务器上的日志实时采集到B服务器"><a href="#5-将A服务器上的日志实时采集到B服务器" class="headerlink" title="5. 将A服务器上的日志实时采集到B服务器"></a>5. 将A服务器上的日志实时采集到B服务器</h3><p>需求：将A服务器上的日志实时传输到B服务器</p>
+<p>Agent 选型：</p>
+<ul>
+<li>A 机器：exec source =&gt; memory channel =&gt; avro sink</li>
+<li>B 机器：avro source =&gt; memory channel =&gt; logger sink</li>
+</ul>
+<img src="/images/Flume%E5%9F%BA%E7%A1%80/UserGuide_image03.png" alt="Two agents communicating over Avro RPC" style="zoom:80%;">
+
+<h4 id="5-1-脚本编写"><a href="#5-1-脚本编写" class="headerlink" title="5.1 脚本编写"></a>5.1 脚本编写</h4><p>（1）新建并编辑A服务器上的<em>exec-memory-avro.conf</em>文件</p>
+<figure class="highlight properties"><table><tr><td class="code"><pre><span class="line"><span class="comment"># agent中三个组件的定义 exec-memory-avro:agent的名称</span></span><br><span class="line"><span class="comment"># source名称</span></span><br><span class="line"><span class="meta">exec-memory-avro.sources</span> = <span class="string">exec-source</span></span><br><span class="line"><span class="comment"># sink名称</span></span><br><span class="line"><span class="meta">exec-memory-avro.sinks</span> = <span class="string">avro-sink</span></span><br><span class="line"><span class="comment"># channel名称</span></span><br><span class="line"><span class="meta">exec-memory-avro.channels</span> = <span class="string">memory-channel</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># source的配置</span></span><br><span class="line"><span class="comment"># source类型</span></span><br><span class="line"><span class="meta">exec-memory-avro.sources.exec-source.type</span> = <span class="string">exec</span></span><br><span class="line"><span class="comment"># 执行的脚本</span></span><br><span class="line"><span class="meta">exec-memory-avro.sources.exec-source.command</span> = <span class="string">tail -F /opt/data/flume.log</span></span><br><span class="line"><span class="meta">exec-memory-avro.sources.exec-source.shell</span> = <span class="string">/bin/sh -c</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># sink的配置</span></span><br><span class="line"><span class="comment"># sink的类型为avro</span></span><br><span class="line"><span class="meta">exec-memory-avro.sinks.avro-sink.type</span> = <span class="string">avro</span></span><br><span class="line"><span class="comment"># 输出的IP/hostname</span></span><br><span class="line"><span class="meta">exec-memory-avro.sinks.avro-sink.hostname</span> = <span class="string">min01</span></span><br><span class="line"><span class="meta">exec-memory-avro.sinks.avro-sink.port</span> = <span class="string">44444</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># channel的配置</span></span><br><span class="line"><span class="meta">exec-memory-avro.channels.memory-channel.type</span> = <span class="string">memory</span></span><br><span class="line"><span class="meta">exec-memory-avro.channels.memory-channel.capacity</span> = <span class="string">1000</span></span><br><span class="line"><span class="meta">exec-memory-avro.channels.memory-channel.transactionCapacity</span> = <span class="string">100</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 将source和sink连接到channel</span></span><br><span class="line"><span class="meta">exec-memory-avro.sources.exec-source.channels</span> = <span class="string">memory-channel</span></span><br><span class="line"><span class="meta">exec-memory-avro.sinks.avro-sink.channel</span> = <span class="string">memory-channel</span></span><br></pre></td></tr></table></figure>
+
+<p>（2）新建并编辑B服务器上的<em>avro-memory-logger.conf</em>文件</p>
+<figure class="highlight properties"><table><tr><td class="code"><pre><span class="line"><span class="comment"># agent中三个组件的定义 avro-memory-logger:agent的名称</span></span><br><span class="line"><span class="comment"># source名称</span></span><br><span class="line"><span class="meta">avro-memory-logger.sources</span> = <span class="string">avro-source</span></span><br><span class="line"><span class="comment"># sink名称</span></span><br><span class="line"><span class="meta">avro-memory-logger.sinks</span> = <span class="string">logger-sink</span></span><br><span class="line"><span class="comment"># channel名称</span></span><br><span class="line"><span class="meta">avro-memory-logger.channels</span> = <span class="string">memory-channel</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># source的配置</span></span><br><span class="line"><span class="comment"># source类型</span></span><br><span class="line"><span class="meta">avro-memory-logger.sources.avro-source.type</span> = <span class="string">avro</span></span><br><span class="line"><span class="comment"># 接收的IP/hostname</span></span><br><span class="line"><span class="meta">avro-memory-logger.sources.avro-source.bind</span> = <span class="string">min01</span></span><br><span class="line"><span class="meta">avro-memory-logger.sources.avro-source.port</span> = <span class="string">44444</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># sink的配置</span></span><br><span class="line"><span class="comment">#sink的类型为logger</span></span><br><span class="line"><span class="meta">avro-memory-logger.sinks.logger-sink.type</span> = <span class="string">logger</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># channel的配置</span></span><br><span class="line"><span class="meta">avro-memory-logger.channels.memory-channel.type</span> = <span class="string">memory</span></span><br><span class="line"><span class="meta">avro-memory-logger.channels.memory-channel.capacity</span> = <span class="string">1000</span></span><br><span class="line"><span class="meta">avro-memory-logger.channels.memory-channel.transactionCapacity</span> = <span class="string">100</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 将source和sink连接到channel</span></span><br><span class="line"><span class="meta">avro-memory-logger.sources.avro-source.channels</span> = <span class="string">memory-channel</span></span><br><span class="line"><span class="meta">avro-memory-logger.sinks.logger-sink.channel</span> = <span class="string">memory-channel</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="5-2-执行脚本"><a href="#5-2-执行脚本" class="headerlink" title="5.2 执行脚本"></a>5.2 执行脚本</h4><p>（1）先在B服务器执行avro-memory-logger这个Agent</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> bin/flume-ng agent \</span></span><br><span class="line">--name avro-memory-logger \</span><br><span class="line">--conf $FLUME_HOME/conf \</span><br><span class="line">--conf-file $FLUME_HOME/conf/script/avro-memory-logger.conf \</span><br><span class="line">-Dflume.root.logger=INFO,console</span><br></pre></td></tr></table></figure>
+
+<p>（2）再在A服务器执行exec-memory-avro这个Agent</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> bin/flume-ng agent \</span></span><br><span class="line">--name exec-memory-avro \</span><br><span class="line">--conf $FLUME_HOME/conf \</span><br><span class="line">--conf-file $FLUME_HOME/conf/script/exec-memory-avro.conf \</span><br><span class="line">-Dflume.root.logger=INFO,console</span><br></pre></td></tr></table></figure>
+
+<p>（3）向A服务器的<em>flume.log</em>文件中写入两行数据：</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> <span class="built_in">echo</span> Can you see me? &gt;&gt; flume.log </span></span><br><span class="line"><span class="meta">$</span><span class="bash"> <span class="built_in">echo</span> How are you? &gt;&gt; flume.log</span></span><br></pre></td></tr></table></figure>
+
+<p>在B服务器的控制台可以实时显示刚刚写入的信息：</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">2019-11-26 15:48:34,402 (SinkRunner-PollingRunner-DefaultSinkProcessor) [INFO - org.apache.flume.sink.LoggerSink.process(LoggerSink.java:94)] Event: &#123; headers:&#123;&#125; body: 43 61 6E 20 79 6F 75 20 73 65 65 20 6D 65 3F    Can you see me? &#125;</span><br><span class="line">2019-11-26 15:48:34,402 (SinkRunner-PollingRunner-DefaultSinkProcessor) [INFO - org.apache.flume.sink.LoggerSink.process(LoggerSink.java:94)] Event: &#123; headers:&#123;&#125; body: 48 6F 77 20 61 72 65 20 79 6F 75 3F             How are you? &#125;</span><br></pre></td></tr></table></figure>
+
+<p>⚠️注意：之所以A服务器控制台看不到信息是因为数据通过sink传到了B服务器的Source去了，所以自然不会输出到控制台啦~</p>
+<hr>
+<h3 id="6-与Kafka整合完成实时日志数据采集"><a href="#6-与Kafka整合完成实时日志数据采集" class="headerlink" title="6. 与Kafka整合完成实时日志数据采集"></a>6. 与Kafka整合完成实时日志数据采集</h3><blockquote>
+<p>这里我使用的Kafka的版本为<code>kafka_2.11-2.2.1</code>，具体Kafka的使用可以参见我之前的整理的《<a href="https://ashermin.github.io/2019/11/21/Kafka%E5%9F%BA%E6%9C%AC%E4%BD%BF%E7%94%A8/" target="_blank" rel="noopener">Kafka基本使用</a>》</p>
+</blockquote>
+<p>Agent 的选型类似于上面，区别就是把logger sink改为Kafka Sink：</p>
+<ul>
+<li>A 机器：exec source =&gt; memory channel =&gt; <a href="https://flume.apache.org/releases/content/1.6.0/FlumeUserGuide.html#avro-sink" target="_blank" rel="noopener">avro sink</a></li>
+<li>B 机器：avro source =&gt; memory channel =&gt; <a href="https://flume.apache.org/releases/content/1.6.0/FlumeUserGuide.html#kafka-sink" target="_blank" rel="noopener">Kafka Sink</a></li>
+</ul>
+<h4 id="6-1-脚本编写"><a href="#6-1-脚本编写" class="headerlink" title="6.1 脚本编写"></a>6.1 脚本编写</h4><p>（1）在A服务器上新建并编辑<em>$FLUME_HOME/script/exec-memory-avro.conf</em>文件</p>
+<figure class="highlight properties"><table><tr><td class="code"><pre><span class="line"><span class="comment"># agent中三个组件的定义 exec-memory-avro:agent的名称</span></span><br><span class="line"><span class="comment"># source名称</span></span><br><span class="line"><span class="meta">exec-memory-avro.sources</span> = <span class="string">exec-source</span></span><br><span class="line"><span class="comment"># sink名称</span></span><br><span class="line"><span class="meta">exec-memory-avro.sinks</span> = <span class="string">avro-sink</span></span><br><span class="line"><span class="comment"># channel名称</span></span><br><span class="line"><span class="meta">exec-memory-avro.channels</span> = <span class="string">memory-channel</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># source的配置</span></span><br><span class="line"><span class="comment"># source类型</span></span><br><span class="line"><span class="meta">exec-memory-avro.sources.exec-source.type</span> = <span class="string">exec</span></span><br><span class="line"><span class="comment"># 执行的脚本</span></span><br><span class="line"><span class="meta">exec-memory-avro.sources.exec-source.command</span> = <span class="string">tail -F /opt/data/flume.log</span></span><br><span class="line"><span class="meta">exec-memory-avro.sources.exec-source.shell</span> = <span class="string">/bin/sh -c</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># sink的配置</span></span><br><span class="line"><span class="comment"># sink的类型为avro</span></span><br><span class="line"><span class="meta">exec-memory-avro.sinks.avro-sink.type</span> = <span class="string">avro</span></span><br><span class="line"><span class="comment"># 输出的IP/hostname，我这里B服务器就是min01</span></span><br><span class="line"><span class="meta">exec-memory-avro.sinks.avro-sink.hostname</span> = <span class="string">min01</span></span><br><span class="line"><span class="meta">exec-memory-avro.sinks.avro-sink.port</span> = <span class="string">4545</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># channel的配置</span></span><br><span class="line"><span class="meta">exec-memory-avro.channels.memory-channel.type</span> = <span class="string">memory</span></span><br><span class="line"><span class="meta">exec-memory-avro.channels.memory-channel.capacity</span> = <span class="string">1000</span></span><br><span class="line"><span class="meta">exec-memory-avro.channels.memory-channel.transactionCapacity</span> = <span class="string">100</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 将source和sink连接到channel</span></span><br><span class="line"><span class="meta">exec-memory-avro.sources.exec-source.channels</span> = <span class="string">memory-channel</span></span><br><span class="line"><span class="meta">exec-memory-avro.sinks.avro-sink.channel</span> = <span class="string">memory-channel</span></span><br></pre></td></tr></table></figure>
+
+<p>（2）在B服务器上新建并编辑<em>$FLUME_HOME/script/avro-memory-kafka.conf</em>文件</p>
+<figure class="highlight properties"><table><tr><td class="code"><pre><span class="line"><span class="comment"># agent中三个组件的定义 avro-memory-kafka:Agent的名称</span></span><br><span class="line"><span class="comment"># source名称</span></span><br><span class="line"><span class="meta">avro-memory-kafka.sources</span> = <span class="string">avro-source</span></span><br><span class="line"><span class="comment"># sink名称</span></span><br><span class="line"><span class="meta">avro-memory-kafka.sinks</span> = <span class="string">kafka-sink</span></span><br><span class="line"><span class="comment"># channel名称</span></span><br><span class="line"><span class="meta">avro-memory-kafka.channels</span> = <span class="string">memory-channel</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># source的配置</span></span><br><span class="line"><span class="comment"># source类型</span></span><br><span class="line"><span class="meta">avro-memory-kafka.sources.avro-source.type</span> = <span class="string">avro</span></span><br><span class="line"><span class="comment"># 接收的IP/hostname</span></span><br><span class="line"><span class="meta">avro-memory-kafka.sources.avro-source.bind</span> = <span class="string">min01</span></span><br><span class="line"><span class="meta">avro-memory-kafka.sources.avro-source.port</span> = <span class="string">4545</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># sink的配置</span></span><br><span class="line"><span class="comment">#sink的类型必须为org.apache.flume.sink.kafka.KafkaSink</span></span><br><span class="line"><span class="meta">avro-memory-kafka.sinks.kafka-sink.type</span> =<span class="string">org.apache.flume.sink.kafka.KafkaSink</span></span><br><span class="line"><span class="meta">avro-memory-kafka.sinks.kafka-sink.brokerList</span> = <span class="string">min01:9092</span></span><br><span class="line"><span class="meta">avro-memory-kafka.sinks.kafka-sink.topic</span> = <span class="string">flume-logs</span></span><br><span class="line"><span class="meta">avro-memory-kafka.sinks.kafka-sink.requiredAcks</span> = <span class="string">1</span></span><br><span class="line"><span class="meta">avro-memory-kafka.sinks.kafka-sink.batchSize</span> = <span class="string">5</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># channel的配置</span></span><br><span class="line"><span class="meta">avro-memory-kafka.channels.memory-channel.type</span> = <span class="string">memory</span></span><br><span class="line"><span class="meta">avro-memory-kafka.channels.memory-channel.capacity</span> = <span class="string">1000</span></span><br><span class="line"><span class="meta">avro-memory-kafka.channels.memory-channel.transactionCapacity</span> = <span class="string">100</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 将source和sink连接到channel</span></span><br><span class="line"><span class="meta">avro-memory-kafka.sources.avro-source.channels</span> = <span class="string">memory-channel</span></span><br><span class="line"><span class="meta">avro-memory-kafka.sinks.kafka-sink.channel</span> = <span class="string">memory-channel</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="6-2-执行脚本"><a href="#6-2-执行脚本" class="headerlink" title="6.2 执行脚本"></a>6.2 执行脚本</h4><p>（1）启动Kafka，新建上面脚本中涉及到的主题<code>flume-logs</code>：</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> bin/kafka-server-start.sh config/server.properties</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> bin/kafka-topics.sh --create --zookeeper min01:2181 --replication-factor 1 --partitions 2 --topic flume-logs</span></span><br></pre></td></tr></table></figure>
+
+<p>（2）接着先在B服务器执行avro-memory-kafka这个Agent</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> bin/flume-ng agent \</span></span><br><span class="line">--name avro-memory-kafka \</span><br><span class="line">--conf $FLUME_HOME/conf \</span><br><span class="line">--conf-file $FLUME_HOME/script/avro-memory-kafka.conf \</span><br><span class="line">-Dflume.root.logger=INFO,console</span><br></pre></td></tr></table></figure>
+
+<p>（3）然后在A服务器执行exec-memory-avro这个Agent</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> bin/flume-ng agent \</span></span><br><span class="line">--name exec-memory-avro \</span><br><span class="line">--conf $FLUME_HOME/conf \</span><br><span class="line">--conf-file $FLUME_HOME/script/exec-memory-avro.conf \</span><br><span class="line">-Dflume.root.logger=INFO,console</span><br></pre></td></tr></table></figure>
+
+<p>（4）最后向A服务器的<em>flume.log</em>文件中写入数据：</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> <span class="built_in">echo</span> Happy new year, 2020! &gt;&gt; flume.log</span></span><br></pre></td></tr></table></figure>
+
+<p>（5）可以通过启动Kafka的控制台消费flume-logs主题中的数据：</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> bin/kafka-console-consumer.sh --bootstrap-server min01:9092 --topic flume-logs --from-beginning</span></span><br><span class="line">Happy new year, 2020!</span><br></pre></td></tr></table></figure>
+
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Flume/" rel="tag"># Flume</a>
+              <a href="/tags/Hadoop/" rel="tag"># Hadoop</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-next post-nav-item">
+                <a href="/2019/11/24/Kafka-API%E7%BC%96%E7%A8%8B/" rel="next" title="Kafka API编程">
+                  <i class="fa fa-chevron-left"></i> Kafka API编程
+                </a>
+            </div>
+
+            <span class="post-nav-divider"></span>
+
+            <div class="post-nav-prev post-nav-item">
+                <a href="/2019/11/27/HDFS%E5%9F%BA%E7%A1%80/" rel="prev" title="HDFS基础">
+                  HDFS基础 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-Flume架构及核心组件"><span class="nav-number">1.</span> <span class="nav-text">1. Flume架构及核心组件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-Flume环境部署"><span class="nav-number">2.</span> <span class="nav-text">2. Flume环境部署</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#2-1-配置环境变量"><span class="nav-number">2.1.</span> <span class="nav-text">2.1 配置环境变量</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-2-修改conf下的配置文件"><span class="nav-number">2.2.</span> <span class="nav-text">2.2 修改conf下的配置文件</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-从指定网络端口采集数据输出到控制台"><span class="nav-number">3.</span> <span class="nav-text">3. 从指定网络端口采集数据输出到控制台</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#3-1-脚本编写"><span class="nav-number">3.1.</span> <span class="nav-text">3.1 脚本编写</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-2-执行脚本"><span class="nav-number">3.2.</span> <span class="nav-text">3.2 执行脚本</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-监控一个文件，实时采集新增数据，并输出到控制台"><span class="nav-number">4.</span> <span class="nav-text">4. 监控一个文件，实时采集新增数据，并输出到控制台</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#4-1-脚本编写"><span class="nav-number">4.1.</span> <span class="nav-text">4.1 脚本编写</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#4-2-执行脚本"><span class="nav-number">4.2.</span> <span class="nav-text">4.2 执行脚本</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-将A服务器上的日志实时采集到B服务器"><span class="nav-number">5.</span> <span class="nav-text">5. 将A服务器上的日志实时采集到B服务器</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#5-1-脚本编写"><span class="nav-number">5.1.</span> <span class="nav-text">5.1 脚本编写</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#5-2-执行脚本"><span class="nav-number">5.2.</span> <span class="nav-text">5.2 执行脚本</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6-与Kafka整合完成实时日志数据采集"><span class="nav-number">6.</span> <span class="nav-text">6. 与Kafka整合完成实时日志数据采集</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#6-1-脚本编写"><span class="nav-number">6.1.</span> <span class="nav-text">6.1 脚本编写</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#6-2-执行脚本"><span class="nav-number">6.2.</span> <span class="nav-text">6.2 执行脚本</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <img class="site-author-image" itemprop="image" alt="MIN MIN"
+    src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">MIN MIN</p>
+  <div class="site-description" itemprop="description">即使最后没有人为你鼓掌，也要优雅地谢幕，感谢自己的认真付出。</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">54</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">13</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+        <span class="site-state-item-count">32</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/ashermin" title="GitHub &amp;rarr; https:&#x2F;&#x2F;github.com&#x2F;ashermin" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+<div class="copyright">
+  
+  &copy; 2019 – 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user-circle"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">MIN MIN</span>
+</div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+<script src="/js/utils.js"></script>
+<script src="/js/schemes/pisces.js"></script>
+<script src="/js/next-boot.js"></script>
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+</body>
+</html>

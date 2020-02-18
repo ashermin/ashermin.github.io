@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.0.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/avatar.jpg">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/avatar.jpg">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/avatar.jpg">
+  <link rel="mask-icon" href="/images/avatar.jpg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+
+
+<script id="hexo-configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '7.4.2',
+    exturl: false,
+    sidebar: {"position":"left","width":260,"display":"post","offset":12,"onmobile":false},
+    copycode: {"enable":true,"show_result":true,"style":"default"},
+    back2top: {"enable":true,"sidebar":false,"scrollpercent":true},
+    bookmark: {"enable":false,"color":"#222","save":"auto"},
+    fancybox: false,
+    mediumzoom: false,
+    lazyload: false,
+    pangu: false,
+    algolia: {
+      appID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    localsearch: {"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},
+    path: '',
+    motion: {"enable":false,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    translation: {
+      copy_button: '复制',
+      copy_success: '复制成功',
+      copy_failure: '复制失败'
+    },
+    sidebarPadding: 40
+  };
+</script>
+
+  <meta name="description" content="Maven主要配置Scala和Kafka的版本信息，具体版本可见下载的Kafka的文件名：kafka_2.11-2.2.1&amp;lt;properties&amp;gt;  &amp;lt;scala.version&amp;gt;2.11.8&amp;lt;&#x2F;scala.version&amp;gt;  &amp;lt;kafka.verson&amp;gt;2.2.1&amp;lt;&#x2F;kafka.verson&amp;gt;&amp;lt;&#x2F;properties&amp;gt;&amp;lt">
+<meta name="keywords" content="Kafka">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Kafka API编程">
+<meta property="og:url" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2019&#x2F;11&#x2F;24&#x2F;Kafka-API%E7%BC%96%E7%A8%8B&#x2F;index.html">
+<meta property="og:site_name" content="MIN MIN">
+<meta property="og:description" content="Maven主要配置Scala和Kafka的版本信息，具体版本可见下载的Kafka的文件名：kafka_2.11-2.2.1&amp;lt;properties&amp;gt;  &amp;lt;scala.version&amp;gt;2.11.8&amp;lt;&#x2F;scala.version&amp;gt;  &amp;lt;kafka.verson&amp;gt;2.2.1&amp;lt;&#x2F;kafka.verson&amp;gt;&amp;lt;&#x2F;properties&amp;gt;&amp;lt">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;images&#x2F;Kafka-API%E7%BC%96%E7%A8%8B&#x2F;image-20191230152323210.png">
+<meta property="og:updated_time" content="2019-12-31T06:42:43.234Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;images&#x2F;Kafka-API%E7%BC%96%E7%A8%8B&#x2F;image-20191230152323210.png">
+
+<link rel="canonical" href="http://yoursite.com/2019/11/24/Kafka-API%E7%BC%96%E7%A8%8B/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true,
+    isPage: false,
+    isArchive: false
+  };
+</script>
+
+  <title>Kafka API编程 | MIN MIN</title>
+  
+
+
+  <script>
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?cad2a7930afd095772e571e6eab3628f";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+  <!--  -->
+<link href='//fonts.googleapis.com/css?family=Kaushan+Script' rel='stylesheet' type='text/css'>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">MIN MIN</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+        <p class="site-subtitle">BLOG</p>
+  </div>
+
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档</a>
+
+  </li>
+  </ul>
+
+</nav>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/11/24/Kafka-API%E7%BC%96%E7%A8%8B/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="MIN MIN">
+      <meta itemprop="description" content="即使最后没有人为你鼓掌，也要优雅地谢幕，感谢自己的认真付出。">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="MIN MIN">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Kafka API编程
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2019-11-24 12:31:11" itemprop="dateCreated datePublished" datetime="2019-11-24T12:31:11+08:00">2019-11-24</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2019-12-31 14:42:43" itemprop="dateModified" datetime="2019-12-31T14:42:43+08:00">2019-12-31</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Kafka/" itemprop="url" rel="index">
+                    <span itemprop="name">Kafka</span>
+                  </a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>Maven主要配置Scala和Kafka的版本信息，具体版本可见下载的Kafka的文件名：<code>kafka_2.11-2.2.1</code></p><figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">properties</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">scala.version</span>&gt;</span>2.11.8<span class="tag">&lt;/<span class="name">scala.version</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">kafka.verson</span>&gt;</span>2.2.1<span class="tag">&lt;/<span class="name">kafka.verson</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">properties</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;<span class="name">dependencies</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.scala-lang<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>scala-library<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">version</span>&gt;</span>$&#123;scala.version&#125;<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line">  <span class="comment">&lt;!--kafka依赖--&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.apache.kafka<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>kafka-clients<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">version</span>&gt;</span>$&#123;kafka.verson&#125;<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependencies</span>&gt;</span></span><br></pre></td></tr></table></figure><a id="more"></a>
+
+
+<h3 id="1-Producer-API的使用"><a href="#1-Producer-API的使用" class="headerlink" title="1. Producer API的使用"></a>1. Producer API的使用</h3><p>需要用到的类：</p>
+<ul>
+<li><p>KafkaProducer：需要创建一个生产者对象，用来发送数据</p>
+</li>
+<li><p>ProducerConfig：获取所需的一系列配置参数</p>
+</li>
+<li><p>ProducerRecord：每条数据都要封装成一个 ProducerRecord 对象</p>
+</li>
+</ul>
+<h4 id="1-1-创建生产者（不带回调函数，不指定分区）"><a href="#1-1-创建生产者（不带回调函数，不指定分区）" class="headerlink" title="1.1 创建生产者（不带回调函数，不指定分区）"></a>1.1 创建生产者（不带回调函数，不指定分区）</h4><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> org.apache.kafka.clients.producer.KafkaProducer;</span><br><span class="line"><span class="keyword">import</span> org.apache.kafka.clients.producer.Producer;</span><br><span class="line"><span class="keyword">import</span> org.apache.kafka.clients.producer.ProducerRecord;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.util.Properties;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">  Kafka生产者，不带回调函数，不指定分区</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">KafkaProducerApi</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">        Properties props = <span class="keyword">new</span> Properties();</span><br><span class="line">        <span class="comment">// Kafka服务端的主机名和端口号</span></span><br><span class="line">        props.put(<span class="string">"bootstrap.servers"</span>, <span class="string">"min01:9092"</span>);</span><br><span class="line">        <span class="comment">// 等待所有副本节点的应答</span></span><br><span class="line">        props.put(<span class="string">"acks"</span>, <span class="string">"all"</span>);</span><br><span class="line">        <span class="comment">// 消息发送最大尝试次。配置为大于0的话，客户端会在消息发送失败时重新发送</span></span><br><span class="line">        props.put(<span class="string">"retries"</span>, <span class="number">0</span>);</span><br><span class="line">        <span class="comment">// 一批消息处理大小。当多条消息需要发送到同一个分区时，生产者会尝试合并网络请求</span></span><br><span class="line">        props.put(<span class="string">"batch.size"</span>, <span class="number">16384</span>);</span><br><span class="line">        <span class="comment">// 请求延时</span></span><br><span class="line">        props.put(<span class="string">"linger.ms"</span>, <span class="number">1</span>);</span><br><span class="line">        <span class="comment">// 发送缓存区内存大小</span></span><br><span class="line">        props.put(<span class="string">"buffer.memory"</span>, <span class="number">33554432</span>);</span><br><span class="line">        <span class="comment">// &lt;key, value&gt;对序列化</span></span><br><span class="line">        props.put(<span class="string">"key.serializer"</span>, <span class="string">"org.apache.kafka.common.serialization.StringSerializer"</span>);</span><br><span class="line">        props.put(<span class="string">"value.serializer"</span>, <span class="string">"org.apache.kafka.common.serialization.StringSerializer"</span>);</span><br><span class="line"></span><br><span class="line">        Producer&lt;String, String&gt; producer = <span class="keyword">new</span> KafkaProducer&lt;String, String&gt;(props);</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="number">10</span>; i++)</span><br><span class="line">          producer.send(<span class="keyword">new</span> ProducerRecord&lt;String, String&gt;(<span class="string">"test"</span>, <span class="string">"Key:"</span>+String.valueOf(i), <span class="string">"Value:"</span>+String.valueOf(i)));</span><br><span class="line"></span><br><span class="line">        producer.close();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> bin/kafka-console-consumer.sh --bootstrap-server min01:9092 --topic <span class="built_in">test</span></span></span><br><span class="line">Value:0</span><br><span class="line">Value:1</span><br><span class="line">Value:2</span><br><span class="line">Value:3</span><br><span class="line">Value:4</span><br><span class="line">Value:5</span><br><span class="line">Value:6</span><br><span class="line">Value:7</span><br><span class="line">Value:8</span><br><span class="line">Value:9</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>acks：消息的确认机制，默认值是0</p>
+<ul>
+<li>acks=0：如果设置为0，生产者不会等待kafka的响应（默认）</li>
+<li>acks=1：这个配置意味着kafka会把这条消息写到本地日志文件中，但是不会等待集群中其他机器的成功响应</li>
+<li>acks=all：这个配置意味着leader会等待所有的follower同步完成。这个确保消息不会丢失，除非kafka集群中所有机器挂掉。这是最强的可用性保证</li>
+</ul>
+<p>具体的参数说明可以参考<code>ProducerConfig</code>对象。</p>
+</blockquote>
+<h4 id="1-2-创建生产者（带回调函数，不指定分区）"><a href="#1-2-创建生产者（带回调函数，不指定分区）" class="headerlink" title="1.2 创建生产者（带回调函数，不指定分区）"></a>1.2 创建生产者（带回调函数，不指定分区）</h4><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> org.apache.kafka.clients.producer.*;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.util.Properties;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">  Kafka生产者，带回调函数</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">KafkaProducerApi</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">        Properties props = <span class="keyword">new</span> Properties();</span><br><span class="line">        props.put(<span class="string">"bootstrap.servers"</span>, <span class="string">"min01:9092"</span>);</span><br><span class="line">        props.put(<span class="string">"acks"</span>, <span class="string">"all"</span>);</span><br><span class="line">        props.put(<span class="string">"retries"</span>, <span class="number">0</span>);</span><br><span class="line">        props.put(<span class="string">"batch.size"</span>, <span class="number">16384</span>);</span><br><span class="line">        props.put(<span class="string">"linger.ms"</span>, <span class="number">1</span>);</span><br><span class="line">        props.put(<span class="string">"buffer.memory"</span>, <span class="number">33554432</span>);</span><br><span class="line">        props.put(<span class="string">"key.serializer"</span>, <span class="string">"org.apache.kafka.common.serialization.StringSerializer"</span>);</span><br><span class="line">        props.put(<span class="string">"value.serializer"</span>, <span class="string">"org.apache.kafka.common.serialization.StringSerializer"</span>);</span><br><span class="line"></span><br><span class="line">        Producer&lt;String, String&gt; producer = <span class="keyword">new</span> KafkaProducer&lt;String, String&gt;(props);</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="number">10</span>; i++)</span><br><span class="line"></span><br><span class="line">            <span class="comment">/* 不带回调函数</span></span><br><span class="line"><span class="comment">            producer.send(new ProducerRecord&lt;String, String&gt;("test", "Key:"+String.valueOf(i), "Value:"+String.valueOf(i)));</span></span><br><span class="line"><span class="comment">             */</span></span><br><span class="line"></span><br><span class="line">            <span class="comment">//带回调函数Callback()</span></span><br><span class="line">            producer.send(</span><br><span class="line">                    <span class="keyword">new</span> ProducerRecord&lt;String, String&gt;(<span class="string">"test"</span>, <span class="string">"Key:"</span> + String.valueOf(i), <span class="string">"Value:"</span> + String.valueOf(i)),</span><br><span class="line">                    (metadata, exception) -&gt; &#123;</span><br><span class="line">                        <span class="keyword">if</span> (exception == <span class="keyword">null</span>) &#123;</span><br><span class="line">                            System.out.println(metadata.partition()+<span class="string">"分区，offset为："</span>+metadata.offset());</span><br><span class="line">                        &#125;<span class="keyword">else</span> &#123;</span><br><span class="line">                            System.out.println(<span class="string">"发送失败！"</span>);</span><br><span class="line">                        &#125;</span><br><span class="line">                    &#125;</span><br><span class="line">            );</span><br><span class="line"></span><br><span class="line">        producer.close();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">0分区，offset为：11</span><br><span class="line">0分区，offset为：12</span><br><span class="line">0分区，offset为：13</span><br><span class="line">0分区，offset为：14</span><br><span class="line">0分区，offset为：15</span><br><span class="line">0分区，offset为：16</span><br><span class="line">0分区，offset为：17</span><br><span class="line">0分区，offset为：18</span><br><span class="line">0分区，offset为：19</span><br><span class="line">0分区，offset为：20</span><br><span class="line"><span class="meta">$</span><span class="bash"> bin/kafka-console-consumer.sh --bootstrap-server min01:9092 --topic <span class="built_in">test</span></span></span><br><span class="line">Value:0</span><br><span class="line">Value:1</span><br><span class="line">Value:2</span><br><span class="line">Value:3</span><br><span class="line">Value:4</span><br><span class="line">Value:5</span><br><span class="line">Value:6</span><br><span class="line">Value:7</span><br><span class="line">Value:8</span><br><span class="line">Value:9</span><br></pre></td></tr></table></figure>
+
+<h4 id="1-3-创建分区生产者（带回调函数，指定分区）"><a href="#1-3-创建分区生产者（带回调函数，指定分区）" class="headerlink" title="1.3 创建分区生产者（带回调函数，指定分区）"></a>1.3 创建分区生产者（带回调函数，指定分区）</h4><p>新建一个Topic，指定3个分区：</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> bin/kafka-topics.sh --create --zookeeper min01:2181 --partitions 3 --replication-factor 1 --topic javaApi-test</span></span><br></pre></td></tr></table></figure>
+
+<img src="/images/Kafka-API%E7%BC%96%E7%A8%8B/image-20191230152323210.png" alt="image-20191230152323210" style="zoom:50%;">
+
+<p>新建一个类实现<code>Partitioner</code>接口，重写里面的方法（具体按照实际业务进行编写）：</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> org.apache.kafka.clients.producer.Partitioner;</span><br><span class="line"><span class="keyword">import</span> org.apache.kafka.common.Cluster;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.util.Map;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">KafkaProducerPartitioner</span> <span class="keyword">implements</span> <span class="title">Partitioner</span> </span>&#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">partition</span><span class="params">(String topic, Object key, <span class="keyword">byte</span>[] keyBytes, Object value, <span class="keyword">byte</span>[] valueBytes, Cluster cluster)</span> </span>&#123;</span><br><span class="line">      </span><br><span class="line">        <span class="comment">// 获取Topic的分区数（这里我就不考虑partition的死活，要全面的话参考DefaultPartitioner类）</span></span><br><span class="line">        <span class="keyword">int</span> partitionNumber = cluster.partitionCountForTopic(topic);</span><br><span class="line">        <span class="comment">// 对key根据partition数取模</span></span><br><span class="line">        <span class="keyword">return</span> key.toString().hashCode() % partitionNumber;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">close</span><span class="params">()</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">configure</span><span class="params">(Map&lt;String, ?&gt; configs)</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>主类，将上面自定义的类增加至配置参数中：</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> org.apache.kafka.clients.producer.*;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.util.Properties;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">  Kafka生产者</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">KafkaProducerApi</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">        Properties props = <span class="keyword">new</span> Properties();</span><br><span class="line">        props.put(<span class="string">"bootstrap.servers"</span>, <span class="string">"min01:9092"</span>);</span><br><span class="line">        props.put(<span class="string">"acks"</span>, <span class="string">"all"</span>);</span><br><span class="line">        props.put(<span class="string">"retries"</span>, <span class="number">0</span>);</span><br><span class="line">        props.put(<span class="string">"batch.size"</span>, <span class="number">16384</span>);</span><br><span class="line">        props.put(<span class="string">"linger.ms"</span>, <span class="number">1</span>);</span><br><span class="line">        props.put(<span class="string">"buffer.memory"</span>, <span class="number">33554432</span>);</span><br><span class="line">        props.put(<span class="string">"key.serializer"</span>, <span class="string">"org.apache.kafka.common.serialization.StringSerializer"</span>);</span><br><span class="line">        props.put(<span class="string">"value.serializer"</span>, <span class="string">"org.apache.kafka.common.serialization.StringSerializer"</span>);</span><br><span class="line">        <span class="comment">// 自定义分区类</span></span><br><span class="line">        props.put(<span class="string">"partitioner.class"</span>, <span class="string">"github.ashermin.kafka.KafkaProducerPartitioner"</span>);</span><br><span class="line"></span><br><span class="line">        Producer&lt;String, String&gt; producer = <span class="keyword">new</span> KafkaProducer&lt;String, String&gt;(props);</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="number">10</span>; i++)</span><br><span class="line">            <span class="comment">//带回调函数Callback()</span></span><br><span class="line">            producer.send(</span><br><span class="line">                    <span class="keyword">new</span> ProducerRecord&lt;String, String&gt;(<span class="string">"javaApi-test"</span>, <span class="string">"Key:"</span> + String.valueOf(i), <span class="string">"Value:"</span> + String.valueOf(i)),</span><br><span class="line">                    (metadata, exception) -&gt; &#123;</span><br><span class="line">                        <span class="keyword">if</span> (exception == <span class="keyword">null</span>) &#123;</span><br><span class="line">                            System.out.println(metadata.partition()+<span class="string">"分区，offset为："</span>+metadata.offset());</span><br><span class="line">                        &#125;<span class="keyword">else</span> &#123;</span><br><span class="line">                            System.out.println(<span class="string">"发送失败！"</span>);</span><br><span class="line">                        &#125;</span><br><span class="line">                    &#125;</span><br><span class="line">            );</span><br><span class="line"></span><br><span class="line">        producer.close();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">1分区，offset为：10</span><br><span class="line">1分区，offset为：11</span><br><span class="line">1分区，offset为：12</span><br><span class="line">1分区，offset为：13</span><br><span class="line">2分区，offset为：0</span><br><span class="line">2分区，offset为：1</span><br><span class="line">2分区，offset为：2</span><br><span class="line">0分区，offset为：0</span><br><span class="line">0分区，offset为：1</span><br><span class="line">0分区，offset为：2</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h3 id="2-Consumer-API的使用"><a href="#2-Consumer-API的使用" class="headerlink" title="2. Consumer API的使用"></a>2. Consumer API的使用</h3><p>需要用到的类：</p>
+<ul>
+<li>KafkaConsumer：需要创建一个消费者对象，用来消费数据</li>
+<li>ConsumerConfig：获取所需的一系列配置参数</li>
+<li>ConsuemrRecord：每条数据都要封装成一个 ConsumerRecord 对象</li>
+</ul>
+<p>为了使我们能够专注于自己的业务逻辑，Kafka 提供了自动提交 offset 的功能。 自动提交 offset 的相关参数：</p>
+<ul>
+<li><code>enable.auto.commit</code>：是否开启自动提交 offset 功能</li>
+<li><code>auto.commit.interval.ms</code>：自动提交 offset 的时间间隔（开启自动提交才生效）</li>
+</ul>
+<h4 id="2-1-消费Topic中的实时数据（不指定offset，自动提交offset）"><a href="#2-1-消费Topic中的实时数据（不指定offset，自动提交offset）" class="headerlink" title="2.1 消费Topic中的实时数据（不指定offset，自动提交offset）"></a>2.1 消费Topic中的实时数据（不指定offset，自动提交offset）</h4><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> org.apache.kafka.clients.consumer.ConsumerConfig;</span><br><span class="line"><span class="keyword">import</span> org.apache.kafka.clients.consumer.ConsumerRecord;</span><br><span class="line"><span class="keyword">import</span> org.apache.kafka.clients.consumer.ConsumerRecords;</span><br><span class="line"><span class="keyword">import</span> org.apache.kafka.clients.consumer.KafkaConsumer;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.time.Duration;</span><br><span class="line"><span class="keyword">import</span> java.util.Arrays;</span><br><span class="line"><span class="keyword">import</span> java.util.Properties;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Kafka消费者</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">KafkaConsumerApi</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">        Properties prop = <span class="keyword">new</span> Properties();</span><br><span class="line">        <span class="comment">// Kafka地址（不需要指定所有broker）</span></span><br><span class="line">        prop.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, <span class="string">"min01:9092"</span>);</span><br><span class="line">        <span class="comment">// 自动提交offset信息</span></span><br><span class="line">        prop.put(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, <span class="keyword">true</span>);</span><br><span class="line">        <span class="comment">// 自动提交offset的间隔，设置为1秒</span></span><br><span class="line">        prop.put(ConsumerConfig.AUTO_COMMIT_INTERVAL_MS_CONFIG, <span class="string">"1000"</span>);</span><br><span class="line">        <span class="comment">// &lt;key, value&gt;对反序列化类（⌘+O查找StringDeserializer）</span></span><br><span class="line">        prop.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, <span class="string">"org.apache.kafka.common.serialization.StringDeserializer"</span>);</span><br><span class="line">        prop.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, <span class="string">"org.apache.kafka.common.serialization.StringDeserializer"</span>);</span><br><span class="line">        <span class="comment">// 消费者组</span></span><br><span class="line">        prop.put(ConsumerConfig.GROUP_ID_CONFIG, <span class="string">"minmin"</span>);</span><br><span class="line"></span><br><span class="line">        KafkaConsumer consumer = <span class="keyword">new</span> KafkaConsumer&lt;String, String&gt;(prop);</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 订阅Topic</span></span><br><span class="line">        consumer.subscribe(Arrays.asList(<span class="string">"javaApi-test"</span>, <span class="string">"test"</span>));</span><br><span class="line"></span><br><span class="line">        <span class="keyword">while</span> (<span class="keyword">true</span>) &#123;</span><br><span class="line">            <span class="comment">// 获取数据</span></span><br><span class="line">            ConsumerRecords&lt;String, String&gt; consumerRecords = consumer.poll(Duration.ofMillis(<span class="number">1000</span>));</span><br><span class="line"></span><br><span class="line">            <span class="comment">// 解析并打印ConsumerRecords</span></span><br><span class="line">            <span class="keyword">for</span> (ConsumerRecord&lt;String, String&gt; consumerRecord : consumerRecords) &#123;</span><br><span class="line">                System.out.println(<span class="string">"&lt;"</span> + consumerRecord.key() + <span class="string">","</span> + consumerRecord.value() + <span class="string">"&gt;"</span>);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>运行1.3中的代码来生产数据，然后运行消费者数据来获取数据：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&lt;Key:1,Value:1&gt;</span><br><span class="line">&lt;Key:4,Value:4&gt;</span><br><span class="line">&lt;Key:7,Value:7&gt;</span><br><span class="line">&lt;Key:0,Value:0&gt;</span><br><span class="line">&lt;Key:3,Value:3&gt;</span><br><span class="line">&lt;Key:6,Value:6&gt;</span><br><span class="line">&lt;Key:9,Value:9&gt;</span><br><span class="line">&lt;Key:2,Value:2&gt;</span><br><span class="line">&lt;Key:5,Value:5&gt;</span><br><span class="line">&lt;Key:8,Value:8&gt;</span><br></pre></td></tr></table></figure>
+
+<h4 id="2-2-重新消费Topic中的数据（指定最开始的offset，自动提交offset）"><a href="#2-2-重新消费Topic中的数据（指定最开始的offset，自动提交offset）" class="headerlink" title="2.2 重新消费Topic中的数据（指定最开始的offset，自动提交offset）"></a>2.2 重新消费Topic中的数据（指定最开始的offset，自动提交offset）</h4><p>在消费者已经消费过某Topic中的数据后，如果想从头重新消费，那就要做两件事：</p>
+<ol>
+<li>给这个消费者换一个消费者组Consumer Group</li>
+<li>设置<code>auto.offset.reset</code>参数为earliest，默认为latest。这个参数触发的条件为：换一个消费者组或offset对应的数据被删了（offset失效了）</li>
+</ol>
+<p>需求：重新消费javaApi-test主题的数据</p>
+<p>实现：换一个消费者组minmin2；设置<code>auto.offset.reset</code>参数为earliest</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> org.apache.kafka.clients.consumer.ConsumerConfig;</span><br><span class="line"><span class="keyword">import</span> org.apache.kafka.clients.consumer.ConsumerRecord;</span><br><span class="line"><span class="keyword">import</span> org.apache.kafka.clients.consumer.ConsumerRecords;</span><br><span class="line"><span class="keyword">import</span> org.apache.kafka.clients.consumer.KafkaConsumer;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.time.Duration;</span><br><span class="line"><span class="keyword">import</span> java.util.Arrays;</span><br><span class="line"><span class="keyword">import</span> java.util.Properties;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Kafka消费者</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">KafkaConsumerApi</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">        Properties prop = <span class="keyword">new</span> Properties();</span><br><span class="line">        prop.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, <span class="string">"min01:9092"</span>);</span><br><span class="line">        prop.put(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, <span class="keyword">true</span>);</span><br><span class="line">        prop.put(ConsumerConfig.AUTO_COMMIT_INTERVAL_MS_CONFIG, <span class="string">"1000"</span>);</span><br><span class="line">        prop.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, <span class="string">"org.apache.kafka.common.serialization.StringDeserializer"</span>);</span><br><span class="line">        prop.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, <span class="string">"org.apache.kafka.common.serialization.StringDeserializer"</span>);</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 重置消费者组</span></span><br><span class="line">        prop.put(ConsumerConfig.GROUP_ID_CONFIG, <span class="string">"minmin2"</span>);</span><br><span class="line">        <span class="comment">// 修改offset默认值</span></span><br><span class="line">        prop.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, <span class="string">"earliest"</span>);</span><br><span class="line"></span><br><span class="line">        KafkaConsumer consumer = <span class="keyword">new</span> KafkaConsumer&lt;String, String&gt;(prop);</span><br><span class="line"></span><br><span class="line">        consumer.subscribe(Arrays.asList(<span class="string">"javaApi-test"</span>));</span><br><span class="line"></span><br><span class="line">        <span class="keyword">while</span> (<span class="keyword">true</span>) &#123;</span><br><span class="line">            ConsumerRecords&lt;String, String&gt; consumerRecords = consumer.poll(Duration.ofMillis(<span class="number">1000</span>));</span><br><span class="line"></span><br><span class="line">            <span class="keyword">for</span> (ConsumerRecord&lt;String, String&gt; consumerRecord : consumerRecords) &#123;</span><br><span class="line">                System.out.println(<span class="string">"&lt;"</span> + consumerRecord.key() + <span class="string">","</span> + consumerRecord.value() + <span class="string">"&gt;"</span>);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="2-3-手动提交offset"><a href="#2-3-手动提交offset" class="headerlink" title="2.3 手动提交offset"></a>2.3 手动提交offset</h4><p>虽然自动提交 offset 十分简介便利，但由于其是基于时间提交的，开发人员难以把握 offset 提交的时机。因此 Kafka 还提供了手动提交 offset 的 API。</p>
+<p>手动提交 offset 的方法有两种：分别是：</p>
+<ul>
+<li>commitSync：同步提交。阻塞当前线程，一直到提交成功，并且会自动失败重试</li>
+<li>commitAsync：异步提交。没有失败重试机制，故提交offset线程挂了的话会导致重复拉取数据。但考虑到吞吐量因素，一般会选用异步</li>
+</ul>
+<p>两者的相同点是，都会将本次 poll 的一批数据最高的偏移量提交。</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> org.apache.kafka.clients.consumer.*;</span><br><span class="line"><span class="keyword">import</span> org.apache.kafka.common.TopicPartition;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.time.Duration;</span><br><span class="line"><span class="keyword">import</span> java.util.Arrays;</span><br><span class="line"><span class="keyword">import</span> java.util.Map;</span><br><span class="line"><span class="keyword">import</span> java.util.Properties;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Kafka消费者</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">KafkaConsumerApi</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">        Properties prop = <span class="keyword">new</span> Properties();</span><br><span class="line">        prop.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, <span class="string">"min01:9092"</span>);</span><br><span class="line">        <span class="comment">// 关闭自动提交offset信息</span></span><br><span class="line">        prop.put(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, <span class="keyword">false</span>);</span><br><span class="line">        prop.put(ConsumerConfig.AUTO_COMMIT_INTERVAL_MS_CONFIG, <span class="string">"1000"</span>);</span><br><span class="line">        prop.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, <span class="string">"org.apache.kafka.common.serialization.StringDeserializer"</span>);</span><br><span class="line">        prop.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, <span class="string">"org.apache.kafka.common.serialization.StringDeserializer"</span>);</span><br><span class="line"></span><br><span class="line">        KafkaConsumer consumer = <span class="keyword">new</span> KafkaConsumer&lt;String, String&gt;(prop);</span><br><span class="line"></span><br><span class="line">        consumer.subscribe(Arrays.asList(<span class="string">"javaApi-test"</span>, <span class="string">"test"</span>));</span><br><span class="line"></span><br><span class="line">        <span class="keyword">while</span> (<span class="keyword">true</span>) &#123;</span><br><span class="line">            ConsumerRecords&lt;String, String&gt; consumerRecords = consumer.poll(Duration.ofMillis(<span class="number">1000</span>));</span><br><span class="line"></span><br><span class="line">            <span class="keyword">for</span> (ConsumerRecord&lt;String, String&gt; consumerRecord : consumerRecords) &#123;</span><br><span class="line">                System.out.println(<span class="string">"&lt;"</span> + consumerRecord.key() + <span class="string">","</span> + consumerRecord.value() + <span class="string">"&gt;"</span>);</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            <span class="comment">// 同步提交，当前线程会阻塞，直到offset提交成功</span></span><br><span class="line">            <span class="comment">// consumer.commitSync();</span></span><br><span class="line"></span><br><span class="line">            <span class="comment">// 异步提交，上面代码运行到这后就兵分两路了，拉取数据和提交offset两个线程互不影响</span></span><br><span class="line">            consumer.commitAsync(<span class="keyword">new</span> OffsetCommitCallback() &#123;</span><br><span class="line">                <span class="meta">@Override</span></span><br><span class="line">                <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onComplete</span><span class="params">(Map&lt;TopicPartition, OffsetAndMetadata&gt; offsets, Exception exception)</span> </span>&#123;</span><br><span class="line">                    <span class="keyword">if</span>(exception != <span class="keyword">null</span>)&#123;</span><br><span class="line">                        System.err.println(<span class="string">"Commit failed for "</span> + offsets);</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="2-4-自定义存储offset"><a href="#2-4-自定义存储offset" class="headerlink" title="2.4 自定义存储offset"></a>2.4 自定义存储offset</h4><p>当有新的消费者加入消费者组、已有的消费者退出消费者组、或者所订阅的主题的分区发生变化，就会触发到分区的重新分配，重新分配的过程叫做 Rebalance。消费者发生 Rebalance 之后，每个消费者消费的分区就会发生变化。</p>
+<p>因此消费者要首先获取到自己被重新分配到的分区，并且定位到每个分区最近提交的 offset 位置继续消费。</p>
+<p>要实现自定义存储 offset，需要借助<code>ConsumerRebalanceListener</code>，其中提交和获取 offset 的方法，需要根据所选的 offset 存储系统自行实现。建议可以把从数据库中<code>getOffset()</code>和<code>commitOffset()</code>写成一个事务，这样只有成功提交offset至数据库后，才能从数据库读offset。</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> org.apache.kafka.clients.consumer.*;</span><br><span class="line"><span class="keyword">import</span> org.apache.kafka.common.TopicPartition;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.time.Duration;</span><br><span class="line"><span class="keyword">import</span> java.util.*;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Kafka消费者</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">KafkaConsumerApi</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 当前offset</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> Map&lt;TopicPartition, Long&gt; currentOffset = <span class="keyword">new</span> HashMap&lt;&gt;();</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">        Properties prop = <span class="keyword">new</span> Properties();</span><br><span class="line">        prop.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, <span class="string">"min01:9092"</span>);</span><br><span class="line">        <span class="comment">// 关闭自动提交offset信息</span></span><br><span class="line">        prop.put(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, <span class="keyword">false</span>);</span><br><span class="line">        prop.put(ConsumerConfig.AUTO_COMMIT_INTERVAL_MS_CONFIG, <span class="string">"1000"</span>);</span><br><span class="line">        prop.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, <span class="string">"org.apache.kafka.common.serialization.StringDeserializer"</span>);</span><br><span class="line">        prop.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, <span class="string">"org.apache.kafka.common.serialization.StringDeserializer"</span>);</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">        KafkaConsumer consumer = <span class="keyword">new</span> KafkaConsumer&lt;String, String&gt;(prop);</span><br><span class="line"></span><br><span class="line">        consumer.subscribe(Arrays.asList(<span class="string">"javaApi-test"</span>), <span class="keyword">new</span> ConsumerRebalanceListener() &#123;</span><br><span class="line"></span><br><span class="line">            <span class="comment">// 该方法会在 Rebalance 之前调用</span></span><br><span class="line">            <span class="meta">@Override</span></span><br><span class="line">            <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onPartitionsRevoked</span><span class="params">(Collection&lt;TopicPartition&gt; partitions)</span> </span>&#123;</span><br><span class="line">                commitOffset(currentOffset);</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            <span class="comment">// 该方法会在 Rebalance 之后调用</span></span><br><span class="line">            <span class="meta">@Override</span></span><br><span class="line">            <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onPartitionsAssigned</span><span class="params">(Collection&lt;TopicPartition&gt; partitions)</span> </span>&#123;</span><br><span class="line">                currentOffset.clear();</span><br><span class="line">                <span class="keyword">for</span> (TopicPartition partition : partitions) &#123;</span><br><span class="line">                    <span class="comment">// 定位到最近提交的offset位置继续消费</span></span><br><span class="line">                    consumer.seek(partition, getOffset(partition));</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;);</span><br><span class="line"></span><br><span class="line">        <span class="keyword">while</span> (<span class="keyword">true</span>) &#123;</span><br><span class="line">            ConsumerRecords&lt;String, String&gt; consumerRecords = consumer.poll(Duration.ofMillis(<span class="number">1000</span>));</span><br><span class="line"></span><br><span class="line">            <span class="keyword">for</span> (ConsumerRecord&lt;String, String&gt; consumerRecord : consumerRecords) &#123;</span><br><span class="line">                System.out.println(<span class="string">"&lt;"</span> + consumerRecord.key() + <span class="string">","</span> + consumerRecord.value() + <span class="string">"&gt;"</span>);</span><br><span class="line">                </span><br><span class="line">                <span class="comment">// 设置最新的offset</span></span><br><span class="line">                currentOffset.put(<span class="keyword">new</span> TopicPartition(consumerRecord.topic(), consumerRecord.partition()), consumerRecord.offset());</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            <span class="comment">// 异步提交最新的offset</span></span><br><span class="line">            commitOffset(currentOffset);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//获取某分区的最新 offset</span></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">long</span> <span class="title">getOffset</span><span class="params">(TopicPartition partition)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//提交该消费者所有分区的 offset</span></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">commitOffset</span><span class="params">(Map&lt;TopicPartition, Long&gt; currentOffset)</span> </span>&#123;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h3 id="3-生产者拦截器"><a href="#3-生产者拦截器" class="headerlink" title="3. 生产者拦截器"></a>3. 生产者拦截器</h3><p>生产者拦截器（Interceptor），就是生产者在发送数据给Kafka之前对数据进行一些定制化，0.10版本后被引入。可以指定多个Interceptor按序作用于同一条消息，形成一个拦截链。</p>
+<p>Interceptor的使用方法：</p>
+<ol>
+<li><code>configure(configs)</code>：获取配置信息和初始化数据</li>
+<li><code>onSend(ProducerRecord)</code>：在数据被序列化及计算分区前调用改方法。可以对数据进行修改，但不要修改数据所属的Topic和分区（会影响目标分区的计算）</li>
+<li><code>onAcknowledgement(RecordMetadata, Exception)</code>：该方法会在消息从 RecordAccumulator 成功发送到 Kafka Broker 之后，或者在发送过程中失败时调用，返回失败或成功的消息。</li>
+<li><code>close</code>：关闭Interceptor，也会进行资源清理</li>
+</ol>
+<p>需求：实现一个简单的双 Interceptor 组成的拦截链。第一个 Interceptor 会在消息发送前将时间戳信息加到消息 value 的最前面；第二个 Interceptor 会在消息发送后，对消息发送成功或者失败的个数进行统计（success:10,error:0）。</p>
+<p>总共写三个类：</p>
+<ol>
+<li><code>TimeInterceptor</code>：时间拦截器，在value数据前添加时间戳</li>
+<li><code>CountInterceptor</code>：统计拦截器，对数据发送给Kafka的成功或失败进行统计</li>
+<li><code>ProducerInterceptor</code>：主类</li>
+</ol>
+<p>TimeInterceptor.java</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> org.apache.kafka.clients.producer.ProducerInterceptor;</span><br><span class="line"><span class="keyword">import</span> org.apache.kafka.clients.producer.ProducerRecord;</span><br><span class="line"><span class="keyword">import</span> org.apache.kafka.clients.producer.RecordMetadata;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.util.Map;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 时间拦截器，在value前添加个时间戳</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">TimeInterceptor</span> <span class="keyword">implements</span> <span class="title">ProducerInterceptor</span>&lt;<span class="title">String</span>, <span class="title">String</span>&gt; </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">configure</span><span class="params">(Map&lt;String, ?&gt; configs)</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> ProducerRecord&lt;String, String&gt; <span class="title">onSend</span><span class="params">(ProducerRecord&lt;String, String&gt; record)</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 创建一个新的ProducerRecord，把时间戳添加到消息的最前面</span></span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> ProducerRecord&lt;String, String&gt;(</span><br><span class="line">                record.topic(),</span><br><span class="line">                record.partition(),</span><br><span class="line">                record.key(),</span><br><span class="line">                System.currentTimeMillis() + <span class="string">","</span> + record.value());</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onAcknowledgement</span><span class="params">(RecordMetadata metadata, Exception exception)</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">close</span><span class="params">()</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>CountInterceptor.java</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> org.apache.kafka.clients.producer.ProducerInterceptor;</span><br><span class="line"><span class="keyword">import</span> org.apache.kafka.clients.producer.ProducerRecord;</span><br><span class="line"><span class="keyword">import</span> org.apache.kafka.clients.producer.RecordMetadata;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.util.Map;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 统计消息发送成功或失败的个数</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">CountInterceptor</span> <span class="keyword">implements</span> <span class="title">ProducerInterceptor</span>&lt;<span class="title">String</span>, <span class="title">String</span>&gt; </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 定义全局数据发送成功或失败的计数器</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">int</span> successCounter = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">int</span> errorCounter = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">configure</span><span class="params">(Map&lt;String, ?&gt; configs)</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> ProducerRecord&lt;String, String&gt; <span class="title">onSend</span><span class="params">(ProducerRecord&lt;String, String&gt; record)</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 作为拦截链的第二环，第一环的数据怎么来的，就怎么发送出去</span></span><br><span class="line">        <span class="keyword">return</span> record;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 统计数据发送成功或失败的次数</span></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onAcknowledgement</span><span class="params">(RecordMetadata metadata, Exception exception)</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 如果没有收到异常，那说明数据发送成功了</span></span><br><span class="line">        <span class="keyword">if</span> (exception == <span class="keyword">null</span>)&#123;</span><br><span class="line">            successCounter++;</span><br><span class="line">        &#125;<span class="keyword">else</span> &#123;</span><br><span class="line">            errorCounter++;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 拦截器关闭时，发送最后的数据统计结果</span></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">close</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        System.out.println(<span class="string">"success:"</span> + successCounter);</span><br><span class="line">        System.out.println(<span class="string">"error:"</span> + errorCounter);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>ProducerInterceptor.java</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> org.apache.kafka.clients.producer.KafkaProducer;</span><br><span class="line"><span class="keyword">import</span> org.apache.kafka.clients.producer.Producer;</span><br><span class="line"><span class="keyword">import</span> org.apache.kafka.clients.producer.ProducerConfig;</span><br><span class="line"><span class="keyword">import</span> org.apache.kafka.clients.producer.ProducerRecord;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.util.ArrayList;</span><br><span class="line"><span class="keyword">import</span> java.util.List;</span><br><span class="line"><span class="keyword">import</span> java.util.Properties;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ProducerInterceptor</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">        Properties prop = <span class="keyword">new</span> Properties();</span><br><span class="line">        prop.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, <span class="string">"min01:9092"</span>);</span><br><span class="line">        prop.put(ProducerConfig.ACKS_CONFIG, <span class="string">"all"</span>);</span><br><span class="line">        prop.put(ProducerConfig.RETRIES_CONFIG, <span class="number">3</span>);</span><br><span class="line">        prop.put(ProducerConfig.BATCH_SIZE_CONFIG, <span class="number">16384</span>);</span><br><span class="line">        prop.put(ProducerConfig.LINGER_MS_CONFIG, <span class="number">1</span>);</span><br><span class="line">        prop.put(ProducerConfig.BUFFER_MEMORY_CONFIG, <span class="number">33554432</span>);</span><br><span class="line">        prop.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, <span class="string">"org.apache.kafka.common.serialization.StringSerializer"</span>);</span><br><span class="line">        prop.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, <span class="string">"org.apache.kafka.common.serialization.StringSerializer"</span>);</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 构建拦截链</span></span><br><span class="line">        List&lt;String&gt; interceptors = <span class="keyword">new</span> ArrayList&lt;&gt;();</span><br><span class="line">        <span class="comment">// 拦截器之间按照执行顺序进行写入</span></span><br><span class="line">        interceptors.add(<span class="string">"github.ashermin.kafka.interceptor.TimeInterceptor"</span>);</span><br><span class="line">        interceptors.add(<span class="string">"github.ashermin.kafka.interceptor.CountInterceptor"</span>);</span><br><span class="line">        <span class="comment">// 将拦截链添加到配置器中</span></span><br><span class="line">        prop.put(ProducerConfig.INTERCEPTOR_CLASSES_CONFIG, interceptors);</span><br><span class="line"></span><br><span class="line">        Producer&lt;String, String&gt; producer = <span class="keyword">new</span> KafkaProducer&lt;String, String&gt;(prop);</span><br><span class="line">        String topic = <span class="string">"test"</span>;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="number">10</span>; i++)&#123;</span><br><span class="line">            producer.send(<span class="keyword">new</span> ProducerRecord&lt;String, String&gt;(topic, <span class="string">"message"</span>+i));</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 只有关闭Producer，才能调用Interceptor的close()方法</span></span><br><span class="line">        producer.close();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>IDEA控制台：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">success:10</span><br><span class="line">error:0</span><br></pre></td></tr></table></figure>
+
+<p>Shell端控制台消费者：</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> bin/kafka-console-consumer.sh --bootstrap-server min01:9092 --topic <span class="built_in">test</span></span></span><br><span class="line">1577773988125,message1</span><br><span class="line">1577773988125,message3</span><br><span class="line">1577773988125,message5</span><br><span class="line">1577773988126,message7</span><br><span class="line">1577773988126,message9</span><br><span class="line">1577773987928,message0</span><br><span class="line">1577773988125,message2</span><br><span class="line">1577773988125,message4</span><br><span class="line">1577773988125,message6</span><br><span class="line">1577773988126,message8</span><br></pre></td></tr></table></figure>
+
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Kafka/" rel="tag"># Kafka</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-next post-nav-item">
+                <a href="/2019/11/22/Zookeeper%E5%8D%95%E8%8A%82%E7%82%B9%E9%85%8D%E7%BD%AE/" rel="next" title="Zookeeper单节点配置">
+                  <i class="fa fa-chevron-left"></i> Zookeeper单节点配置
+                </a>
+            </div>
+
+            <span class="post-nav-divider"></span>
+
+            <div class="post-nav-prev post-nav-item">
+                <a href="/2019/11/26/Flume%E5%9F%BA%E7%A1%80/" rel="prev" title="Flume基础">
+                  Flume基础 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-Producer-API的使用"><span class="nav-number">1.</span> <span class="nav-text">1. Producer API的使用</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-1-创建生产者（不带回调函数，不指定分区）"><span class="nav-number">1.1.</span> <span class="nav-text">1.1 创建生产者（不带回调函数，不指定分区）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#1-2-创建生产者（带回调函数，不指定分区）"><span class="nav-number">1.2.</span> <span class="nav-text">1.2 创建生产者（带回调函数，不指定分区）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#1-3-创建分区生产者（带回调函数，指定分区）"><span class="nav-number">1.3.</span> <span class="nav-text">1.3 创建分区生产者（带回调函数，指定分区）</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-Consumer-API的使用"><span class="nav-number">2.</span> <span class="nav-text">2. Consumer API的使用</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#2-1-消费Topic中的实时数据（不指定offset，自动提交offset）"><span class="nav-number">2.1.</span> <span class="nav-text">2.1 消费Topic中的实时数据（不指定offset，自动提交offset）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-2-重新消费Topic中的数据（指定最开始的offset，自动提交offset）"><span class="nav-number">2.2.</span> <span class="nav-text">2.2 重新消费Topic中的数据（指定最开始的offset，自动提交offset）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-3-手动提交offset"><span class="nav-number">2.3.</span> <span class="nav-text">2.3 手动提交offset</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-4-自定义存储offset"><span class="nav-number">2.4.</span> <span class="nav-text">2.4 自定义存储offset</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-生产者拦截器"><span class="nav-number">3.</span> <span class="nav-text">3. 生产者拦截器</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <img class="site-author-image" itemprop="image" alt="MIN MIN"
+    src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">MIN MIN</p>
+  <div class="site-description" itemprop="description">即使最后没有人为你鼓掌，也要优雅地谢幕，感谢自己的认真付出。</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">54</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">13</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+        <span class="site-state-item-count">32</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/ashermin" title="GitHub &amp;rarr; https:&#x2F;&#x2F;github.com&#x2F;ashermin" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+<div class="copyright">
+  
+  &copy; 2019 – 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user-circle"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">MIN MIN</span>
+</div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+<script src="/js/utils.js"></script>
+<script src="/js/schemes/pisces.js"></script>
+<script src="/js/next-boot.js"></script>
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+</body>
+</html>
