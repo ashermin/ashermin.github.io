@@ -1,0 +1,647 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.0.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/avatar.jpg">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/avatar.jpg">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/avatar.jpg">
+  <link rel="mask-icon" href="/images/avatar.jpg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+
+
+<script id="hexo-configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '7.4.2',
+    exturl: false,
+    sidebar: {"position":"left","width":260,"display":"post","offset":12,"onmobile":false},
+    copycode: {"enable":true,"show_result":true,"style":"default"},
+    back2top: {"enable":true,"sidebar":false,"scrollpercent":true},
+    bookmark: {"enable":false,"color":"#222","save":"auto"},
+    fancybox: false,
+    mediumzoom: false,
+    lazyload: false,
+    pangu: false,
+    algolia: {
+      appID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    localsearch: {"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},
+    path: '',
+    motion: {"enable":false,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    translation: {
+      copy_button: '复制',
+      copy_success: '复制成功',
+      copy_failure: '复制失败'
+    },
+    sidebarPadding: 40
+  };
+</script>
+
+  <meta name="description" content="需要安装matplotlib，OS X的安装方法： $ pip install --user matplotlib 1. 生成数据1.1 plot() 连点成线根据一个个的点，让Python连点成线：import matplotlib.pyplot as pltinput_values = [1, 2, 3, 4, 5]square = [1, 4, 9, 16, 25]plt.plot(inp">
+<meta name="keywords" content="Python">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Python 数据可视化">
+<meta property="og:url" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2020&#x2F;02&#x2F;24&#x2F;Python-%E6%95%B0%E6%8D%AE%E5%8F%AF%E8%A7%86%E5%8C%96&#x2F;index.html">
+<meta property="og:site_name" content="MIN MIN">
+<meta property="og:description" content="需要安装matplotlib，OS X的安装方法： $ pip install --user matplotlib 1. 生成数据1.1 plot() 连点成线根据一个个的点，让Python连点成线：import matplotlib.pyplot as pltinput_values = [1, 2, 3, 4, 5]square = [1, 4, 9, 16, 25]plt.plot(inp">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;images&#x2F;Python-%E6%95%B0%E6%8D%AE%E5%8F%AF%E8%A7%86%E5%8C%96&#x2F;image-20200224134601250.png">
+<meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;images&#x2F;Python-%E6%95%B0%E6%8D%AE%E5%8F%AF%E8%A7%86%E5%8C%96&#x2F;cubic_plot.png">
+<meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;images&#x2F;Python-%E6%95%B0%E6%8D%AE%E5%8F%AF%E8%A7%86%E5%8C%96&#x2F;image-20200224152507648.png">
+<meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;images&#x2F;Python-%E6%95%B0%E6%8D%AE%E5%8F%AF%E8%A7%86%E5%8C%96&#x2F;image-20200224194408128.png">
+<meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;images&#x2F;Python-%E6%95%B0%E6%8D%AE%E5%8F%AF%E8%A7%86%E5%8C%96&#x2F;image-20200224203308931.png">
+<meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;images&#x2F;Python-%E6%95%B0%E6%8D%AE%E5%8F%AF%E8%A7%86%E5%8C%96&#x2F;image-20200224231523302.png">
+<meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;images&#x2F;Python-%E6%95%B0%E6%8D%AE%E5%8F%AF%E8%A7%86%E5%8C%96&#x2F;image-20200225152706339.png">
+<meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;images&#x2F;Python-%E6%95%B0%E6%8D%AE%E5%8F%AF%E8%A7%86%E5%8C%96&#x2F;world_population.svg">
+<meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;images&#x2F;Python-%E6%95%B0%E6%8D%AE%E5%8F%AF%E8%A7%86%E5%8C%96&#x2F;image-20200226162858495.png">
+<meta property="og:updated_time" content="2020-02-26T15:15:32.186Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;images&#x2F;Python-%E6%95%B0%E6%8D%AE%E5%8F%AF%E8%A7%86%E5%8C%96&#x2F;image-20200224134601250.png">
+
+<link rel="canonical" href="http://yoursite.com/2020/02/24/Python-%E6%95%B0%E6%8D%AE%E5%8F%AF%E8%A7%86%E5%8C%96/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true,
+    isPage: false,
+    isArchive: false
+  };
+</script>
+
+  <title>Python 数据可视化 | MIN MIN</title>
+  
+
+
+  <script>
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?cad2a7930afd095772e571e6eab3628f";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+  <!--  -->
+<link href='//fonts.googleapis.com/css?family=Kaushan+Script' rel='stylesheet' type='text/css'>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">MIN MIN</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+        <p class="site-subtitle">BLOG</p>
+  </div>
+
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档</a>
+
+  </li>
+  </ul>
+
+</nav>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/02/24/Python-%E6%95%B0%E6%8D%AE%E5%8F%AF%E8%A7%86%E5%8C%96/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="MIN MIN">
+      <meta itemprop="description" content="即使最后没有人为你鼓掌，也要优雅地谢幕，感谢自己的认真付出。">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="MIN MIN">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Python 数据可视化
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-02-24 13:39:32" itemprop="dateCreated datePublished" datetime="2020-02-24T13:39:32+08:00">2020-02-24</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-02-26 23:15:32" itemprop="dateModified" datetime="2020-02-26T23:15:32+08:00">2020-02-26</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Python/" itemprop="url" rel="index">
+                    <span itemprop="name">Python</span>
+                  </a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <blockquote>
+<p>需要安装<a href="https://matplotlib.org/index.html" target="_blank" rel="noopener">matplotlib</a>，OS X的安装方法：</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> pip install --user matplotlib</span></span><br></pre></td></tr></table></figure>
+</blockquote><h3 id="1-生成数据"><a href="#1-生成数据" class="headerlink" title="1. 生成数据"></a>1. 生成数据</h3><h4 id="1-1-plot-连点成线"><a href="#1-1-plot-连点成线" class="headerlink" title="1.1 plot() 连点成线"></a>1.1 <code>plot()</code> 连点成线</h4><p>根据一个个的点，让Python连点成线：</p><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> matplotlib.pyplot <span class="keyword">as</span> plt</span><br><span class="line"></span><br><span class="line">input_values = [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>]</span><br><span class="line">square = [<span class="number">1</span>, <span class="number">4</span>, <span class="number">9</span>, <span class="number">16</span>, <span class="number">25</span>]</span><br><span class="line">plt.plot(input_values, square, linewidth=<span class="number">5</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 设置图标标题，并给坐标轴加标签</span></span><br><span class="line">plt.title(<span class="string">"Square Numbers"</span>, fontsize=<span class="number">24</span>)</span><br><span class="line">plt.xlabel(<span class="string">"Value"</span>, fontsize=<span class="number">14</span>)</span><br><span class="line">plt.ylabel(<span class="string">"Square of Value"</span>, fontsize=<span class="number">14</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 设置xy轴刻度字体大小</span></span><br><span class="line">plt.tick_params(axis=<span class="string">'both'</span>, which=<span class="string">'major'</span>, labelsize=<span class="number">14</span>)</span><br><span class="line"></span><br><span class="line">plt.show()</span><br></pre></td></tr></table></figure><a id="more"></a>
+
+
+
+<img src="/images/Python-%E6%95%B0%E6%8D%AE%E5%8F%AF%E8%A7%86%E5%8C%96/image-20200224134601250.png" alt="image-20200224134601250" style="zoom:50%;">
+
+<h4 id="1-2-scatter-散点图"><a href="#1-2-scatter-散点图" class="headerlink" title="1.2 scatter() 散点图"></a>1.2 <code>scatter()</code> 散点图</h4><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> matplotlib.pyplot <span class="keyword">as</span> plt</span><br><span class="line"></span><br><span class="line"><span class="comment"># 设置图标标题，并给坐标轴加标签</span></span><br><span class="line">plt.title(<span class="string">"Square Numbers"</span>, fontsize=<span class="number">24</span>)</span><br><span class="line">plt.xlabel(<span class="string">"Value"</span>, fontsize=<span class="number">14</span>)</span><br><span class="line">plt.ylabel(<span class="string">"Square of Value"</span>, fontsize=<span class="number">14</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 设置x、y轴刻度字体大小</span></span><br><span class="line">plt.tick_params(axis=<span class="string">'both'</span>, which=<span class="string">'major'</span>, labelsize=<span class="number">14</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 设置每个坐标轴的取值范围</span></span><br><span class="line">plt.axis([<span class="number">0</span>, <span class="number">52</span>, <span class="number">0</span>, <span class="number">150000</span>])</span><br><span class="line"></span><br><span class="line">x_values = list(range(<span class="number">1</span>, <span class="number">51</span>))</span><br><span class="line">y_values = [x**<span class="number">3</span> <span class="keyword">for</span> x <span class="keyword">in</span> x_values]</span><br><span class="line"><span class="comment"># 绘制点，指定点的颜色、轮廓和大小</span></span><br><span class="line">plt.scatter(x_values, y_values, c=(<span class="number">0</span>, <span class="number">0</span>, <span class="number">0.8</span>), edgecolors=<span class="string">'none'</span>, s=<span class="number">40</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 自动保存图表，并将图标多余的空白区域剪裁掉</span></span><br><span class="line">plt.savefig(<span class="string">'cubic_plot.png'</span>, bbox_inches=<span class="string">'tight'</span>)</span><br></pre></td></tr></table></figure>
+
+<img src="/images/Python-%E6%95%B0%E6%8D%AE%E5%8F%AF%E8%A7%86%E5%8C%96/cubic_plot.png" alt="cubic_plot" style="zoom: 50%;">
+
+<p><strong>颜色映射</strong>（colormap）：针对不同的值，显示不同的颜色。如浅色表示数值小，深色表示数值大。下面就是根据每个点的y值来设置其颜色：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> matplotlib.pyplot <span class="keyword">as</span> plt</span><br><span class="line"></span><br><span class="line"><span class="comment"># 设置图标标题，并给坐标轴加标签</span></span><br><span class="line">plt.title(<span class="string">"Square Numbers"</span>, fontsize=<span class="number">24</span>)</span><br><span class="line">plt.xlabel(<span class="string">"Value"</span>, fontsize=<span class="number">14</span>)</span><br><span class="line">plt.ylabel(<span class="string">"Square of Value"</span>, fontsize=<span class="number">14</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 设置xy轴刻度字体大小</span></span><br><span class="line">plt.tick_params(axis=<span class="string">'both'</span>, which=<span class="string">'major'</span>, labelsize=<span class="number">14</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 设置每个坐标轴的取值范围</span></span><br><span class="line">plt.axis([<span class="number">-15</span>, <span class="number">15</span>, <span class="number">-10</span>, <span class="number">120</span>])</span><br><span class="line"></span><br><span class="line">x_values = list(range(<span class="number">-10</span>, <span class="number">10</span>))</span><br><span class="line">y_values = [x**<span class="number">2</span>+<span class="number">2</span>*x+<span class="number">1</span> <span class="keyword">for</span> x <span class="keyword">in</span> x_values]</span><br><span class="line"><span class="comment"># 绘制点，指定点的颜色、轮廓和大小</span></span><br><span class="line">plt.scatter(x_values, y_values, c=y_values, cmap=plt.cm.Blues</span><br><span class="line">            , edgecolors=<span class="string">'none'</span>, s=<span class="number">40</span>)</span><br><span class="line"></span><br><span class="line">plt.show()</span><br></pre></td></tr></table></figure>
+
+<img src="/images/Python-%E6%95%B0%E6%8D%AE%E5%8F%AF%E8%A7%86%E5%8C%96/image-20200224152507648.png" alt="image-20200224152507648" style="zoom:50%;">
+
+<p><strong>案例：随机漫步</strong>。让点在地图上随机走，绿色起点红色终点，越往后面走颜色越深。</p>
+<ul>
+<li>main.py</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> matplotlib.pyplot <span class="keyword">as</span> plt</span><br><span class="line"><span class="keyword">from</span> random_walk <span class="keyword">import</span> RandomWalk</span><br><span class="line"></span><br><span class="line">rw = RandomWalk()</span><br><span class="line">rw.fill_walk()</span><br><span class="line"></span><br><span class="line"><span class="comment"># 添加颜色映射，根据漫步中点的先后顺序，由浅入深着色</span></span><br><span class="line">point_numbers = list(range(rw.num_point))</span><br><span class="line">plt.scatter(rw.x_value, rw.y_value, c=point_numbers, cmap=plt.cm.Blues,</span><br><span class="line">            edgecolors=<span class="string">'none'</span>, s=<span class="number">10</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 突出起点和终点</span></span><br><span class="line">plt.scatter(<span class="number">0</span>, <span class="number">0</span>, c=<span class="string">'green'</span>, edgecolors=<span class="string">'none'</span>, s=<span class="number">100</span>)</span><br><span class="line">plt.scatter(rw.x_value[<span class="number">-1</span>], rw.y_value[<span class="number">-1</span>], c=<span class="string">'red'</span>, edgecolors=<span class="string">'none'</span>, s=<span class="number">100</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 隐藏坐标轴</span></span><br><span class="line">plt.axes().get_xaxis().set_visible(<span class="literal">False</span>)</span><br><span class="line">plt.axes().get_yaxis().set_visible(<span class="literal">False</span>)</span><br><span class="line"></span><br><span class="line">plt.show()</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>random_walk.py</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> random <span class="keyword">import</span> choice</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">RandomWalk</span><span class="params">()</span>:</span></span><br><span class="line">    <span class="string">"""随机漫步"""</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self, num_point=<span class="number">1000</span>)</span>:</span></span><br><span class="line">        self.num_point = num_point</span><br><span class="line"></span><br><span class="line">        <span class="comment"># 所有随机漫步的点都始于原点</span></span><br><span class="line">        self.x_value = [<span class="number">0</span>]</span><br><span class="line">        self.y_value = [<span class="number">0</span>]</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">fill_walk</span><span class="params">(self)</span>:</span></span><br><span class="line">        <span class="string">"""计算随机漫步包含的所有点"""</span></span><br><span class="line"></span><br><span class="line">        <span class="comment"># 不断漫步，直到列表的点数到达指定长度</span></span><br><span class="line">        <span class="keyword">while</span> len(self.x_value) &lt; self.num_point:</span><br><span class="line"></span><br><span class="line">            <span class="comment"># x轴的随机移动步伐</span></span><br><span class="line">            x_direction = choice([<span class="number">1</span>, <span class="number">-1</span>])</span><br><span class="line">            x_distance = choice([<span class="number">0</span>, <span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>]) <span class="comment"># 0表示向y轴移动</span></span><br><span class="line">            x_step = x_direction * x_distance</span><br><span class="line"></span><br><span class="line">            <span class="comment"># y轴的随机移动步伐</span></span><br><span class="line">            y_direction = choice([<span class="number">1</span>, <span class="number">-1</span>])</span><br><span class="line">            y_distance = choice([<span class="number">0</span>, <span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>]) <span class="comment"># 0表示向x轴移动</span></span><br><span class="line">            y_step = y_direction * y_distance</span><br><span class="line"></span><br><span class="line">            <span class="comment"># 不能原地不动</span></span><br><span class="line">            <span class="keyword">if</span> x_step==<span class="number">0</span> <span class="keyword">and</span> y_step==<span class="number">0</span>:</span><br><span class="line">                <span class="keyword">continue</span></span><br><span class="line"></span><br><span class="line">            <span class="comment"># 计算下一个点的(x, y)值</span></span><br><span class="line">            next_x = self.x_value[<span class="number">-1</span>] + x_step</span><br><span class="line">            next_y = self.y_value[<span class="number">-1</span>] + y_step</span><br><span class="line"></span><br><span class="line">            <span class="comment"># 将新坐标保存至列表</span></span><br><span class="line">            self.x_value.append(next_x)</span><br><span class="line">            self.y_value.append(next_y)</span><br></pre></td></tr></table></figure>
+
+<img src="/images/Python-%E6%95%B0%E6%8D%AE%E5%8F%AF%E8%A7%86%E5%8C%96/image-20200224194408128.png" alt="image-20200224194408128" style="zoom:50%;">
+
+<h4 id="1-3-掷骰子-Pygal-直方图"><a href="#1-3-掷骰子-Pygal-直方图" class="headerlink" title="1.3 掷骰子 Pygal 直方图"></a>1.3 掷骰子 Pygal 直方图</h4><blockquote>
+<p>需要安装Pygal，Linux和OS X：</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> pip install --user pygal</span></span><br></pre></td></tr></table></figure>
+
+<p>Windows：</p>
+<figure class="highlight powershell"><table><tr><td class="code"><pre><span class="line">$ python -m pip install --user pygal</span><br></pre></td></tr></table></figure>
+
+<p>Pygal的<a href="http://www.pygal.org/en/stable/" target="_blank" rel="noopener">官方网站</a>，查看图表可以单击“Documentation”—“Chart types”。</p>
+</blockquote>
+<h5 id="案例1"><a href="#案例1" class="headerlink" title="案例1"></a>案例1</h5><p>将一个六面骰子投掷1000次，用直方图的方式展现每个数字的出现频率。</p>
+<ul>
+<li>main.py</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> pygal</span><br><span class="line"></span><br><span class="line"><span class="keyword">from</span> die <span class="keyword">import</span> Die</span><br><span class="line"></span><br><span class="line"><span class="comment"># 创建一个六面骰子</span></span><br><span class="line">my_die = Die()</span><br><span class="line"></span><br><span class="line"><span class="comment"># 掷1000次骰子</span></span><br><span class="line">results = []</span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">1000</span>):</span><br><span class="line">    result = my_die.roll()</span><br><span class="line">    results.append(result)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 每个数字出现的频率</span></span><br><span class="line">frequencies = []</span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">1</span>, my_die.num_sides+<span class="number">1</span>):</span><br><span class="line">    frequency = results.count(i)</span><br><span class="line">    frequencies.append(frequency)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 用直方图可视化</span></span><br><span class="line">hist = pygal.Bar()</span><br><span class="line">hist.title = <span class="string">"六面骰子掷1000次的结果"</span></span><br><span class="line">hist.x_labels = [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>, <span class="number">6</span>]</span><br><span class="line">hist.x_title = <span class="string">"投掷数字"</span></span><br><span class="line">hist.y_title = <span class="string">"数字显示频率"</span></span><br><span class="line"></span><br><span class="line">hist.add(<span class="string">"六面骰子"</span>, frequencies)</span><br><span class="line">hist.render_to_file(<span class="string">'die_visual.svg'</span>)</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>die.py</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> random <span class="keyword">import</span> randint</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Die</span><span class="params">()</span>:</span></span><br><span class="line">    <span class="string">"""骰子类"""</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self, num_sides=<span class="number">6</span>)</span>:</span></span><br><span class="line">        <span class="string">"""骰子默认6面"""</span></span><br><span class="line">        self.num_sides = num_sides</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">roll</span><span class="params">(self)</span>:</span></span><br><span class="line">        <span class="string">"""返回1～骰子面数之间的随机数"""</span></span><br><span class="line">        <span class="keyword">return</span> randint(<span class="number">1</span>, self.num_sides)</span><br></pre></td></tr></table></figure>
+
+<img src="/images/Python-%E6%95%B0%E6%8D%AE%E5%8F%AF%E8%A7%86%E5%8C%96/image-20200224203308931.png" alt="image-20200224203308931" style="zoom:50%;">
+
+<h5 id="案例2"><a href="#案例2" class="headerlink" title="案例2"></a>案例2</h5><p>投2次六面骰子：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> pygal</span><br><span class="line"></span><br><span class="line"><span class="keyword">from</span> die <span class="keyword">import</span> Die</span><br><span class="line"></span><br><span class="line"><span class="comment"># 创建一个六面骰子</span></span><br><span class="line">my_die_1 = Die()</span><br><span class="line">my_die_2 = Die()</span><br><span class="line"></span><br><span class="line"><span class="comment"># 掷1000次骰子</span></span><br><span class="line">results = []</span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">1000</span>):</span><br><span class="line">    result = my_die_1.roll() + my_die_2.roll()</span><br><span class="line">    results.append(result)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 每个数字出现的频率</span></span><br><span class="line">frequencies = []</span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">2</span>, my_die_1.num_sides+my_die_2.num_sides+<span class="number">1</span>):</span><br><span class="line">    frequency = results.count(i)</span><br><span class="line">    frequencies.append(frequency)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 用直方图可视化</span></span><br><span class="line">hist = pygal.Bar()</span><br><span class="line">hist.title = <span class="string">"投2次六面骰子掷1000次的结果"</span></span><br><span class="line">hist.x_labels = [<span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>, <span class="number">6</span>, <span class="number">7</span>, <span class="number">8</span>, <span class="number">9</span>, <span class="number">10</span>, <span class="number">11</span>, <span class="number">12</span>]</span><br><span class="line">hist.x_title = <span class="string">"投掷数字"</span></span><br><span class="line">hist.y_title = <span class="string">"数字显示频率"</span></span><br><span class="line"></span><br><span class="line">hist.add(<span class="string">"投2次六面骰子"</span>, frequencies)</span><br><span class="line">hist.render_to_file(<span class="string">'die_visual.svg'</span>)</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h3 id="2-下载数据"><a href="#2-下载数据" class="headerlink" title="2. 下载数据"></a>2. 下载数据</h3><p>天气数据下载来源：<a href="https://www.wunderground.com/history/" target="_blank" rel="noopener">https://www.wunderground.com/history/</a></p>
+<h4 id="2-1-csv文件格式"><a href="#2-1-csv文件格式" class="headerlink" title="2.1 csv文件格式"></a>2.1 csv文件格式</h4><h5 id="案例1：从csx文件中得到阿拉斯加锡特卡地区2014年7月每日的最高气温，并绘制折线图"><a href="#案例1：从csx文件中得到阿拉斯加锡特卡地区2014年7月每日的最高气温，并绘制折线图" class="headerlink" title="案例1：从csx文件中得到阿拉斯加锡特卡地区2014年7月每日的最高气温，并绘制折线图"></a>案例1：从csx文件中得到阿拉斯加锡特卡地区2014年7月每日的最高气温，并绘制折线图</h5><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment">#coding:utf-8</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> csv</span><br><span class="line"><span class="keyword">from</span> matplotlib <span class="keyword">import</span> pyplot <span class="keyword">as</span> plt</span><br><span class="line"></span><br><span class="line">plt.rcParams[<span class="string">'font.sans-serif'</span>]=[<span class="string">'Arial Unicode MS'</span>]</span><br><span class="line">plt.rcParams[<span class="string">'axes.unicode_minus'</span>]=<span class="literal">False</span></span><br><span class="line"></span><br><span class="line">filename = <span class="string">"sitka_weather_07-2014.csv"</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">with</span> open(filename) <span class="keyword">as</span> f:</span><br><span class="line">    reader = csv.reader(f)</span><br><span class="line">    header_row = next(reader) <span class="comment"># 得到文件的第一行，列名</span></span><br><span class="line"></span><br><span class="line">    <span class="comment"># 如果列多，可以通过这种方式查看每个列名所对应的索引值</span></span><br><span class="line">    <span class="comment"># for index,column_header in enumerate(header_row):</span></span><br><span class="line">    <span class="comment">#     # 获取每个元素的索引和值</span></span><br><span class="line">    <span class="comment">#     print(index, column_header)</span></span><br><span class="line"></span><br><span class="line">    <span class="comment"># 每天的最高温度集</span></span><br><span class="line">    max_temperature_f = []</span><br><span class="line">    <span class="comment"># 遍历余下的各行</span></span><br><span class="line">    <span class="keyword">for</span> row <span class="keyword">in</span> reader:</span><br><span class="line">        <span class="comment"># 最高温度在每行的第二列</span></span><br><span class="line">        max_temperature_f.append(int(row[<span class="number">1</span>]))</span><br><span class="line"></span><br><span class="line">    fig = plt.figure(dpi=<span class="number">128</span>, figsize=(<span class="number">10</span>, <span class="number">6</span>))</span><br><span class="line">    plt.plot(max_temperature_f,c=<span class="string">'red'</span>)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 图形的格式</span></span><br><span class="line">    plt.title(<span class="string">"阿拉斯加锡特卡2014年7月每日最高气温折线图"</span>, fontsize=<span class="number">24</span>)</span><br><span class="line">    plt.xlabel(<span class="string">""</span>, fontsize=<span class="number">16</span>)</span><br><span class="line">    plt.ylabel(<span class="string">"Temperature (F)"</span>, fontsize=<span class="number">16</span>)</span><br><span class="line">    plt.tick_params(axis=<span class="string">'both'</span>, which=<span class="string">'major'</span>, labelsize=<span class="number">16</span>)</span><br><span class="line"></span><br><span class="line">    plt.show()</span><br></pre></td></tr></table></figure>
+
+<img src="/images/Python-%E6%95%B0%E6%8D%AE%E5%8F%AF%E8%A7%86%E5%8C%96/image-20200224231523302.png" alt="image-20200224231523302" style="zoom: 25%;">
+
+<h5 id="案例2：最高最低温差着色，横坐标斜着显示日期"><a href="#案例2：最高最低温差着色，横坐标斜着显示日期" class="headerlink" title="案例2：最高最低温差着色，横坐标斜着显示日期"></a>案例2：最高最低温差着色，横坐标斜着显示日期</h5><p>需求：</p>
+<ol>
+<li>横坐标显示日期：使用模块<code>datetime.strptime()</code>将字符串转为日期：</li>
+</ol>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> datetime <span class="keyword">import</span> datetime</span><br><span class="line">now = datetime.strptime(<span class="string">'2020/2/25 14:27:39'</span>, <span class="string">'%Y/%m/%d %H:%M:%S'</span>)</span><br><span class="line"><span class="comment"># 2020-02-25 14:27:39</span></span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<table>
+<thead>
+<tr>
+<th>实参</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>%A</code></td>
+<td>星期的名称，如Monday</td>
+</tr>
+<tr>
+<td><code>%B</code></td>
+<td>月份名，如January</td>
+</tr>
+<tr>
+<td><code>%m</code></td>
+<td>月份，01～12</td>
+</tr>
+<tr>
+<td><code>%d</code></td>
+<td>月份中的天，01～31</td>
+</tr>
+<tr>
+<td><code>%Y</code></td>
+<td>四位的年份，如2020</td>
+</tr>
+<tr>
+<td><code>%y</code></td>
+<td>两位数的年份，如20</td>
+</tr>
+<tr>
+<td><code>%H</code></td>
+<td>24小时制的小时，00～23</td>
+</tr>
+<tr>
+<td><code>%I</code></td>
+<td>12小时制的小时，01～12</td>
+</tr>
+<tr>
+<td><code>%p</code></td>
+<td>am或pm</td>
+</tr>
+<tr>
+<td><code>%M</code></td>
+<td>分钟，00～59</td>
+</tr>
+<tr>
+<td><code>%S</code></td>
+<td>秒，00～61</td>
+</tr>
+</tbody></table>
+</blockquote>
+<ol start="2">
+<li>纵坐标显示每天的最高气温和最低气温，并且温差之间着色：使用<code>fill_between()</code>，它接受一个x值和两个y值，并填充两个y值系列之间的空间</li>
+</ol>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> csv</span><br><span class="line"><span class="keyword">from</span> datetime <span class="keyword">import</span> datetime</span><br><span class="line"></span><br><span class="line"><span class="keyword">from</span> matplotlib <span class="keyword">import</span> pyplot <span class="keyword">as</span> plt</span><br><span class="line"></span><br><span class="line">plt.rcParams[<span class="string">'font.sans-serif'</span>] = [<span class="string">'Arial Unicode MS'</span>]</span><br><span class="line">plt.rcParams[<span class="string">'axes.unicode_minus'</span>] = <span class="literal">False</span></span><br><span class="line"></span><br><span class="line">filename = <span class="string">"sitka_weather_2014.csv"</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">with</span> open(filename) <span class="keyword">as</span> f:</span><br><span class="line">    reader = csv.reader(f)</span><br><span class="line">    header_row = next(reader) <span class="comment"># 得到文件的第一行，列名</span></span><br><span class="line"></span><br><span class="line">    <span class="comment"># 每天的日期、最高温度集、最低气温集</span></span><br><span class="line">    dates, max_temperature_f, min_temperature_f = [], [],[]</span><br><span class="line">    <span class="comment"># 遍历余下的各行</span></span><br><span class="line">    <span class="keyword">for</span> row <span class="keyword">in</span> reader:</span><br><span class="line">        <span class="comment"># 每天日期在每行的第一列</span></span><br><span class="line">        current_date = datetime.strptime(row[<span class="number">0</span>], <span class="string">'%Y-%m-%d'</span>)</span><br><span class="line">        dates.append(current_date)</span><br><span class="line">        <span class="comment"># 最高温度在每行的第二列</span></span><br><span class="line">        max_temperature_f.append(int(row[<span class="number">1</span>]))</span><br><span class="line">        <span class="comment"># 最低温度在每行的第四列</span></span><br><span class="line">        min_temperature_f.append(int(row[<span class="number">3</span>]))</span><br><span class="line"></span><br><span class="line">    fig = plt.figure(dpi=<span class="number">128</span>, figsize=(<span class="number">10</span>, <span class="number">6</span>))</span><br><span class="line">    <span class="comment"># 绘制最高温折线</span></span><br><span class="line">    plt.plot(dates, max_temperature_f, c=<span class="string">'red'</span>)</span><br><span class="line">    <span class="comment"># 绘制最低温折线</span></span><br><span class="line">    plt.plot(dates, min_temperature_f, c=<span class="string">'blue'</span>)</span><br><span class="line">    <span class="comment"># 填充温差，alpha指定颜色透明度（0完全透明1不透明）</span></span><br><span class="line">    plt.fill_between(dates, max_temperature_f, min_temperature_f, facecolor=<span class="string">'blue'</span>, alpha=<span class="number">0.1</span>)</span><br><span class="line">    <span class="comment"># 倾斜日期标签</span></span><br><span class="line">    fig.autofmt_xdate()</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 图形的格式</span></span><br><span class="line">    plt.title(<span class="string">"阿拉斯加锡特卡2014年7月每日最高和最低气温折线图"</span>, fontsize=<span class="number">24</span>)</span><br><span class="line">    plt.xlabel(<span class="string">"日期"</span>, fontsize=<span class="number">16</span>)</span><br><span class="line">    plt.ylabel(<span class="string">"Temperature (F)"</span>, fontsize=<span class="number">16</span>)</span><br><span class="line">    plt.tick_params(axis=<span class="string">'both'</span>, which=<span class="string">'major'</span>, labelsize=<span class="number">16</span>)</span><br><span class="line"></span><br><span class="line">    plt.show()</span><br></pre></td></tr></table></figure>
+
+<img src="/images/Python-%E6%95%B0%E6%8D%AE%E5%8F%AF%E8%A7%86%E5%8C%96/image-20200225152706339.png" alt="image-20200225152706339" style="zoom: 33%;">
+
+<h5 id="案例3：错误检查"><a href="#案例3：错误检查" class="headerlink" title="案例3：错误检查"></a>案例3：错误检查</h5><p>有时候会取不到数据，如下面的情况，那就用try-except-else的方式将错误抛出，不会影响其余正常数据的处理</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">2014-2-16,,,,,,,,,,,,,,,,,,,0.00,,,-1</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">for</span> row <span class="keyword">in</span> reader:</span><br><span class="line">        <span class="keyword">try</span>:</span><br><span class="line">            <span class="comment"># 每天日期在每行的第一列</span></span><br><span class="line">            current_date = datetime.strptime(row[<span class="number">0</span>], <span class="string">'%Y-%m-%d'</span>)</span><br><span class="line">            <span class="comment"># 最高温度在每行的第二列</span></span><br><span class="line">            max_temperature = int(row[<span class="number">1</span>])</span><br><span class="line">            <span class="comment"># 最低温度在每行的第四列</span></span><br><span class="line">            min_temperature = int(row[<span class="number">3</span>])</span><br><span class="line">        <span class="keyword">except</span> ValueError:</span><br><span class="line">            print(current_date, <span class="string">" miss data"</span>)</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            dates.append(current_date)</span><br><span class="line">            max_temperature_f.append(max_temperature)</span><br><span class="line">            min_temperature_f.append(min_temperature)</span><br></pre></td></tr></table></figure>
+
+<h4 id="2-2-制作世界人口地图：JSON格式"><a href="#2-2-制作世界人口地图：JSON格式" class="headerlink" title="2.2 制作世界人口地图：JSON格式"></a>2.2 制作世界人口地图：JSON格式</h4><p>population_data.json：大部分国家1960～2010年的人口数据</p>
+<figure class="highlight json"><table><tr><td class="code"><pre><span class="line">[</span><br><span class="line">  &#123;</span><br><span class="line">    <span class="attr">"Country Name"</span>: <span class="string">"Arab World"</span>,</span><br><span class="line">    <span class="attr">"Country Code"</span>: <span class="string">"ARB"</span>,</span><br><span class="line">    <span class="attr">"Year"</span>: <span class="string">"1960"</span>,</span><br><span class="line">    <span class="attr">"Value"</span>: <span class="string">"96388069"</span></span><br><span class="line">  &#125;,</span><br><span class="line">  &#123;</span><br><span class="line">    <span class="attr">"Country Name"</span>: <span class="string">"Arab World"</span>,</span><br><span class="line">    <span class="attr">"Country Code"</span>: <span class="string">"ARB"</span>,</span><br><span class="line">    <span class="attr">"Year"</span>: <span class="string">"1961"</span>,</span><br><span class="line">    <span class="attr">"Value"</span>: <span class="string">"98882541.4"</span></span><br><span class="line">  &#125;,</span><br><span class="line">  ...</span><br><span class="line"> ]</span><br></pre></td></tr></table></figure>
+
+<p>每个元素包含四个键的字典：国家名、国别码、年份和人口数量。</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> pip install pygal_maps_world</span></span><br></pre></td></tr></table></figure>
+
+<p>由于<em>population_data.json</em>中包含的是三个字母的国别码，但Pygal使用的是两个字母的国别码，所以需要在<code>country_codes.py</code>中将json文件中的三位国别码转换为两位的。</p>
+<ul>
+<li>country_codes.py</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> pygal_maps_world.i18n <span class="keyword">import</span> COUNTRIES</span><br><span class="line"></span><br><span class="line"><span class="comment"># 由于population_data.json中Country Code是三个字母的国别码，</span></span><br><span class="line"><span class="comment"># 但Pygal使用的是两个字母的国别码，</span></span><br><span class="line"><span class="comment"># 所以需要根据Country Name来得到两个字母的国别码</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">get_country_code</span><span class="params">(country_name)</span>:</span></span><br><span class="line">    <span class="string">"""获取两个字母的国别码"""</span></span><br><span class="line">    <span class="keyword">for</span> code,name <span class="keyword">in</span> COUNTRIES.items():</span><br><span class="line">        <span class="keyword">if</span> name == country_name:</span><br><span class="line">            <span class="keyword">return</span> code</span><br></pre></td></tr></table></figure>
+
+<p>需求：地图显示2010年每个国家的人口总数，并根据1000万和10亿两个点将国家分为3类，并更换分类颜色。</p>
+<ul>
+<li>world_population.py</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> json</span><br><span class="line"><span class="keyword">import</span> pygal_maps_world.maps <span class="keyword">as</span> maps</span><br><span class="line"><span class="keyword">from</span> pygal.style <span class="keyword">import</span> RotateStyle, LightColorizedStyle</span><br><span class="line"><span class="keyword">from</span> country_codes <span class="keyword">import</span> get_country_code</span><br><span class="line"></span><br><span class="line">filename = <span class="string">"population_map/population_data.json"</span></span><br><span class="line"><span class="comment"># 存储两位国别码和人口数量的字典</span></span><br><span class="line">country_population = &#123;&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">with</span> open(filename) <span class="keyword">as</span> f:</span><br><span class="line">    <span class="comment"># 将数据转换为Python能处理的列表，列表中每个元素都是字典</span></span><br><span class="line">    pop_data = json.load(f)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 循环遍历每个国家2010年的人口数量</span></span><br><span class="line">    <span class="keyword">for</span> pop_dict <span class="keyword">in</span> pop_data:</span><br><span class="line">        <span class="keyword">if</span> pop_dict[<span class="string">'Year'</span>] == <span class="string">'2010'</span>:</span><br><span class="line">            <span class="comment"># 获取需要的两位国别码和人口数</span></span><br><span class="line">            country_name = pop_dict[<span class="string">'Country Name'</span>]</span><br><span class="line">            population = int(float(pop_dict[<span class="string">'Value'</span>]))</span><br><span class="line">            code = get_country_code(country_name)</span><br><span class="line">            <span class="keyword">if</span> code:</span><br><span class="line">                country_population[code] = population</span><br><span class="line"></span><br><span class="line"><span class="comment"># 根据人口数量将所有国家分成3组</span></span><br><span class="line">cty_pop_A, cty_pop_B, cty_pop_C = &#123;&#125;, &#123;&#125;, &#123;&#125;</span><br><span class="line"><span class="keyword">for</span> cty_code,cty_pop <span class="keyword">in</span> country_population.items():</span><br><span class="line">    <span class="keyword">if</span> cty_pop &lt; <span class="number">10000000</span>:</span><br><span class="line">        cty_pop_A[cty_code] = cty_pop</span><br><span class="line">    <span class="keyword">elif</span> cty_pop &lt; <span class="number">1000000000</span>:</span><br><span class="line">        cty_pop_B[cty_code] = cty_pop</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        cty_pop_C[cty_code] = cty_pop</span><br><span class="line"></span><br><span class="line">wm_style = RotateStyle(<span class="string">'#336699'</span>, base_style=LightColorizedStyle)</span><br><span class="line">wm = maps.World(style=wm_style)</span><br><span class="line">wm.title = <span class="string">"2010年世界人口数量分布图"</span></span><br><span class="line">wm.add(<span class="string">"0~10m"</span>, cty_pop_A)</span><br><span class="line">wm.add(<span class="string">"10m~1bm"</span>, cty_pop_B)</span><br><span class="line">wm.add(<span class="string">"&gt;1bm"</span>, cty_pop_C)</span><br><span class="line">wm.render_to_file(<span class="string">"world_population.svg"</span>)</span><br></pre></td></tr></table></figure>
+
+<p>效果图：</p>
+<img src="/images/Python-%E6%95%B0%E6%8D%AE%E5%8F%AF%E8%A7%86%E5%8C%96/world_population.svg" alt="world_population" style="zoom:50%;">
+
+<h4 id="2-3-使用API"><a href="#2-3-使用API" class="headerlink" title="2.3 使用API"></a>2.3 使用API</h4><figure class="highlight"><table><tr><td class="code"><pre><span class="line">https://api.github.com/search/repositories?q=language:python&amp;sort=stars</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><code>https://api.github.com/</code>：将请求发送到GitHub网站中响应API调用的部分</li>
+<li><code>search/repositories</code>：让API搜索GitHub上所有仓库</li>
+<li><code>?</code>：传递一个实参</li>
+<li><code>q=</code>：开始查询</li>
+<li><code>language:python&amp;sort=stars</code>：获取主要语言为Python的仓库信息，项目按照星级排序</li>
+</ul>
+<p>安装requests包，让Python程序能向网站请求信息，以及检查返回的响应：</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> pip install --user requests</span></span><br></pre></td></tr></table></figure>
+
+<h5 id="案例1：找出GitHub上星级最高的Python项目的信息"><a href="#案例1：找出GitHub上星级最高的Python项目的信息" class="headerlink" title="案例1：找出GitHub上星级最高的Python项目的信息"></a>案例1：找出GitHub上星级最高的Python项目的信息</h5><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> requests</span><br><span class="line"></span><br><span class="line"><span class="comment"># 执行API调用，存储响应</span></span><br><span class="line">url = <span class="string">"https://api.github.com/search/repositories?q=language:python&amp;sort=stars"</span></span><br><span class="line">r = requests.get(url)</span><br><span class="line">print(<span class="string">"Status code:"</span>, r.status_code) <span class="comment"># 请求是否成功，200成功</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 将API返回的JSON信息存在Python字典中</span></span><br><span class="line">reponse_dict = r.json()</span><br><span class="line"></span><br><span class="line"><span class="comment"># 第一个仓库就是星级最高的</span></span><br><span class="line">repo_dict = reponse_dict[<span class="string">'items'</span>][<span class="number">0</span>]</span><br><span class="line"></span><br><span class="line">print(<span class="string">'项目名称：'</span>, repo_dict[<span class="string">'name'</span>])</span><br><span class="line">print(<span class="string">'项目拥有者：'</span>, repo_dict[<span class="string">'owner'</span>][<span class="string">'login'</span>])</span><br><span class="line">print(<span class="string">'项目拥有的stars：'</span>, repo_dict[<span class="string">'stargazers_count'</span>])</span><br><span class="line">print(<span class="string">'项目仓库地址：'</span>, repo_dict[<span class="string">'html_url'</span>])</span><br><span class="line">print(<span class="string">'项目创建时间：'</span>, repo_dict[<span class="string">'created_at'</span>])</span><br><span class="line">print(<span class="string">'项目最近一次更新时间：'</span>, repo_dict[<span class="string">'updated_at'</span>])</span><br><span class="line">print(<span class="string">'项目简介：'</span>, repo_dict[<span class="string">'description'</span>])</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>Status code: 200<br>项目名称： system-design-primer<br>项目拥有者： donnemartin<br>项目拥有的stars： 83913<br>项目仓库地址： <a href="https://github.com/donnemartin/system-design-primer" target="_blank" rel="noopener">https://github.com/donnemartin/system-design-primer</a><br>项目创建时间： 2017-02-26T16:15:28Z<br>项目最近一次更新时间： 2020-02-26T06:01:49Z<br>项目简介： Learn how to design large-scale systems. Prep for the system design interview.  Includes Anki flashcards.</p>
+</blockquote>
+<h5 id="案例2：统计GitHub上最流行的30个Python项目"><a href="#案例2：统计GitHub上最流行的30个Python项目" class="headerlink" title="案例2：统计GitHub上最流行的30个Python项目"></a>案例2：统计GitHub上最流行的30个Python项目</h5><ul>
+<li>python_repos.py</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> requests</span><br><span class="line"><span class="keyword">import</span> pygal</span><br><span class="line"><span class="keyword">from</span> pygal.style <span class="keyword">import</span> LightColorizedStyle, LightenStyle</span><br><span class="line"></span><br><span class="line"><span class="comment"># 执行API调用，存储响应</span></span><br><span class="line">url = <span class="string">"https://api.github.com/search/repositories?q=language:python&amp;sort=stars"</span></span><br><span class="line">r = requests.get(url)</span><br><span class="line">print(<span class="string">"Status code:"</span>, r.status_code) <span class="comment"># 请求是否成功，200成功</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 将API返回的JSON信息存在Python字典中</span></span><br><span class="line">response_dict = r.json()</span><br><span class="line"></span><br><span class="line">repo_dicts = response_dict[<span class="string">'items'</span>]</span><br><span class="line">names, plot_dicts = [], []</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> repo_dict <span class="keyword">in</span> repo_dicts:</span><br><span class="line">    names.append(repo_dict[<span class="string">'name'</span>])</span><br><span class="line">    plot_dict = &#123;</span><br><span class="line">        <span class="string">'value'</span>: repo_dict[<span class="string">'stargazers_count'</span>], <span class="comment"># 柱状图的stars数</span></span><br><span class="line">        <span class="string">'label'</span>: str(repo_dict[<span class="string">'description'</span>]), <span class="comment"># 项目描述，鼠标放上面会显示</span></span><br><span class="line">        <span class="string">'xlink'</span>: repo_dict[<span class="string">'html_url'</span>]          <span class="comment"># 鼠标点击某个柱条就可以跳转到指定项目地址</span></span><br><span class="line">    &#125;</span><br><span class="line">    plot_dicts.append(plot_dict)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 定制图表的外观</span></span><br><span class="line">my_config = pygal.Config()</span><br><span class="line"><span class="comment"># 深蓝色，变浅</span></span><br><span class="line">my_config.style = LightenStyle(<span class="string">'#333366'</span>, base_style=LightColorizedStyle)</span><br><span class="line"><span class="comment"># 标签绕x轴选择45度</span></span><br><span class="line">my_config.x_label_rotation = <span class="number">45</span></span><br><span class="line"><span class="comment"># 隐藏图例</span></span><br><span class="line">my_config.show_legend = <span class="literal">False</span></span><br><span class="line"><span class="comment"># 图标标题字体大小</span></span><br><span class="line">my_config.style.title_font_size = <span class="number">24</span></span><br><span class="line"><span class="comment"># 副标签（x轴项目名、y轴上的大部分数字）字体大小</span></span><br><span class="line">my_config.style.label_font_size = <span class="number">14</span></span><br><span class="line"><span class="comment"># 主标签（y轴上为5000整数倍的刻度）字体大小</span></span><br><span class="line">my_config.style.major_label_font_size = <span class="number">18</span></span><br><span class="line"><span class="comment"># 将较长的项目名缩短为15个字符</span></span><br><span class="line">my_config.truncate_label = <span class="number">15</span></span><br><span class="line"><span class="comment"># 隐藏水平线</span></span><br><span class="line">my_config.show_y_guides = <span class="literal">False</span></span><br><span class="line"><span class="comment"># 图表整体宽度</span></span><br><span class="line">my_config.width = <span class="number">1000</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 创建条形图</span></span><br><span class="line">chart = pygal.Bar(my_config)</span><br><span class="line">chart.title = <span class="string">"GitHub上最流行的30个Python项目"</span></span><br><span class="line">chart.x_labels = names</span><br><span class="line"><span class="comment"># 不添加标签</span></span><br><span class="line">chart.add(<span class="string">''</span>, plot_dicts)</span><br><span class="line">chart.render_to_file(<span class="string">'python_repos.svg'</span>)</span><br></pre></td></tr></table></figure>
+
+<img src="/images/Python-%E6%95%B0%E6%8D%AE%E5%8F%AF%E8%A7%86%E5%8C%96/image-20200226162858495.png" alt="image-20200226162858495" style="zoom:50%;">
+
+<h5 id="案例3：对网站上的文章按评论数进行降序打印（标题、到讨论页面的链接、评论数）"><a href="#案例3：对网站上的文章按评论数进行降序打印（标题、到讨论页面的链接、评论数）" class="headerlink" title="案例3：对网站上的文章按评论数进行降序打印（标题、到讨论页面的链接、评论数）"></a>案例3：对网站上的文章按评论数进行降序打印（标题、到讨论页面的链接、评论数）</h5><p>Hacker News网站：<a href="https://news.ycombinator.com" target="_blank" rel="noopener">https://news.ycombinator.com</a></p>
+<ul>
+<li>Hacker News当前最热门的500篇文章的ID：<code>https://hacker-news.firebaseio.com/v0/topstories.json</code></li>
+<li>每篇文章的信息：<code>https://hacker-news.firebaseio.com/v0/item/${ID}.json</code>，类似于下面这种格式</li>
+</ul>
+<figure class="highlight"><table><tr><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    'by': 'ChrisArchitect', </span><br><span class="line">    'descendants': 94,  // 文章被评论的次数</span><br><span class="line">    'id': 22417458, </span><br><span class="line">    'kids': [22417984, 22417876, 22422045, 22418052, 22417755, 22421942, 22421398, 22418782, 22418153, 22419721, 22421600, 22418058, 22418688, 22418290, 22417746, 22419690, 22420316, 22417824, 22418065, 22418060, 22420573, 22418495, 22418419, 22418236, 22420801, 22420802, 22418037, 22418555],  //对文章评论的ID</span><br><span class="line">    'score': 827, </span><br><span class="line">    'time': 1582664775, </span><br><span class="line">    'title': 'Smithsonian Releases 2.8M Images into Public Domain', </span><br><span class="line">    'type': 'story', </span><br><span class="line">    'url': 'https://www.smithsonianmag.com/smithsonian-institution/smithsonian-releases-28-million-images-public-domain-180974263/'</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>hanker_news.py</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> operator <span class="keyword">import</span> itemgetter</span><br><span class="line"><span class="keyword">import</span> requests</span><br><span class="line"></span><br><span class="line">top_500_url = <span class="string">'https://hacker-news.firebaseio.com/v0/topstories.json'</span></span><br><span class="line">top_500_url_response = requests.get(top_500_url)</span><br><span class="line">print(<span class="string">"Status code:"</span>, top_500_url_response.status_code)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 处理前30篇文章</span></span><br><span class="line">top_500_ids = top_500_url_response.json()</span><br><span class="line">url_dicts = []</span><br><span class="line"><span class="keyword">for</span> each_id <span class="keyword">in</span> top_500_ids[:<span class="number">30</span>]:</span><br><span class="line">    each_url = <span class="string">'https://hacker-news.firebaseio.com/v0/item/'</span> + str(each_id) + <span class="string">'.json'</span></span><br><span class="line">    each_url_response = requests.get(each_url)</span><br><span class="line">    each_url_dict = each_url_response.json()</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 从每个url的字典中抽取需要的</span></span><br><span class="line">    url_dict = &#123;</span><br><span class="line">        <span class="string">'title'</span>: each_url_dict[<span class="string">'title'</span>],</span><br><span class="line">        <span class="comment"># 讨论页面的链接</span></span><br><span class="line">        <span class="string">'link'</span>: <span class="string">'http://news.ycombinator.com/item?id='</span> + str(each_id),</span><br><span class="line">        <span class="comment"># 还没评论时没有键"descendants"，所以默认指定为0</span></span><br><span class="line">        <span class="string">'comments'</span>: each_url_dict.get(<span class="string">'descendants'</span>, <span class="number">0</span>)</span><br><span class="line">    &#125;</span><br><span class="line">    url_dicts.append(url_dict)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 根据评论数对文章进行降序排序</span></span><br><span class="line">url_dicts = sorted(url_dicts, key=itemgetter(<span class="string">'comments'</span>), reverse=<span class="literal">True</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> url_dict <span class="keyword">in</span> url_dicts:</span><br><span class="line">    print(<span class="string">"\nTitle:"</span>, url_dict[<span class="string">'title'</span>])</span><br><span class="line">    print(<span class="string">"Discussion link:"</span>, url_dict[<span class="string">'link'</span>])</span><br><span class="line">    print(<span class="string">"Comments:"</span>, url_dict[<span class="string">'comments'</span>])</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>Status code: 200</p>
+<p>Title: Tokyo Olympics “looking at a cancellation” if coronavirus not contained<br>Discussion link: <a href="http://news.ycombinator.com/item?id=22420148" target="_blank" rel="noopener">http://news.ycombinator.com/item?id=22420148</a><br>Comments: 568</p>
+<p>Title: To get good, go after the metagame<br>Discussion link: <a href="http://news.ycombinator.com/item?id=22413376" target="_blank" rel="noopener">http://news.ycombinator.com/item?id=22413376</a><br>Comments: 257</p>
+<p>…(省略)</p>
+</blockquote>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Python/" rel="tag"># Python</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-next post-nav-item">
+                <a href="/2020/02/12/Python-%E5%9F%BA%E7%A1%80/" rel="next" title="Python 基础">
+                  <i class="fa fa-chevron-left"></i> Python 基础
+                </a>
+            </div>
+
+            <span class="post-nav-divider"></span>
+
+            <div class="post-nav-prev post-nav-item">
+            </div>
+          </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-生成数据"><span class="nav-number">1.</span> <span class="nav-text">1. 生成数据</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-1-plot-连点成线"><span class="nav-number">1.1.</span> <span class="nav-text">1.1 plot() 连点成线</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#1-2-scatter-散点图"><span class="nav-number">1.2.</span> <span class="nav-text">1.2 scatter() 散点图</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#1-3-掷骰子-Pygal-直方图"><span class="nav-number">1.3.</span> <span class="nav-text">1.3 掷骰子 Pygal 直方图</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#案例1"><span class="nav-number">1.3.1.</span> <span class="nav-text">案例1</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#案例2"><span class="nav-number">1.3.2.</span> <span class="nav-text">案例2</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-下载数据"><span class="nav-number">2.</span> <span class="nav-text">2. 下载数据</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#2-1-csv文件格式"><span class="nav-number">2.1.</span> <span class="nav-text">2.1 csv文件格式</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#案例1：从csx文件中得到阿拉斯加锡特卡地区2014年7月每日的最高气温，并绘制折线图"><span class="nav-number">2.1.1.</span> <span class="nav-text">案例1：从csx文件中得到阿拉斯加锡特卡地区2014年7月每日的最高气温，并绘制折线图</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#案例2：最高最低温差着色，横坐标斜着显示日期"><span class="nav-number">2.1.2.</span> <span class="nav-text">案例2：最高最低温差着色，横坐标斜着显示日期</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#案例3：错误检查"><span class="nav-number">2.1.3.</span> <span class="nav-text">案例3：错误检查</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-2-制作世界人口地图：JSON格式"><span class="nav-number">2.2.</span> <span class="nav-text">2.2 制作世界人口地图：JSON格式</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-3-使用API"><span class="nav-number">2.3.</span> <span class="nav-text">2.3 使用API</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#案例1：找出GitHub上星级最高的Python项目的信息"><span class="nav-number">2.3.1.</span> <span class="nav-text">案例1：找出GitHub上星级最高的Python项目的信息</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#案例2：统计GitHub上最流行的30个Python项目"><span class="nav-number">2.3.2.</span> <span class="nav-text">案例2：统计GitHub上最流行的30个Python项目</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#案例3：对网站上的文章按评论数进行降序打印（标题、到讨论页面的链接、评论数）"><span class="nav-number">2.3.3.</span> <span class="nav-text">案例3：对网站上的文章按评论数进行降序打印（标题、到讨论页面的链接、评论数）</span></a></li></ol></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <img class="site-author-image" itemprop="image" alt="MIN MIN"
+    src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">MIN MIN</p>
+  <div class="site-description" itemprop="description">即使最后没有人为你鼓掌，也要优雅地谢幕，感谢自己的认真付出。</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">55</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">13</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+        <span class="site-state-item-count">32</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/ashermin" title="GitHub &amp;rarr; https:&#x2F;&#x2F;github.com&#x2F;ashermin" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+<div class="copyright">
+  
+  &copy; 2019 – 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user-circle"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">MIN MIN</span>
+</div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+<script src="/js/utils.js"></script>
+<script src="/js/schemes/pisces.js"></script>
+<script src="/js/next-boot.js"></script>
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+</body>
+</html>
