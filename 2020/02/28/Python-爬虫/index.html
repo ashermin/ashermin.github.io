@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.0.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/avatar.jpg">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/avatar.jpg">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/avatar.jpg">
+  <link rel="mask-icon" href="/images/avatar.jpg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+
+
+<script id="hexo-configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '7.4.2',
+    exturl: false,
+    sidebar: {"position":"left","width":260,"display":"post","offset":12,"onmobile":false},
+    copycode: {"enable":true,"show_result":true,"style":"default"},
+    back2top: {"enable":true,"sidebar":false,"scrollpercent":true},
+    bookmark: {"enable":false,"color":"#222","save":"auto"},
+    fancybox: false,
+    mediumzoom: false,
+    lazyload: false,
+    pangu: false,
+    algolia: {
+      appID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    localsearch: {"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},
+    path: '',
+    motion: {"enable":false,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    translation: {
+      copy_button: '复制',
+      copy_success: '复制成功',
+      copy_failure: '复制失败'
+    },
+    sidebarPadding: 40
+  };
+</script>
+
+  <meta name="description" content="GET和POST请求方式 GET是默认的HTTP请求方法，用于直接输入网址的方式去访问网页，请求参数都包含在URL中，不太安全  POST是向WEB服务器提交表单数据，通过请求体传递参数，相对安全点  用Python发请求需要安装requests库：$ pip install requests$ pip show requests">
+<meta name="keywords" content="Python">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Python 爬虫">
+<meta property="og:url" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2020&#x2F;02&#x2F;28&#x2F;Python-%E7%88%AC%E8%99%AB&#x2F;index.html">
+<meta property="og:site_name" content="MIN MIN">
+<meta property="og:description" content="GET和POST请求方式 GET是默认的HTTP请求方法，用于直接输入网址的方式去访问网页，请求参数都包含在URL中，不太安全  POST是向WEB服务器提交表单数据，通过请求体传递参数，相对安全点  用Python发请求需要安装requests库：$ pip install requests$ pip show requests">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;images&#x2F;Python-%E7%88%AC%E8%99%AB&#x2F;image-20200302150606946.png">
+<meta property="og:updated_time" content="2020-03-06T14:11:48.122Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;images&#x2F;Python-%E7%88%AC%E8%99%AB&#x2F;image-20200302150606946.png">
+
+<link rel="canonical" href="http://yoursite.com/2020/02/28/Python-%E7%88%AC%E8%99%AB/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true,
+    isPage: false,
+    isArchive: false
+  };
+</script>
+
+  <title>Python 爬虫 | MIN MIN</title>
+  
+
+
+  <script>
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?cad2a7930afd095772e571e6eab3628f";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+  <!--  -->
+<link href='//fonts.googleapis.com/css?family=Kaushan+Script' rel='stylesheet' type='text/css'>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">MIN MIN</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+        <p class="site-subtitle">BLOG</p>
+  </div>
+
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档</a>
+
+  </li>
+  </ul>
+
+</nav>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/02/28/Python-%E7%88%AC%E8%99%AB/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="MIN MIN">
+      <meta itemprop="description" content="即使最后没有人为你鼓掌，也要优雅地谢幕，感谢自己的认真付出。">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="MIN MIN">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Python 爬虫
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-02-28 16:21:16" itemprop="dateCreated datePublished" datetime="2020-02-28T16:21:16+08:00">2020-02-28</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-03-06 22:11:48" itemprop="dateModified" datetime="2020-03-06T22:11:48+08:00">2020-03-06</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Python/" itemprop="url" rel="index">
+                    <span itemprop="name">Python</span>
+                  </a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h4 id="GET和POST请求方式"><a href="#GET和POST请求方式" class="headerlink" title="GET和POST请求方式"></a>GET和POST请求方式</h4><ul>
+<li><p>GET是默认的HTTP请求方法，用于直接输入网址的方式去访问网页，请求参数都包含在URL中，不太安全</p>
+</li>
+<li><p>POST是向WEB服务器提交表单数据，通过请求体传递参数，相对安全点</p>
+</li>
+</ul><p>用Python发请求需要安装<code>requests</code>库：</p><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> pip install requests</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> pip show requests</span></span><br></pre></td></tr></table></figure><a id="more"></a>
+
+
+
+<p>发送get请求后，响应结果有下面这些：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> requests</span><br><span class="line"></span><br><span class="line"><span class="comment"># 定义请求的url</span></span><br><span class="line">url = <span class="string">'https://www.baidu.com'</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 发送get请求</span></span><br><span class="line">response = requests.get(url)</span><br><span class="line">response.encoding = <span class="string">'utf-8'</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 获取响应结果</span></span><br><span class="line">print(response) <span class="comment"># &lt;Response [200]&gt;</span></span><br><span class="line">print(response.status_code) <span class="comment"># 请求状态码：200</span></span><br><span class="line">print(response.text) <span class="comment"># 获取响应内容</span></span><br><span class="line">print(response.content) <span class="comment"># 获取响应内容（二进制的方式）b'...'</span></span><br><span class="line">print(response.content.decode(<span class="string">'utf-8'</span>)) <span class="comment"># 把二进制文本流转为普通字符串</span></span><br><span class="line">print(response.headers) <span class="comment"># 响应头信息 &#123;'Cache-Control': 'private, no-cache, no-store, proxy-revalidate, no-transform', 'Connection': 'keep-alive', 'Content-Encoding': 'gzip', 'Content-Type': 'text/html', 'Date': 'Mon, 02 Mar 2020 05:47:07 GMT', 'Last-Modified': 'Mon, 23 Jan 2017 13:23:55 GMT', 'Pragma': 'no-cache', 'Server': 'bfe/1.0.8.18', 'Set-Cookie': 'BDORZ=27315; max-age=86400; domain=.baidu.com; path=/', 'Transfer-Encoding': 'chunked'&#125;</span></span><br><span class="line">print(response.url) <span class="comment"># https://www.baidu.com/</span></span><br><span class="line">print(response.request.headers) <span class="comment"># 请求头信息 &#123;'User-Agent': 'python-requests/2.23.0', 'Accept-Encoding': 'gzip, deflate', 'Accept': '*/*', 'Connection': 'keep-alive'&#125;</span></span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>⚠️注意：默认<code>User-Agent</code>中是带有<code>python-requests</code>的请求头，说明是爬虫程序。遇到网站具有反扒，则会得到<code>503</code>错误。</p>
+<p>解决方案是修改<code>User-Agent</code>请求头：在Chrome中进入“检查”页面，在“Network”中“Name”列点击第一个，然后在“Headers”栏的“Request Headers”中，复制对应的“User-Agent”：</p>
+<img src="/images/Python-%E7%88%AC%E8%99%AB/image-20200302150606946.png" alt="image-20200302150606946" style="zoom:50%;">
+
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> requests</span><br><span class="line"></span><br><span class="line"><span class="comment"># 定义请求的url</span></span><br><span class="line">url = <span class="string">'https://www.xicidaili.com'</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 定义请求头</span></span><br><span class="line">headers = &#123;</span><br><span class="line">    <span class="string">'User-Agent'</span>: <span class="string">'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.122 Safari/537.36'</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment"># 发送get请求</span></span><br><span class="line">response = requests.get(url=url, headers=headers)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 获取响应状态码</span></span><br><span class="line">status_code = response.status_code</span><br><span class="line">print(status_code)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 将成功响应的内容写入文件中</span></span><br><span class="line"><span class="keyword">if</span> status_code == <span class="number">200</span>:</span><br><span class="line">    <span class="keyword">with</span> open(<span class="string">'./xicidaili.html'</span>, <span class="string">'w'</span>) <span class="keyword">as</span> file:</span><br><span class="line">        file.write(response.text)</span><br></pre></td></tr></table></figure>
+</blockquote>
+<h4 id="requests库——post请求"><a href="#requests库——post请求" class="headerlink" title="requests库——post请求"></a>requests库——post请求</h4><p>案例：以post请求，实现百度翻译的功能</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> requests</span><br><span class="line"></span><br><span class="line">url = <span class="string">'https://fanyi.baidu.com/sug'</span></span><br><span class="line"></span><br><span class="line">headers = &#123;</span><br><span class="line">    <span class="string">'User-Agent'</span>: <span class="string">'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.122 Safari/537.36'</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment"># post发送的数据</span></span><br><span class="line">data_kw = input(<span class="string">"请输入需要翻译的字符串："</span>)</span><br><span class="line">data = &#123;</span><br><span class="line">    <span class="string">'kw'</span>: data_kw</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment"># 发送请求</span></span><br><span class="line">response = requests.post(url=url, data=data, headers=headers)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 接收返回的数据</span></span><br><span class="line">status_code = response.status_code</span><br><span class="line"><span class="keyword">if</span> status_code == <span class="number">200</span>:</span><br><span class="line">    data = response.json()</span><br><span class="line">    result = data[<span class="string">'data'</span>][<span class="number">0</span>][<span class="string">'v'</span>].split(<span class="string">';'</span>)[<span class="number">0</span>]</span><br><span class="line">    print(result)</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>请输入需要翻译的字符串：苹果<br>[píng guǒ] apple</p>
+</blockquote>
+<h4 id="requests库——cookie信息"><a href="#requests库——cookie信息" class="headerlink" title="requests库——cookie信息"></a>requests库——cookie信息</h4><p>可以使用浏览器已有的cookie来实现模拟登陆v2ex网站：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> requests</span><br><span class="line"></span><br><span class="line">url = <span class="string">'https://www.v2ex.com/balance'</span></span><br><span class="line"></span><br><span class="line">headers = &#123;</span><br><span class="line">    <span class="string">'User-Agent'</span>: <span class="string">'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.122 Safari/537.36'</span>,</span><br><span class="line">    <span class="string">'cookie'</span>: <span class="string">'__cfduid=dea297c2b767ee3fd833cb2f0943da7dd1573400546; V2EX_LANG=zhcn; _ga=GA1.2.267000674.1573400548; A2="2|1:0|10:1578806958|2:A2|48:ZTI5OTY1MWMtMjRhOC00YmJjLThjZDAtNmRhNTEyZTJlODJl|6ec3480cff9426c6a8388ac12c1bb03a173acd582d7bbc83f0ba8adc4ed987a4"; PB3_SESSION="2|1:0|10:1583162047|11:PB3_SESSION|40:djJleDoyMTguMTAyLjIxOS4xNzI6OTg1ODM5NDM=|fc1a79a95189530a5d30b8fcacc3c7adec61938e6bb3f8782d739835a4918f'</span></span><br><span class="line">&#125;</span><br><span class="line">response = requests.get(url=url, headers=headers)</span><br><span class="line"></span><br><span class="line">status_code = response.status_code</span><br><span class="line">print(status_code)</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> status_code == <span class="number">200</span>:</span><br><span class="line">    <span class="keyword">with</span> open(<span class="string">'./v2ex.html'</span>, <span class="string">'w'</span>) <span class="keyword">as</span> douyuFile:</span><br><span class="line">        douyuFile.write(response.text)</span><br></pre></td></tr></table></figure>
+
+<h4 id="requests库——session方法"><a href="#requests库——session方法" class="headerlink" title="requests库——session方法"></a>requests库——session方法</h4><p>如果需要爬虫程序主动记录并携带cookie信息，那需要使用先调用requests库的<code>session()</code>，再用<code>session()</code>返回的对象发送请求。</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> requests</span><br><span class="line"></span><br><span class="line"><span class="comment"># 登陆请求地址</span></span><br><span class="line">login_url = <span class="string">'https://freemycloud.xyz/auth/login'</span></span><br><span class="line"><span class="comment"># 个人信息地址</span></span><br><span class="line">url = <span class="string">'https://freemycloud.xyz/user'</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 请求头</span></span><br><span class="line">headers = &#123;</span><br><span class="line">    <span class="string">'User-Agent'</span>: <span class="string">'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.122 Safari/537.36'</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment"># 登陆请求的数据</span></span><br><span class="line">date = &#123;</span><br><span class="line">    <span class="string">'email'</span>: <span class="string">'xxxxxxxx@qq.com'</span>,</span><br><span class="line">    <span class="string">'passwd'</span>: <span class="string">'xxxxxxxx'</span>,</span><br><span class="line">    <span class="string">'remember_me'</span>: <span class="string">'on'</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">mysession = requests.session()</span><br><span class="line"><span class="comment"># 发起登陆请求</span></span><br><span class="line">response_login = mysession.post(url=login_url, headers=headers, data=date)</span><br><span class="line"></span><br><span class="line">login_status_code = response_login.status_code</span><br><span class="line">print(login_status_code)</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> login_status_code == <span class="number">200</span>:</span><br><span class="line">    response = mysession.get(url=url, headers=headers)</span><br><span class="line">    status_code = response.status_code</span><br><span class="line">    <span class="keyword">if</span> status_code == <span class="number">200</span>:</span><br><span class="line">        <span class="keyword">with</span> open(<span class="string">'./vpn.html'</span>, <span class="string">'w'</span>) <span class="keyword">as</span> vpn_file:</span><br><span class="line">            vpn_file.write(response.text)</span><br></pre></td></tr></table></figure>
+
+<h4 id="xpath的使用"><a href="#xpath的使用" class="headerlink" title="xpath的使用"></a>xpath的使用</h4><h5 id="1-直接在Python代码中解析html字符串"><a href="#1-直接在Python代码中解析html字符串" class="headerlink" title="1. 直接在Python代码中解析html字符串"></a>1. 直接在Python代码中解析html字符串</h5><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> lxml <span class="keyword">import</span> etree</span><br><span class="line"></span><br><span class="line">text = <span class="string">'''</span></span><br><span class="line"><span class="string">&lt;!DOCTYPE html&gt;</span></span><br><span class="line"><span class="string">&lt;html lang="zh-CN"&gt;</span></span><br><span class="line"><span class="string">&lt;head&gt;</span></span><br><span class="line"><span class="string">    &lt;meta charset="UTF-8"&gt;</span></span><br><span class="line"><span class="string">    &lt;title&gt;一起学Python&lt;/title&gt;</span></span><br><span class="line"><span class="string">&lt;/head&gt;</span></span><br><span class="line"><span class="string">&lt;body&gt;</span></span><br><span class="line"><span class="string">    &lt;ul&gt;</span></span><br><span class="line"><span class="string">        &lt;li&gt;&lt;a href="/language/python"&gt;Python工程师&lt;/a&gt;&lt;/li&gt;</span></span><br><span class="line"><span class="string">        &lt;li&gt;&lt;a href="/language/java"&gt;Java工程师&lt;/a&gt;&lt;/li&gt;</span></span><br><span class="line"><span class="string">        &lt;li&gt;&lt;a href="/language/scala"&gt;Scala工程师&lt;/a&gt;&lt;/li&gt;</span></span><br><span class="line"><span class="string">    &lt;/ul&gt;</span></span><br><span class="line"><span class="string">&lt;/body&gt;</span></span><br><span class="line"><span class="string">&lt;/html&gt;</span></span><br><span class="line"><span class="string">'''</span></span><br><span class="line"><span class="comment"># 使用etree解析html字符串</span></span><br><span class="line">html_str = etree.HTML(text)</span><br><span class="line">print(html_str) <span class="comment"># &lt;Element html at 0x102b53c80&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 提取数据</span></span><br><span class="line">language = html_str.xpath(<span class="string">'/html/body/ul/li/a/text()'</span>)</span><br><span class="line">print(language) <span class="comment"># ['Python工程师', 'Java工程师', 'Scala工程师']</span></span><br><span class="line">language_python = html_str.xpath(<span class="string">'/html/body/ul/li[1]/a/text()'</span>) <span class="comment"># ⚠️注意：第一个是1，不是0</span></span><br><span class="line">print(language_python) <span class="comment"># ['Python工程师']</span></span><br></pre></td></tr></table></figure>
+
+<h5 id="2-读取一个html文件并解析"><a href="#2-读取一个html文件并解析" class="headerlink" title="2. 读取一个html文件并解析"></a>2. 读取一个html文件并解析</h5><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> lxml <span class="keyword">import</span> etree</span><br><span class="line"></span><br><span class="line"><span class="comment"># 读取一个html文件并解析</span></span><br><span class="line">html_str = etree.parse(<span class="string">'./test.html'</span>, etree.HTMLParser())</span><br><span class="line">print(html_str) <span class="comment"># &lt;lxml.etree._ElementTree object at 0x111d9cc80&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 提取数据</span></span><br><span class="line">language = html_str.xpath(<span class="string">'/html/body/ul/li/a/text()'</span>)</span><br><span class="line">print(language) <span class="comment"># ['Python工程师', 'Java工程师', 'Scala工程师']</span></span><br><span class="line">language_python = html_str.xpath(<span class="string">'/html/body/ul/li[1]/a/@href'</span>) <span class="comment"># ⚠️注意：第一个是1，不是0</span></span><br><span class="line">print(language_python) <span class="comment"># ['/language/python']</span></span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<table>
+<thead>
+<tr>
+<th align="left">路径表达式</th>
+<th align="left">结果</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">bookstore</td>
+<td align="left">选取 bookstore 元素的所有子节点</td>
+</tr>
+<tr>
+<td align="left">/bookstore</td>
+<td align="left">选取根元素 bookstore。注释：假如路径起始于正斜杠( / )，则此路径始终代表到某元素的绝对路径！</td>
+</tr>
+<tr>
+<td align="left">bookstore/book</td>
+<td align="left">选取属于 bookstore 的子元素的所有 book 元素</td>
+</tr>
+<tr>
+<td align="left">//book</td>
+<td align="left">选取所有 book 子元素，而不管它们在文档中的位置</td>
+</tr>
+<tr>
+<td align="left">bookstore//book</td>
+<td align="left">选择属于 bookstore 元素的后代的所有 book 元素，而不管它们位于 bookstore 之下的什么位置</td>
+</tr>
+<tr>
+<td align="left">//@lang</td>
+<td align="left">选取名为 lang 的所有属性</td>
+</tr>
+<tr>
+<td align="left">/bookstore/book[last()-1]</td>
+<td align="left">选取属于 bookstore 子元素的倒数第二个 book 元素</td>
+</tr>
+<tr>
+<td align="left">/bookstore/book[position()&lt;3]</td>
+<td align="left">选取最前面的两个属于 bookstore 元素的子元素的 book 元素</td>
+</tr>
+<tr>
+<td align="left">//title[@lang]</td>
+<td align="left">选取所有拥有名为 lang 的属性的 title 元素</td>
+</tr>
+<tr>
+<td align="left">//title[@lang=’eng’]</td>
+<td align="left">选取所有 title 元素，且这些元素拥有值为 eng 的 lang 属性</td>
+</tr>
+<tr>
+<td align="left">/bookstore/book[price&gt;35.00]/title</td>
+<td align="left">选取 bookstore 元素中的 book 元素的所有 title 元素，且其中的 price 元素的值须大于 35.00</td>
+</tr>
+</tbody></table>
+</blockquote>
+<h4 id="爬取网站上账户的余额数据"><a href="#爬取网站上账户的余额数据" class="headerlink" title="爬取网站上账户的余额数据"></a>爬取网站上账户的余额数据</h4><p>实现流程：</p>
+<ol>
+<li>先使用<code>get</code>方式访问登陆页面，获取页面的token值</li>
+<li>拿到token值后，发起<code>post</code>登陆请求</li>
+<li>最后使用<code>get</code>方式访问目标地址，用xpath获取数据</li>
+</ol>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> requests</span><br><span class="line"><span class="keyword">from</span> lxml <span class="keyword">import</span> etree</span><br><span class="line"></span><br><span class="line"><span class="comment"># 登陆地址</span></span><br><span class="line">loginURL = <span class="string">'https://home.cloudn.me/clientarea.php'</span></span><br><span class="line"><span class="comment"># 账户余额地址</span></span><br><span class="line">balanceURL = <span class="string">'https://home.cloudn.me/clientarea.php'</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 请求头</span></span><br><span class="line">headers = &#123;</span><br><span class="line">    <span class="string">'user-agent'</span>: <span class="string">'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.182 Safari/537.36'</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">mysession = requests.session()</span><br><span class="line"></span><br><span class="line"><span class="comment"># 1. get 方式访问登陆页面，获取 token 值</span></span><br><span class="line">res_token = mysession.get(url=loginURL, headers=headers)</span><br><span class="line">print(<span class="string">"res_token的状态:"</span>, res_token.status_code)</span><br><span class="line"><span class="keyword">if</span> res_token.status_code == <span class="number">200</span>:</span><br><span class="line">    login_html = etree.HTML(res_token.text)</span><br><span class="line">    token = login_html.xpath(<span class="string">'/html/body/section/div/div/div[1]/form/input[@name="token"]/@value'</span>)[<span class="number">0</span>]</span><br><span class="line">    print(<span class="string">"登陆页面的 token 值为:"</span>, token)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 2. 拿到 token 后，发起 post 登陆请求</span></span><br><span class="line"><span class="comment"># post 请求需要发送的数据</span></span><br><span class="line">data = &#123;</span><br><span class="line">    <span class="string">'token'</span>:token,</span><br><span class="line">    <span class="string">'username'</span>:<span class="string">'xxx'</span>,</span><br><span class="line">    <span class="string">'password'</span>:<span class="string">'xxx'</span></span><br><span class="line">&#125;</span><br><span class="line">print(data)</span><br><span class="line">res_login = mysession.post(url=loginURL, headers=headers, data=data)</span><br><span class="line">print(<span class="string">"res_login的状态:"</span>, res_login.status_code)</span><br><span class="line"><span class="keyword">if</span> res_login.status_code == <span class="number">200</span>:</span><br><span class="line">    <span class="comment"># 3. get 访问账户余额地址</span></span><br><span class="line">    res_balance = mysession.get(url=balanceURL, headers=headers)</span><br><span class="line">    print(<span class="string">"res_balance.status_code的状态:"</span>, res_balance.status_code)</span><br><span class="line">    <span class="keyword">if</span> res_balance.status_code == <span class="number">200</span>:</span><br><span class="line">        <span class="keyword">with</span> open(<span class="string">'./KyCloud.html'</span>, <span class="string">'w'</span>) <span class="keyword">as</span> vpn_file:</span><br><span class="line">            vpn_file.write(res_balance.text)</span><br></pre></td></tr></table></figure>
+
+<h4 id="爬取百度新闻"><a href="#爬取百度新闻" class="headerlink" title="爬取百度新闻"></a>爬取百度新闻</h4><ul>
+<li>先把百度新闻html链接保存在本地</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> requests</span><br><span class="line"></span><br><span class="line">url = <span class="string">'https://news.baidu.com/'</span></span><br><span class="line"></span><br><span class="line">headers = &#123;</span><br><span class="line">    <span class="string">'user-agent'</span>: <span class="string">'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.132 Safari/537.36'</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">res = requests.get(url=url, headers=headers, timeout=<span class="number">2</span>)</span><br><span class="line">print(res.status_code)</span><br><span class="line"><span class="keyword">if</span> res.status_code == <span class="number">200</span>:</span><br><span class="line">    <span class="keyword">with</span> open(<span class="string">'./news_baidu.html'</span>, <span class="string">'w'</span>) <span class="keyword">as</span> fp:</span><br><span class="line">        fp.write(res.text)</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>再读取本地html并解析</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> lxml <span class="keyword">import</span> etree</span><br><span class="line"></span><br><span class="line">html_news_baidu = etree.parse(<span class="string">'./news_baidu.html'</span>, etree.HTMLParser())</span><br><span class="line"></span><br><span class="line"><span class="comment"># 热点新闻</span></span><br><span class="line">title_hot = html_news_baidu.xpath(<span class="string">'//*[@id="pane-news"]/div/ul/li//a/text()'</span>)</span><br><span class="line">href_hot = html_news_baidu.xpath(<span class="string">'//*[@id="pane-news"]/div/ul/li//a/@href'</span>)</span><br><span class="line">hot_news = zip(title_hot, href_hot)</span><br><span class="line">print(list(hot_news))</span><br><span class="line"></span><br><span class="line"><span class="comment"># 普通新闻</span></span><br><span class="line">title_normal = html_news_baidu.xpath(<span class="string">'//*[@id="pane-news"]/ul/li/a/text()'</span>)</span><br><span class="line">href_normal = html_news_baidu.xpath(<span class="string">'//*[@id="pane-news"]/ul/li/a/@href'</span>)</span><br><span class="line">normal_news = zip(title_normal, href_normal)</span><br><span class="line">print(list(normal_news))</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>[(‘中共中央政治局常务委员会召开会议’, ‘<a href="http://news.cctv.com/2020/03/04/ARTINEC5cRg8ASXZqXCodZUf200304.shtml&#39;" target="_blank" rel="noopener">http://news.cctv.com/2020/03/04/ARTINEC5cRg8ASXZqXCodZUf200304.shtml&#39;</a>), …]<br>[(‘各地投入春季生产农机具总量预计超2000万台套 ‘, ‘<a href="http://www.chinanews.com/gn/2020/03-04/9113643.shtml&#39;" target="_blank" rel="noopener">http://www.chinanews.com/gn/2020/03-04/9113643.shtml&#39;</a>), …]</p>
+</blockquote>
+<h4 id="爬取西祠代理的高匿IP"><a href="#爬取西祠代理的高匿IP" class="headerlink" title="爬取西祠代理的高匿IP"></a>爬取西祠代理的高匿IP</h4><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> requests</span><br><span class="line"><span class="keyword">import</span> time, os</span><br><span class="line"><span class="keyword">from</span> lxml <span class="keyword">import</span> etree</span><br><span class="line"></span><br><span class="line">headers = &#123;</span><br><span class="line">    <span class="string">'user-agent'</span>: <span class="string">'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.132 Safari/537.36'</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">getPages</span><span class="params">(num)</span>:</span></span><br><span class="line">    <span class="string">"""拉取指定页数的 XiciDaili 国内高匿代理网页"""</span></span><br><span class="line">    <span class="keyword">for</span> n <span class="keyword">in</span> range(<span class="number">1</span>, num+<span class="number">1</span>):</span><br><span class="line">        print(<span class="string">f"正在爬取第<span class="subst">&#123;n&#125;</span>页..."</span>)</span><br><span class="line">        url = <span class="string">f'https://www.xicidaili.com/nn/<span class="subst">&#123;n&#125;</span>'</span></span><br><span class="line">        res = requests.get(url=url, headers=headers)</span><br><span class="line">        <span class="keyword">if</span> res.status_code == <span class="number">200</span>:</span><br><span class="line">            <span class="keyword">with</span> open(<span class="string">f'./xicidaili_<span class="subst">&#123;n&#125;</span>.html'</span>, <span class="string">'w'</span>) <span class="keyword">as</span> fp:</span><br><span class="line">                fp.write(res.text)</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            print(url, res.status_code)</span><br><span class="line">        time.sleep(<span class="number">5</span>)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">parsePages</span><span class="params">(num)</span>:</span></span><br><span class="line">    <span class="string">"""获取指定页数的国内高匿代理的IP和端口"""</span></span><br><span class="line">    <span class="keyword">try</span>:</span><br><span class="line">        results = []</span><br><span class="line">        <span class="keyword">for</span> n <span class="keyword">in</span> range(<span class="number">1</span>, num+<span class="number">1</span>):</span><br><span class="line">            <span class="string">"""遍历每一个html文件"""</span></span><br><span class="line">            xicidaili_html = etree.parse(<span class="string">f'./xicidaili_<span class="subst">&#123;n&#125;</span>.html'</span>, parser=etree.HTMLParser())</span><br><span class="line">            ip = xicidaili_html.xpath(<span class="string">'//table[@id="ip_list"]/tr/td[2]/text()'</span>)</span><br><span class="line">            port = xicidaili_html.xpath(<span class="string">'//table[@id="ip_list"]/tr/td[3]/text()'</span>)</span><br><span class="line">            ip_port_list = list(zip(ip, port))</span><br><span class="line">            <span class="keyword">for</span> ip_port <span class="keyword">in</span> ip_port_list:</span><br><span class="line">                <span class="string">"""ip和端口号之间使用冒号拼接"""</span></span><br><span class="line">                results.append(<span class="string">f'<span class="subst">&#123;ip_port[<span class="number">0</span>]&#125;</span>:<span class="subst">&#123;ip_port[<span class="number">1</span>]&#125;</span>'</span>)</span><br><span class="line">        <span class="keyword">return</span> results</span><br><span class="line">    <span class="keyword">except</span>:</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">False</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">testIP</span><span class="params">(ip_ports)</span>:</span></span><br><span class="line">    <span class="string">"""测试IP是否可用"""</span></span><br><span class="line">    ip_path = <span class="string">'./ip.txt'</span></span><br><span class="line">    <span class="comment"># 删除上次的可用IP文件</span></span><br><span class="line">    <span class="keyword">if</span> os.path.exists(ip_path):</span><br><span class="line">        os.remove(ip_path)</span><br><span class="line"></span><br><span class="line">    url = <span class="string">'http://httpbin.org/ip'</span></span><br><span class="line">    <span class="keyword">with</span> open(ip_path, <span class="string">'a'</span>) <span class="keyword">as</span> fp:</span><br><span class="line">        num = <span class="number">0</span></span><br><span class="line">        <span class="keyword">for</span> ip_port <span class="keyword">in</span> ip_ports:</span><br><span class="line">            num += <span class="number">1</span></span><br><span class="line">            proxies = &#123;</span><br><span class="line">                <span class="string">"http"</span>: <span class="string">f"http://<span class="subst">&#123;ip_port&#125;</span>"</span></span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">try</span>:</span><br><span class="line">                res = requests.get(url=url, headers=headers, proxies=proxies,</span><br><span class="line">                                   verify=<span class="literal">False</span>, allow_redirects=<span class="literal">False</span>, timeout=<span class="number">5</span>)</span><br><span class="line">                <span class="keyword">if</span> res.status_code == <span class="number">200</span>:</span><br><span class="line">                    fp.write(<span class="string">f'<span class="subst">&#123;ip_port&#125;</span>\n'</span>)</span><br><span class="line">            <span class="keyword">except</span>:</span><br><span class="line">                print(<span class="string">f'第<span class="subst">&#123;num&#125;</span>个请求失败'</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment">#getPages(1)</span></span><br><span class="line"><span class="comment">#testIP(parsePages(1))</span></span><br></pre></td></tr></table></figure>
+
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Python/" rel="tag"># Python</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-next post-nav-item">
+                <a href="/2020/02/27/Python-%E5%B8%B8%E7%94%A8%E5%86%85%E5%BB%BA%E6%A8%A1%E5%9D%97/" rel="next" title="Python 常用内建模块">
+                  <i class="fa fa-chevron-left"></i> Python 常用内建模块
+                </a>
+            </div>
+
+            <span class="post-nav-divider"></span>
+
+            <div class="post-nav-prev post-nav-item">
+                <a href="/2020/03/11/Python-%E5%A4%9A%E4%BB%BB%E5%8A%A1/" rel="prev" title="Python 多任务">
+                  Python 多任务 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#GET和POST请求方式"><span class="nav-number">1.</span> <span class="nav-text">GET和POST请求方式</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#requests库——post请求"><span class="nav-number">2.</span> <span class="nav-text">requests库——post请求</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#requests库——cookie信息"><span class="nav-number">3.</span> <span class="nav-text">requests库——cookie信息</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#requests库——session方法"><span class="nav-number">4.</span> <span class="nav-text">requests库——session方法</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#xpath的使用"><span class="nav-number">5.</span> <span class="nav-text">xpath的使用</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#1-直接在Python代码中解析html字符串"><span class="nav-number">5.1.</span> <span class="nav-text">1. 直接在Python代码中解析html字符串</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#2-读取一个html文件并解析"><span class="nav-number">5.2.</span> <span class="nav-text">2. 读取一个html文件并解析</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#爬取网站上账户的余额数据"><span class="nav-number">6.</span> <span class="nav-text">爬取网站上账户的余额数据</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#爬取百度新闻"><span class="nav-number">7.</span> <span class="nav-text">爬取百度新闻</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#爬取西祠代理的高匿IP"><span class="nav-number">8.</span> <span class="nav-text">爬取西祠代理的高匿IP</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <img class="site-author-image" itemprop="image" alt="MIN MIN"
+    src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">MIN MIN</p>
+  <div class="site-description" itemprop="description">即使最后没有人为你鼓掌，也要优雅地谢幕，感谢自己的认真付出。</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">58</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">13</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+        <span class="site-state-item-count">32</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/ashermin" title="GitHub &amp;rarr; https:&#x2F;&#x2F;github.com&#x2F;ashermin" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+<div class="copyright">
+  
+  &copy; 2019 – 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user-circle"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">MIN MIN</span>
+</div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+<script src="/js/utils.js"></script>
+<script src="/js/schemes/pisces.js"></script>
+<script src="/js/next-boot.js"></script>
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+</body>
+</html>

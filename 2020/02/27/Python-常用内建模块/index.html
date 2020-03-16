@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.0.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/avatar.jpg">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/avatar.jpg">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/avatar.jpg">
+  <link rel="mask-icon" href="/images/avatar.jpg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+
+
+<script id="hexo-configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '7.4.2',
+    exturl: false,
+    sidebar: {"position":"left","width":260,"display":"post","offset":12,"onmobile":false},
+    copycode: {"enable":true,"show_result":true,"style":"default"},
+    back2top: {"enable":true,"sidebar":false,"scrollpercent":true},
+    bookmark: {"enable":false,"color":"#222","save":"auto"},
+    fancybox: false,
+    mediumzoom: false,
+    lazyload: false,
+    pangu: false,
+    algolia: {
+      appID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    localsearch: {"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},
+    path: '',
+    motion: {"enable":false,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    translation: {
+      copy_button: '复制',
+      copy_success: '复制成功',
+      copy_failure: '复制失败'
+    },
+    sidebarPadding: 40
+  };
+</script>
+
+  <meta name="description" content="1. datetimedatetime是Python处理日期和时间的标准库。1.1 获取当前&#x2F;指定日期和时间 datetime.now()返回当前日期和时间，其类型是datetime 要指定某个日期和时间，直接用参数构造一个datetime from datetime import datetime# 1. 获取当前日期和时间now = datetime.now()print(now) # 202">
+<meta name="keywords" content="Python">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Python 常用内建模块">
+<meta property="og:url" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2020&#x2F;02&#x2F;27&#x2F;Python-%E5%B8%B8%E7%94%A8%E5%86%85%E5%BB%BA%E6%A8%A1%E5%9D%97&#x2F;index.html">
+<meta property="og:site_name" content="MIN MIN">
+<meta property="og:description" content="1. datetimedatetime是Python处理日期和时间的标准库。1.1 获取当前&#x2F;指定日期和时间 datetime.now()返回当前日期和时间，其类型是datetime 要指定某个日期和时间，直接用参数构造一个datetime from datetime import datetime# 1. 获取当前日期和时间now = datetime.now()print(now) # 202">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2020-02-27T08:12:53.370Z">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://yoursite.com/2020/02/27/Python-%E5%B8%B8%E7%94%A8%E5%86%85%E5%BB%BA%E6%A8%A1%E5%9D%97/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true,
+    isPage: false,
+    isArchive: false
+  };
+</script>
+
+  <title>Python 常用内建模块 | MIN MIN</title>
+  
+
+
+  <script>
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?cad2a7930afd095772e571e6eab3628f";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+  <!--  -->
+<link href='//fonts.googleapis.com/css?family=Kaushan+Script' rel='stylesheet' type='text/css'>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">MIN MIN</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+        <p class="site-subtitle">BLOG</p>
+  </div>
+
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档</a>
+
+  </li>
+  </ul>
+
+</nav>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/02/27/Python-%E5%B8%B8%E7%94%A8%E5%86%85%E5%BB%BA%E6%A8%A1%E5%9D%97/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="MIN MIN">
+      <meta itemprop="description" content="即使最后没有人为你鼓掌，也要优雅地谢幕，感谢自己的认真付出。">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="MIN MIN">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Python 常用内建模块
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2020-02-27 10:28:18 / 修改时间：16:12:53" itemprop="dateCreated datePublished" datetime="2020-02-27T10:28:18+08:00">2020-02-27</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Python/" itemprop="url" rel="index">
+                    <span itemprop="name">Python</span>
+                  </a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h2 id="1-datetime"><a href="#1-datetime" class="headerlink" title="1. datetime"></a>1. datetime</h2><p>datetime是Python处理日期和时间的标准库。</p><h4 id="1-1-获取当前-指定日期和时间"><a href="#1-1-获取当前-指定日期和时间" class="headerlink" title="1.1 获取当前/指定日期和时间"></a>1.1 获取当前/指定日期和时间</h4><ul>
+<li><code>datetime.now()</code>返回当前日期和时间，其类型是<code>datetime</code></li>
+<li>要指定某个日期和时间，直接用参数构造一个<code>datetime</code></li>
+</ul><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> datetime <span class="keyword">import</span> datetime</span><br><span class="line"></span><br><span class="line"><span class="comment"># 1. 获取当前日期和时间</span></span><br><span class="line">now = datetime.now()</span><br><span class="line">print(now) <span class="comment"># 2020-02-27 10:35:17.898245</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 2. 获取指定日期和时间</span></span><br><span class="line">dt = datetime(<span class="number">2020</span>, <span class="number">5</span>, <span class="number">1</span>, <span class="number">2</span>) <span class="comment"># 用指定日期时间（指定到小时）创建datetime</span></span><br><span class="line">print(dt) <span class="comment"># 2020-05-01 02:00:00</span></span><br></pre></td></tr></table></figure><a id="more"></a>
+
+
+
+<h4 id="1-2-datetime与timestamp的转换"><a href="#1-2-datetime与timestamp的转换" class="headerlink" title="1.2 datetime与timestamp的转换"></a>1.2 datetime与timestamp的转换</h4><ul>
+<li>datetime转换为timestamp：调用<code>timestamp()</code>方法</li>
+<li>timestamp转换为datetime：<ul>
+<li>本地时区：调用<code>datetime.fromtimestamp()</code>方法</li>
+<li>UTC标准时区：调用<code>datetime.utcfromtimestamp()</code>方法</li>
+</ul>
+</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> datetime <span class="keyword">import</span> datetime</span><br><span class="line"></span><br><span class="line"><span class="comment"># 3. datetime转换为timestamp</span></span><br><span class="line">dt = datetime(<span class="number">2020</span>, <span class="number">2</span>, <span class="number">27</span>, <span class="number">11</span>, <span class="number">14</span>, <span class="number">56</span>, <span class="number">58</span>)</span><br><span class="line">ts = dt.timestamp()</span><br><span class="line">print(ts) <span class="comment"># 1582773296.000058 小数位表示毫秒数</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 4. timestamp转换为datetime</span></span><br><span class="line">dt_local = datetime.fromtimestamp(ts)  <span class="comment"># 本地时间</span></span><br><span class="line">dt_utc = datetime.utcfromtimestamp(ts) <span class="comment"># UTC时间</span></span><br><span class="line">print(dt_local) <span class="comment"># 2020-02-27 11:14:56.000058</span></span><br><span class="line">print(dt_utc)   <span class="comment"># 2020-02-27 03:14:56.000058</span></span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">timestamp = 0 = 1970-1-1 00:00:00 UTC+0:00</span><br></pre></td></tr></table></figure>
+</blockquote>
+<h4 id="1-3-datetime与str的转换"><a href="#1-3-datetime与str的转换" class="headerlink" title="1.3 datetime与str的转换"></a>1.3 datetime与str的转换</h4><ul>
+<li>datetime转换为str：调用<code>strftime()</code>方法 + 时间/日期字符串</li>
+<li>str转换为datetime：调用<code>datetime.strptime()</code>方法 + 时间/日期字符串</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> datetime <span class="keyword">import</span> datetime</span><br><span class="line"></span><br><span class="line"><span class="comment"># 5. datetime转换为str</span></span><br><span class="line">now = datetime.now()</span><br><span class="line">str = now.strftime(<span class="string">'%a, %b %d %H:%M'</span>)</span><br><span class="line">print(str) <span class="comment"># Thu, Feb 27 11:21</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 6. str转换为datetime</span></span><br><span class="line">today = datetime.strptime(<span class="string">'2020/02/27 11:10:39 123456 am Thu'</span>, <span class="string">'%Y/%m/%d %H:%M:%S %f %p %a'</span>)</span><br><span class="line">print(today) <span class="comment"># 2020-02-27 11:10:39.123456</span></span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>字符串部分的代码格式可以参考官网：<a href="https://docs.python.org/3/library/datetime.html#strftime-strptime-behavior" target="_blank" rel="noopener">https://docs.python.org/3/library/datetime.html#strftime-strptime-behavior</a></p>
+</blockquote>
+<h4 id="1-4-datetime加减"><a href="#1-4-datetime加减" class="headerlink" title="1.4 datetime加减"></a>1.4 datetime加减</h4><p>加减可以直接用<code>+</code>和<code>-</code>运算符，不过需要导入<code>timedelta</code>这个类：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> datetime <span class="keyword">import</span> datetime, timedelta</span><br><span class="line"></span><br><span class="line"><span class="comment"># 7. datetime加减</span></span><br><span class="line">now = datetime.now()</span><br><span class="line">print(now)    <span class="comment"># 2020-02-27 11:28:40.213634</span></span><br><span class="line">now_1 = now + timedelta(hours=<span class="number">10</span>)</span><br><span class="line">print(now_1)  <span class="comment"># 2020-02-27 21:28:40.213634</span></span><br><span class="line">now_2 = now - timedelta(days=<span class="number">1</span>)</span><br><span class="line">print(now_2)  <span class="comment"># 2020-02-26 11:28:40.213634</span></span><br><span class="line">now_3 = now + timedelta(days=<span class="number">2</span>, hours=<span class="number">12</span>, minutes=<span class="number">10</span>)</span><br><span class="line">print(now_3)  <span class="comment"># 2020-02-29 23:38:40.213634</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="1-5-本地时间转换为UTC时间"><a href="#1-5-本地时间转换为UTC时间" class="headerlink" title="1.5 本地时间转换为UTC时间"></a>1.5 本地时间转换为UTC时间</h4><blockquote>
+<p>“本地时间转换为UTC时间”解释：时间不变，把时间所属的时区改变。</p>
+</blockquote>
+<p>datetime类型的<code>tzinfo</code>属性默认为<code>None</code>，不知道这个datetime属于哪个时区，所以需要给<code>tzinfo</code>属性指定一个时区：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> datetime <span class="keyword">import</span> datetime, timedelta, timezone</span><br><span class="line"></span><br><span class="line"><span class="comment"># 8. 本地时间转为UTC时间</span></span><br><span class="line">tz_utc_8 = timezone(timedelta(hours=<span class="number">8</span>)) <span class="comment"># 创建时区UTC+8:00</span></span><br><span class="line">now = datetime.now()</span><br><span class="line">dt = now.replace(tzinfo=tz_utc_8) <span class="comment"># 强行设置为UTC+8:00</span></span><br><span class="line">print(now) <span class="comment"># 2020-02-27 11:41:38.802608</span></span><br><span class="line">print(dt)  <span class="comment"># 2020-02-27 11:41:38.802608+08:00</span></span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>⚠️注意：如果系统时区恰好是UTC+8:00，那么上述代码就是正确的，否则，不能强制设置为UTC+8:00时区。</p>
+</blockquote>
+<h4 id="1-6-时区转换"><a href="#1-6-时区转换" class="headerlink" title="1.6 时区转换"></a>1.6 时区转换</h4><p>时区转换的关键在于，拿到一个datetime时，要获知其正确的时区，然后强制设置时区，作为基准时间。先通过<code>utcnow()</code>拿到当前的UTC时间，利用带时区的datetime，通过<code>astimezone()</code>方法，可以转换到任意时区</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> datetime <span class="keyword">import</span> datetime, timedelta, timezone</span><br><span class="line"></span><br><span class="line"><span class="comment"># 9. 时区转换</span></span><br><span class="line"><span class="comment"># 获取带时区的UTC时间</span></span><br><span class="line">utc_time_zone = datetime.utcnow().replace(tzinfo=timezone.utc)</span><br><span class="line"><span class="comment"># UTC时间转换为北京时间</span></span><br><span class="line">beijing_time_zone = utc_time_zone.astimezone(timezone(timedelta(hours=<span class="number">8</span>)))</span><br><span class="line"><span class="comment"># UTC时间转换为东京时间</span></span><br><span class="line">tokyo_time_zone = utc_time_zone.astimezone(timezone(timedelta(hours=<span class="number">9</span>)))</span><br><span class="line"><span class="comment"># 北京时间转换为东京时间</span></span><br><span class="line">tokyo_time_zone_bj = beijing_time_zone.astimezone(timezone(timedelta(hours=<span class="number">9</span>)))</span><br><span class="line">print(beijing_time_zone)   <span class="comment"># 2020-02-27 13:40:15.437334+08:00</span></span><br><span class="line">print(tokyo_time_zone)     <span class="comment"># 2020-02-27 14:40:15.437334+09:00</span></span><br><span class="line">print(tokyo_time_zone_bj)  <span class="comment"># 2020-02-27 14:40:15.437334+09:00</span></span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>⚠️注意：不是必须从UTC+0:00时区转换到其他时区，只要利用带时区的datetime，通过<code>astimezone()</code>方法都可以转换为其它时区。</p>
+</blockquote>
+<h4 id="练习"><a href="#练习" class="headerlink" title="练习"></a>练习</h4><p>需求：假设你获取了用户输入的日期和时间如<code>2015-1-21 9:01:30</code>，以及一个时区信息如<code>UTC+5:00</code>，均是<code>str</code>，请编写一个函数将其转换为timestamp</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> datetime <span class="keyword">import</span> datetime, timedelta, timezone</span><br><span class="line"><span class="keyword">import</span> re</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">str2timestamp</span><span class="params">(input_time, input_zone)</span>:</span></span><br><span class="line">    <span class="string">"""将str字符串的时间转换为timestamp"""</span></span><br><span class="line">    local_time = datetime.strptime(input_time, <span class="string">'%Y-%m-%d %H:%M:%S'</span>)</span><br><span class="line">    zone = int(re.match(<span class="string">r'UTC([\+\-\d]+):\d*'</span>, input_zone).group(<span class="number">1</span>))</span><br><span class="line">    <span class="comment"># 为本地时间添加时区</span></span><br><span class="line">    zone_time = local_time.replace(tzinfo=timezone(timedelta(hours=zone)))</span><br><span class="line">    <span class="comment"># 将带时区的datetime转换为timestamp</span></span><br><span class="line">    timestamp = zone_time.timestamp()</span><br><span class="line">    <span class="keyword">return</span> timestamp</span><br><span class="line"></span><br><span class="line">print(str2timestamp(<span class="string">'2015-6-1 08:10:30'</span>, <span class="string">'UTC+7:00'</span>))   <span class="comment"># 1433121030.0</span></span><br><span class="line">print(str2timestamp(<span class="string">'2015-5-31 16:10:30'</span>, <span class="string">'UTC-09:00'</span>)) <span class="comment"># 1433121030.0</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="2-collections"><a href="#2-collections" class="headerlink" title="2. collections"></a>2. collections</h2><p>collections是Python内建的一个集合模块，提供了许多有用的集合类。</p>
+<h4 id="2-1-namedtuple"><a href="#2-1-namedtuple" class="headerlink" title="2.1 namedtuple"></a>2.1 namedtuple</h4><p>namedtuple是一个函数，它用来创建一个自定义的tuple对象，并且规定了tuple元素的个数，并可以用属性而不是索引来引用tuple的某个元素。</p>
+<p>语法格式：<code>namedtuple(&#39;名称&#39;, [属性list])</code></p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> collections <span class="keyword">import</span> namedtuple</span><br><span class="line"></span><br><span class="line"><span class="comment"># 1. namedtuple，自定义的 tuple 对象</span></span><br><span class="line"><span class="comment"># 用圆心坐标和半径表示一个圆</span></span><br><span class="line">Circle = namedtuple(<span class="string">'Circle'</span>, [<span class="string">'x'</span>, <span class="string">'y'</span>, <span class="string">'r'</span>])</span><br><span class="line">circle = Circle(<span class="number">2</span>, <span class="number">3</span>, <span class="number">1</span>)</span><br><span class="line">print(circle.x) <span class="comment"># 2</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="2-2-deque"><a href="#2-2-deque" class="headerlink" title="2.2 deque"></a>2.2 deque</h4><p>deque和list都是队列，不过deque是双向队列，而list是单向；在删除和插入时，deque很高效，但由于list是线性存储的，数据量一大时效率就很低。</p>
+<p>只要list里有的方法，deque都可以用，而且deque还有自己的方法：</p>
+<ul>
+<li>头部添加元素：<code>appendleft(x)</code></li>
+<li>头部添加多个元素：<code>extendleft(iterable)</code></li>
+<li>头部返回并删除：<code>popleft()</code></li>
+<li>旋转：rotate(n=1)</li>
+<li>最大空间：maxlen，如果无边界返回None</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> collections <span class="keyword">import</span> deque</span><br><span class="line"></span><br><span class="line"><span class="comment"># 2. deque，双向的list</span></span><br><span class="line">q = deque([<span class="string">'a'</span>, <span class="string">'b'</span>, <span class="string">'c'</span>, <span class="string">'d'</span>, <span class="string">'e'</span>, <span class="string">'f'</span>], <span class="number">10</span>) <span class="comment"># 指定队列只能容纳10个元素</span></span><br><span class="line">q.append(<span class="string">'x'</span>)</span><br><span class="line">q.appendleft(<span class="string">'y'</span>)</span><br><span class="line">q.extendleft([<span class="string">'A'</span>, <span class="string">'B'</span>, <span class="string">'C'</span>])</span><br><span class="line">print(q)</span><br><span class="line"><span class="comment"># 若不指定队列长度，应该是有11个元素：</span></span><br><span class="line"><span class="comment">#   deque(['C', 'B', 'A', 'y', 'a', 'b', 'c', 'd', 'e', 'f', 'x'])</span></span><br><span class="line"><span class="comment"># 但是由于指定了10个元素，最后个'x'被挤出了队列：</span></span><br><span class="line"><span class="comment">#   deque(['C', 'B', 'A', 'y', 'a', 'b', 'c', 'd', 'e', 'f'], maxlen=10)</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 将序列的末尾两位移动到前面</span></span><br><span class="line">q.rotate(<span class="number">2</span>)</span><br><span class="line">print(q)</span><br><span class="line"><span class="comment"># q.rotate(2)前：</span></span><br><span class="line"><span class="comment">#   deque(['C', 'B', 'A', 'y', 'a', 'b', 'c', 'd', 'e', 'f'], maxlen=10)</span></span><br><span class="line"><span class="comment"># q.rotate(2)后：</span></span><br><span class="line"><span class="comment">#   deque(['e', 'f', 'C', 'B', 'A', 'y', 'a', 'b', 'c', 'd'], maxlen=10)</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="2-3-defaultdict"><a href="#2-3-defaultdict" class="headerlink" title="2.3 defaultdict"></a>2.3 defaultdict</h4><p>使用字典时，如果引用的Key不存在，就会抛出<code>KeyError</code>。如果希望key不存在时，返回一个默认值，就可以用<code>defaultdict</code>：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> collections <span class="keyword">import</span> defaultdict</span><br><span class="line"></span><br><span class="line"><span class="comment"># 3. defaultdict，当字典中引用的 key 不存在时，返回一个默认值</span></span><br><span class="line">student = defaultdict(<span class="keyword">lambda</span>: <span class="string">'N/A'</span>)</span><br><span class="line">student[<span class="string">'name'</span>] = <span class="string">'zhangsan'</span></span><br><span class="line">print(student[<span class="string">'scode'</span>]) <span class="comment"># N/A</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="2-4-Counter"><a href="#2-4-Counter" class="headerlink" title="2.4 Counter"></a>2.4 Counter</h4><p>Counter是一个简单的计数器，它实际上是字典的一个子类。</p>
+<p>例：可以统计字符出现的个数，也可以在上次统计的基础上进行<code>update()</code>累加</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> collections <span class="keyword">import</span> Counter</span><br><span class="line"></span><br><span class="line"><span class="comment"># 4. Counter() 计数器</span></span><br><span class="line">c = Counter()</span><br><span class="line"><span class="keyword">for</span> ch <span class="keyword">in</span> <span class="string">'abbccc'</span>:</span><br><span class="line">    c[ch] += <span class="number">1</span></span><br><span class="line">print(c) <span class="comment"># Counter(&#123;'c': 3, 'b': 2, 'a': 1&#125;)</span></span><br><span class="line">c.update(<span class="string">'cccdddd'</span>)</span><br><span class="line">print(c) <span class="comment"># Counter(&#123;'c': 6, 'd': 4, 'b': 2, 'a': 1&#125;)</span></span><br></pre></td></tr></table></figure>
+
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Python/" rel="tag"># Python</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-next post-nav-item">
+                <a href="/2020/02/24/Python-%E6%95%B0%E6%8D%AE%E5%8F%AF%E8%A7%86%E5%8C%96/" rel="next" title="Python 数据可视化">
+                  <i class="fa fa-chevron-left"></i> Python 数据可视化
+                </a>
+            </div>
+
+            <span class="post-nav-divider"></span>
+
+            <div class="post-nav-prev post-nav-item">
+                <a href="/2020/02/28/Python-%E7%88%AC%E8%99%AB/" rel="prev" title="Python 爬虫">
+                  Python 爬虫 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-datetime"><span class="nav-number">1.</span> <span class="nav-text">1. datetime</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-1-获取当前-指定日期和时间"><span class="nav-number">1.0.1.</span> <span class="nav-text">1.1 获取当前/指定日期和时间</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#1-2-datetime与timestamp的转换"><span class="nav-number">1.0.2.</span> <span class="nav-text">1.2 datetime与timestamp的转换</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#1-3-datetime与str的转换"><span class="nav-number">1.0.3.</span> <span class="nav-text">1.3 datetime与str的转换</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#1-4-datetime加减"><span class="nav-number">1.0.4.</span> <span class="nav-text">1.4 datetime加减</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#1-5-本地时间转换为UTC时间"><span class="nav-number">1.0.5.</span> <span class="nav-text">1.5 本地时间转换为UTC时间</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#1-6-时区转换"><span class="nav-number">1.0.6.</span> <span class="nav-text">1.6 时区转换</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#练习"><span class="nav-number">1.0.7.</span> <span class="nav-text">练习</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-collections"><span class="nav-number">2.</span> <span class="nav-text">2. collections</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#2-1-namedtuple"><span class="nav-number">2.0.1.</span> <span class="nav-text">2.1 namedtuple</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-2-deque"><span class="nav-number">2.0.2.</span> <span class="nav-text">2.2 deque</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-3-defaultdict"><span class="nav-number">2.0.3.</span> <span class="nav-text">2.3 defaultdict</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-4-Counter"><span class="nav-number">2.0.4.</span> <span class="nav-text">2.4 Counter</span></a></li></ol></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <img class="site-author-image" itemprop="image" alt="MIN MIN"
+    src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">MIN MIN</p>
+  <div class="site-description" itemprop="description">即使最后没有人为你鼓掌，也要优雅地谢幕，感谢自己的认真付出。</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">58</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">13</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+        <span class="site-state-item-count">32</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/ashermin" title="GitHub &amp;rarr; https:&#x2F;&#x2F;github.com&#x2F;ashermin" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+<div class="copyright">
+  
+  &copy; 2019 – 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user-circle"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">MIN MIN</span>
+</div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+<script src="/js/utils.js"></script>
+<script src="/js/schemes/pisces.js"></script>
+<script src="/js/next-boot.js"></script>
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+</body>
+</html>
