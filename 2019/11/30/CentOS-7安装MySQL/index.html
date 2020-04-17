@@ -53,12 +53,12 @@
   <meta name="description" content="检查系统上是否已经装了MySQL$ rpm -qa | grep mysql如果有，则卸载它：$ sudo rpm -e --nodeps xxx安装MySQLMySQL被Oracle收购后，CentOS的镜像仓库中提供的默认的数据库也变为了MariaDB，为了解决这个问题，需要先下载MySQL的repo源：">
 <meta name="keywords" content="Linux,MySQL">
 <meta property="og:type" content="article">
-<meta property="og:title" content="CentOS 7安装MySQL">
+<meta property="og:title" content="CentOS 7 安装 MySQL">
 <meta property="og:url" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2019&#x2F;11&#x2F;30&#x2F;CentOS-7%E5%AE%89%E8%A3%85MySQL&#x2F;index.html">
 <meta property="og:site_name" content="MIN MIN">
 <meta property="og:description" content="检查系统上是否已经装了MySQL$ rpm -qa | grep mysql如果有，则卸载它：$ sudo rpm -e --nodeps xxx安装MySQLMySQL被Oracle收购后，CentOS的镜像仓库中提供的默认的数据库也变为了MariaDB，为了解决这个问题，需要先下载MySQL的repo源：">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2020-01-02T07:33:26.320Z">
+<meta property="og:updated_time" content="2020-04-11T02:47:36.674Z">
 <meta name="twitter:card" content="summary">
 
 <link rel="canonical" href="http://yoursite.com/2019/11/30/CentOS-7%E5%AE%89%E8%A3%85MySQL/">
@@ -75,7 +75,7 @@
   };
 </script>
 
-  <title>CentOS 7安装MySQL | MIN MIN</title>
+  <title>CentOS 7 安装 MySQL | MIN MIN</title>
   
 
 
@@ -206,7 +206,7 @@
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          CentOS 7安装MySQL
+          CentOS 7 安装 MySQL
         </h1>
 
         <div class="post-meta">
@@ -223,7 +223,7 @@
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-01-02 15:33:26" itemprop="dateModified" datetime="2020-01-02T15:33:26+08:00">2020-01-02</time>
+                <time title="修改时间：2020-04-11 10:47:36" itemprop="dateModified" datetime="2020-04-11T10:47:36+08:00">2020-04-11</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -267,9 +267,9 @@
 <figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> sudo rpm -ivh mysql-community-release-el7-5.noarch.rpm</span></span><br></pre></td></tr></table></figure>
 
 <p>安装MySQL：</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> sudo yum install mysql-server</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> sudo yum update</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> sudo yum install mysql-server</span></span><br></pre></td></tr></table></figure>
 
-<h4 id="检查-开启MySQL服务"><a href="#检查-开启MySQL服务" class="headerlink" title="检查/开启MySQL服务"></a>检查/开启MySQL服务</h4><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> systemctl status mysqld.service</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> systemctl start mysqld.service</span></span><br></pre></td></tr></table></figure>
+<h4 id="检查-开启MySQL服务"><a href="#检查-开启MySQL服务" class="headerlink" title="检查/开启MySQL服务"></a>检查/开启MySQL服务</h4><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> systemctl status mysqld.service</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> sudo systemctl start mysqld.service</span></span><br></pre></td></tr></table></figure>
 
 <h4 id="设置开机自启动MySQL服务"><a href="#设置开机自启动MySQL服务" class="headerlink" title="设置开机自启动MySQL服务"></a>设置开机自启动MySQL服务</h4><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> systemctl <span class="built_in">enable</span> mysqld.service</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> systemctl is-enabled mysqld.service</span></span><br></pre></td></tr></table></figure>
 
@@ -277,6 +277,11 @@
 
 <h4 id="进入MySQL"><a href="#进入MySQL" class="headerlink" title="进入MySQL"></a>进入MySQL</h4><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">mysql -u root -p</span><br></pre></td></tr></table></figure>
 
+<h4 id="设置任何IP都有连接权限"><a href="#设置任何IP都有连接权限" class="headerlink" title="设置任何IP都有连接权限"></a>设置任何IP都有连接权限</h4><figure class="highlight"><table><tr><td class="code"><pre><span class="line">&gt; use mysql;</span><br><span class="line">&gt; select host from user where user='root';</span><br><span class="line">+<span class="comment">-----------+</span></span><br><span class="line">| host      |</span><br><span class="line">+<span class="comment">-----------+</span></span><br><span class="line">| 127.0.0.1 |</span><br><span class="line">| ::1       |</span><br><span class="line">| centos701 |</span><br><span class="line">| localhost |</span><br><span class="line">+<span class="comment">-----------+</span></span><br><span class="line">&gt; update user set host = '%' where user = 'root' and host='localhost';</span><br><span class="line">&gt; flush privileges;</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>Host列指定了允许用户登录所使用的IP，比如user=root Host=192.168.1.1。这里的意思就是说root用户只能通过192.168.1.1的客户端去访问。 user=root Host=localhost，表示只能通过本机客户端去访问。而%是个通配符，如果Host=192.168.1.%，那么就表示只要是IP地址前缀为“192.168.1.”的客户端都可以连接。如果Host=%，表示所有IP都有连接权限。</p>
+</blockquote>
 
     </div>
 
@@ -343,7 +348,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#检查系统上是否已经装了MySQL"><span class="nav-number">1.</span> <span class="nav-text">检查系统上是否已经装了MySQL</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#安装MySQL"><span class="nav-number">2.</span> <span class="nav-text">安装MySQL</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#检查-开启MySQL服务"><span class="nav-number">3.</span> <span class="nav-text">检查/开启MySQL服务</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#设置开机自启动MySQL服务"><span class="nav-number">4.</span> <span class="nav-text">设置开机自启动MySQL服务</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#设置管理员root密码"><span class="nav-number">5.</span> <span class="nav-text">设置管理员root密码</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#进入MySQL"><span class="nav-number">6.</span> <span class="nav-text">进入MySQL</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#检查系统上是否已经装了MySQL"><span class="nav-number">1.</span> <span class="nav-text">检查系统上是否已经装了MySQL</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#安装MySQL"><span class="nav-number">2.</span> <span class="nav-text">安装MySQL</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#检查-开启MySQL服务"><span class="nav-number">3.</span> <span class="nav-text">检查/开启MySQL服务</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#设置开机自启动MySQL服务"><span class="nav-number">4.</span> <span class="nav-text">设置开机自启动MySQL服务</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#设置管理员root密码"><span class="nav-number">5.</span> <span class="nav-text">设置管理员root密码</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#进入MySQL"><span class="nav-number">6.</span> <span class="nav-text">进入MySQL</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#设置任何IP都有连接权限"><span class="nav-number">7.</span> <span class="nav-text">设置任何IP都有连接权限</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -359,7 +364,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">58</span>
+          <span class="site-state-item-count">61</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>

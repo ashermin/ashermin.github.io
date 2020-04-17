@@ -191,6 +191,249 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/12/19/%E5%B8%B8%E7%94%A8%E7%9A%84Linux%E5%91%BD%E4%BB%A4/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="MIN MIN">
+      <meta itemprop="description" content="即使最后没有人为你鼓掌，也要优雅地谢幕，感谢自己的认真付出。">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="MIN MIN">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          
+            <a href="/2019/12/19/%E5%B8%B8%E7%94%A8%E7%9A%84Linux%E5%91%BD%E4%BB%A4/" class="post-title-link" itemprop="url">常用的Linux命令</a>
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2019-12-19 22:12:57" itemprop="dateCreated datePublished" datetime="2019-12-19T22:12:57+08:00">2019-12-19</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-03-02 11:02:17" itemprop="dateModified" datetime="2020-03-02T11:02:17+08:00">2020-03-02</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Linux/" itemprop="url" rel="index">
+                    <span itemprop="name">Linux</span>
+                  </a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h3 id="查看端口占用情况"><a href="#查看端口占用情况" class="headerlink" title="查看端口占用情况"></a>查看端口占用情况</h3><h4 id="lsof"><a href="#lsof" class="headerlink" title="lsof"></a>lsof</h4><p>lsof（list open files）是一个列出当前系统打开文件的工具。</p><p>lsof 查看端口占用语法格式：</p><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> lsof -i:端口号</span></span><br></pre></td></tr></table></figure><p>查看5432端口的占用情况：</p><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> lsof -i:5432</span></span><br><span class="line">COMMAND    PID    USER   FD   TYPE DEVICE SIZE/OFF NODE NAME</span><br><span class="line">postgres 35061 gpadmin    3u  IPv4 320198      0t0  TCP *:postgres (LISTEN)</span><br><span class="line">postgres 35061 gpadmin    4u  IPv6 320199      0t0  TCP *:postgres (LISTEN)</span><br></pre></td></tr></table></figure>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2019/12/19/%E5%B8%B8%E7%94%A8%E7%9A%84Linux%E5%91%BD%E4%BB%A4/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+        
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/12/19/Greenplum%E6%95%B0%E6%8D%AE%E5%BA%93%E4%B9%8BDDL/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="MIN MIN">
+      <meta itemprop="description" content="即使最后没有人为你鼓掌，也要优雅地谢幕，感谢自己的认真付出。">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="MIN MIN">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          
+            <a href="/2019/12/19/Greenplum%E6%95%B0%E6%8D%AE%E5%BA%93%E4%B9%8BDDL/" class="post-title-link" itemprop="url">Greenplum数据库之DDL</a>
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2019-12-19 20:19:40" itemprop="dateCreated datePublished" datetime="2019-12-19T20:19:40+08:00">2019-12-19</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2019-12-23 22:14:37" itemprop="dateModified" datetime="2019-12-23T22:14:37+08:00">2019-12-23</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Greenplum/" itemprop="url" rel="index">
+                    <span itemprop="name">Greenplum</span>
+                  </a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h3 id="1-创建和管理数据库"><a href="#1-创建和管理数据库" class="headerlink" title="1. 创建和管理数据库"></a>1. 创建和管理数据库</h3><h4 id="1-1-模版数据库"><a href="#1-1-模版数据库" class="headerlink" title="1.1 模版数据库"></a>1.1 模版数据库</h4><p>Greenplum自带有三个数据库，其中<em>template0</em>和<em>template1</em>是模版库。</p><img src="/images/Greenplum%E6%95%B0%E6%8D%AE%E5%BA%93%E4%B9%8BDDL/image-20191220152804337.png" alt="image-20191220152804337" style="zoom:50%;"><p>建库时默认使用的是<em>template1</em>模版库，如果使用<em>template0</em>需要手工指定<code>TEMPLATE</code>属性：</p><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">postgres=# create database db1;</span><br><span class="line">postgres=# create database db2 TEMPLATE template0;</span><br></pre></td></tr></table></figure>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2019/12/19/Greenplum%E6%95%B0%E6%8D%AE%E5%BA%93%E4%B9%8BDDL/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+        
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/12/19/%E8%BF%9E%E6%8E%A5Greenplum%E6%95%B0%E6%8D%AE%E5%BA%93/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="MIN MIN">
+      <meta itemprop="description" content="即使最后没有人为你鼓掌，也要优雅地谢幕，感谢自己的认真付出。">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="MIN MIN">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          
+            <a href="/2019/12/19/%E8%BF%9E%E6%8E%A5Greenplum%E6%95%B0%E6%8D%AE%E5%BA%93/" class="post-title-link" itemprop="url">连接Greenplum数据库</a>
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2019-12-19 17:11:01 / 修改时间：22:40:36" itemprop="dateCreated datePublished" datetime="2019-12-19T17:11:01+08:00">2019-12-19</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Greenplum/" itemprop="url" rel="index">
+                    <span itemprop="name">Greenplum</span>
+                  </a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h3 id="1-使用psql连接"><a href="#1-使用psql连接" class="headerlink" title="1. 使用psql连接"></a>1. 使用psql连接</h3><p>下面的例子展示了如何通过psql来访问数据库，这里我连接的Greenplum数据库为<code>minmindb</code></p><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> psql -d minmindb -h min01 -p 5432 -U gpadmin</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> psql minmindb</span></span><br></pre></td></tr></table></figure><p>如果不输入数据库名，默认进入的是当前用户名的数据库，如果不存在该数据库，则会报错：</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2019/12/19/%E8%BF%9E%E6%8E%A5Greenplum%E6%95%B0%E6%8D%AE%E5%BA%93/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+        
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/12/18/%20Greenplum%E5%B8%B8%E7%94%A8%E5%B7%A5%E5%85%B7/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -591,7 +834,7 @@
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2019-12-16 22:27:40" itemprop="dateModified" datetime="2019-12-16T22:27:40+08:00">2019-12-16</time>
+                <time title="修改时间：2020-04-15 22:02:07" itemprop="dateModified" datetime="2020-04-15T22:02:07+08:00">2020-04-15</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -799,257 +1042,11 @@
   
   
 
-        
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/12/08/HBase-API%E7%BC%96%E7%A8%8B/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.jpg">
-      <meta itemprop="name" content="MIN MIN">
-      <meta itemprop="description" content="即使最后没有人为你鼓掌，也要优雅地谢幕，感谢自己的认真付出。">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="MIN MIN">
-    </span>
-      <header class="post-header">
-        <h1 class="post-title" itemprop="name headline">
-          
-            <a href="/2019/12/08/HBase-API%E7%BC%96%E7%A8%8B/" class="post-title-link" itemprop="url">HBase API编程</a>
-        </h1>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2019-12-08 18:31:29" itemprop="dateCreated datePublished" datetime="2019-12-08T18:31:29+08:00">2019-12-08</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2019-12-10 22:13:09" itemprop="dateModified" datetime="2019-12-10T22:13:09+08:00">2019-12-10</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/HBase/" itemprop="url" rel="index">
-                    <span itemprop="name">HBase</span>
-                  </a>
-                </span>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>我的HBase版本为：hbase-1.2.0-cdh5.10.2，<code>pom.xml</code>为：</p><figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependencies</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.apache.hbase<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>hbase-client<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">version</span>&gt;</span>1.2.0<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line"></span><br><span class="line">  <span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.apache.hbase<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>hbase-server<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">version</span>&gt;</span>1.2.0<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependencies</span>&gt;</span></span><br></pre></td></tr></table></figure>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2019/12/08/HBase-API%E7%BC%96%E7%A8%8B/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-        
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/12/08/%E4%B8%BA%E4%BB%80%E4%B9%88%E4%B8%8D%E5%BB%BA%E8%AE%AE%E5%9C%A8HBase%E4%B8%AD%E4%BD%BF%E7%94%A8%E8%BF%87%E5%A4%9A%E7%9A%84%E5%88%97%E7%B0%87/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.jpg">
-      <meta itemprop="name" content="MIN MIN">
-      <meta itemprop="description" content="即使最后没有人为你鼓掌，也要优雅地谢幕，感谢自己的认真付出。">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="MIN MIN">
-    </span>
-      <header class="post-header">
-        <h1 class="post-title" itemprop="name headline">
-          
-            <a href="/2019/12/08/%E4%B8%BA%E4%BB%80%E4%B9%88%E4%B8%8D%E5%BB%BA%E8%AE%AE%E5%9C%A8HBase%E4%B8%AD%E4%BD%BF%E7%94%A8%E8%BF%87%E5%A4%9A%E7%9A%84%E5%88%97%E7%B0%87/" class="post-title-link" itemprop="url">为什么不建议在HBase中使用过多的列簇</a>
-        </h1>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-              
-
-              <time title="创建时间：2019-12-08 14:38:49 / 修改时间：15:13:28" itemprop="dateCreated datePublished" datetime="2019-12-08T14:38:49+08:00">2019-12-08</time>
-            </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/HBase/" itemprop="url" rel="index">
-                    <span itemprop="name">HBase</span>
-                  </a>
-                </span>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p><a href="https://hbase.apache.org/book.html" target="_blank" rel="noopener">HBase</a>的官方文档中关于HBase表的列簇的个数有两处描述：</p><blockquote>
-<p>A typical schema has between 1 and 3 column families per table. HBase tables should not be designed to mimic RDBMS tables.</p>
-<p> HBase currently does not do well with anything above two or three column families so keep the number of column families in your schema low.</p>
-</blockquote>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2019/12/08/%E4%B8%BA%E4%BB%80%E4%B9%88%E4%B8%8D%E5%BB%BA%E8%AE%AE%E5%9C%A8HBase%E4%B8%AD%E4%BD%BF%E7%94%A8%E8%BF%87%E5%A4%9A%E7%9A%84%E5%88%97%E7%B0%87/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-        
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/12/06/HBase%E7%9A%84Flush:Compact:Spilt/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.jpg">
-      <meta itemprop="name" content="MIN MIN">
-      <meta itemprop="description" content="即使最后没有人为你鼓掌，也要优雅地谢幕，感谢自己的认真付出。">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="MIN MIN">
-    </span>
-      <header class="post-header">
-        <h1 class="post-title" itemprop="name headline">
-          
-            <a href="/2019/12/06/HBase%E7%9A%84Flush:Compact:Spilt/" class="post-title-link" itemprop="url">HBase的Flush/Compact/Spilt</a>
-        </h1>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2019-12-06 20:57:54" itemprop="dateCreated datePublished" datetime="2019-12-06T20:57:54+08:00">2019-12-06</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2019-12-08 14:37:50" itemprop="dateModified" datetime="2019-12-08T14:37:50+08:00">2019-12-08</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/HBase/" itemprop="url" rel="index">
-                    <span itemprop="name">HBase</span>
-                  </a>
-                </span>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h3 id="1-MemStore-Flush"><a href="#1-MemStore-Flush" class="headerlink" title="1. MemStore Flush"></a>1. MemStore Flush</h3><p>MemStore内存数据刷写到HDFS磁盘的触发时机由下面四个参数所控制，超过任意一个的值，便会触发Flush操作。</p><h4 id="1-1-RegionServer全局级别"><a href="#1-1-RegionServer全局级别" class="headerlink" title="1.1 RegionServer全局级别"></a>1.1 RegionServer全局级别</h4><h5 id="1-1-1-hbase-regionserver-global-memstore-size"><a href="#1-1-1-hbase-regionserver-global-memstore-size" class="headerlink" title="1.1.1 hbase.regionserver.global.memstore.size"></a>1.1.1 hbase.regionserver.global.memstore.size</h5><p>作用：当<code>RegionServer</code>所有的<code>MemStore</code>大小总和超过<code>RegionServer</code>服务最大堆内存的<code>40%</code>，就会阻塞客户端的读写，并且触发Flush。</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2019/12/06/HBase%E7%9A%84Flush:Compact:Spilt/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
   </div>
 
   
   <nav class="pagination">
-    <a class="extend prev" rel="prev" href="/page/2/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/">1</a><a class="page-number" href="/page/2/">2</a><span class="page-number current">3</span><a class="page-number" href="/page/4/">4</a><span class="space">&hellip;</span><a class="page-number" href="/page/6/">6</a><a class="extend next" rel="next" href="/page/4/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
+    <a class="extend prev" rel="prev" href="/page/2/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/">1</a><a class="page-number" href="/page/2/">2</a><span class="page-number current">3</span><a class="page-number" href="/page/4/">4</a><span class="space">&hellip;</span><a class="page-number" href="/page/7/">7</a><a class="extend next" rel="next" href="/page/4/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
   </nav>
 
 
@@ -1095,7 +1092,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">58</span>
+          <span class="site-state-item-count">61</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>

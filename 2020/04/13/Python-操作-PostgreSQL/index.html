@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.0.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/avatar.jpg">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/avatar.jpg">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/avatar.jpg">
+  <link rel="mask-icon" href="/images/avatar.jpg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+
+
+<script id="hexo-configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '7.4.2',
+    exturl: false,
+    sidebar: {"position":"left","width":260,"display":"post","offset":12,"onmobile":false},
+    copycode: {"enable":true,"show_result":true,"style":"default"},
+    back2top: {"enable":true,"sidebar":false,"scrollpercent":true},
+    bookmark: {"enable":false,"color":"#222","save":"auto"},
+    fancybox: false,
+    mediumzoom: false,
+    lazyload: false,
+    pangu: false,
+    algolia: {
+      appID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    localsearch: {"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},
+    path: '',
+    motion: {"enable":false,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    translation: {
+      copy_button: '复制',
+      copy_success: '复制成功',
+      copy_failure: '复制失败'
+    },
+    sidebarPadding: 40
+  };
+</script>
+
+  <meta name="description" content="先安装 psycopg2 模块：$ pip install psycopg2-binary使用 try-except-finally 获取 PostgreSQL 的版本import psycopg2, sysconn = Nonetry:    conn = psycopg2.connect(database=&amp;apos;arduino&amp;apos;, user=&amp;apos;postgres&amp;apos;, password=&amp;apos;postgr">
+<meta name="keywords" content="Python">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Python 操作 PostgreSQL">
+<meta property="og:url" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2020&#x2F;04&#x2F;13&#x2F;Python-%E6%93%8D%E4%BD%9C-PostgreSQL&#x2F;index.html">
+<meta property="og:site_name" content="MIN MIN">
+<meta property="og:description" content="先安装 psycopg2 模块：$ pip install psycopg2-binary使用 try-except-finally 获取 PostgreSQL 的版本import psycopg2, sysconn = Nonetry:    conn = psycopg2.connect(database=&amp;apos;arduino&amp;apos;, user=&amp;apos;postgres&amp;apos;, password=&amp;apos;postgr">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;images&#x2F;Python-%E6%93%8D%E4%BD%9C-PostgreSQL&#x2F;image-20200413160842168.png">
+<meta property="og:updated_time" content="2020-04-13T15:10:47.041Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;images&#x2F;Python-%E6%93%8D%E4%BD%9C-PostgreSQL&#x2F;image-20200413160842168.png">
+
+<link rel="canonical" href="http://yoursite.com/2020/04/13/Python-%E6%93%8D%E4%BD%9C-PostgreSQL/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true,
+    isPage: false,
+    isArchive: false
+  };
+</script>
+
+  <title>Python 操作 PostgreSQL | MIN MIN</title>
+  
+
+
+  <script>
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?cad2a7930afd095772e571e6eab3628f";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+  <!--  -->
+<link href='//fonts.googleapis.com/css?family=Kaushan+Script' rel='stylesheet' type='text/css'>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">MIN MIN</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+        <p class="site-subtitle">BLOG</p>
+  </div>
+
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档</a>
+
+  </li>
+  </ul>
+
+</nav>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/04/13/Python-%E6%93%8D%E4%BD%9C-PostgreSQL/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="MIN MIN">
+      <meta itemprop="description" content="即使最后没有人为你鼓掌，也要优雅地谢幕，感谢自己的认真付出。">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="MIN MIN">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Python 操作 PostgreSQL
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2020-04-13 14:11:49 / 修改时间：23:10:47" itemprop="dateCreated datePublished" datetime="2020-04-13T14:11:49+08:00">2020-04-13</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Python/" itemprop="url" rel="index">
+                    <span itemprop="name">Python</span>
+                  </a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>先安装 psycopg2 模块：</p><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> pip install psycopg2-binary</span></span><br></pre></td></tr></table></figure><h5 id="使用-try-except-finally-获取-PostgreSQL-的版本"><a href="#使用-try-except-finally-获取-PostgreSQL-的版本" class="headerlink" title="使用 try-except-finally 获取 PostgreSQL 的版本"></a>使用 try-except-finally 获取 PostgreSQL 的版本</h5><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> psycopg2, sys</span><br><span class="line"></span><br><span class="line">conn = <span class="literal">None</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">try</span>:</span><br><span class="line">    conn = psycopg2.connect(database=<span class="string">'arduino'</span>, user=<span class="string">'postgres'</span>, password=<span class="string">'postgres'</span>,</span><br><span class="line">                            host=<span class="string">'192.168.56.101'</span>, port=<span class="string">'5432'</span>)</span><br><span class="line"></span><br><span class="line">    cursor = conn.cursor()</span><br><span class="line">    cursor.execute(<span class="string">'SELECT version()'</span>)</span><br><span class="line"></span><br><span class="line">    version = cursor.fetchone()[<span class="number">0</span>]</span><br><span class="line">    print(version)</span><br><span class="line"><span class="keyword">except</span> psycopg2.DatabaseError <span class="keyword">as</span> e:</span><br><span class="line">    print(<span class="string">f'Error <span class="subst">&#123;e&#125;</span>'</span>)</span><br><span class="line">    sys.exit(<span class="number">1</span>)</span><br><span class="line"><span class="keyword">finally</span>:</span><br><span class="line">    <span class="keyword">if</span> conn:</span><br><span class="line">        conn.close()</span><br><span class="line">----</span><br><span class="line">PostgreSQL <span class="number">11.7</span> on x86_64-pc-linux-gnu, compiled by gcc (GCC) <span class="number">4.8</span><span class="number">.5</span> <span class="number">20150623</span> (Red Hat <span class="number">4.8</span><span class="number">.5</span><span class="number">-39</span>), <span class="number">64</span>-bit</span><br></pre></td></tr></table></figure><a id="more"></a>
+
+
+
+
+<h5 id="使用-with-获取-PostgreSQL-的版本"><a href="#使用-with-获取-PostgreSQL-的版本" class="headerlink" title="使用 with 获取 PostgreSQL 的版本"></a>使用 with 获取 PostgreSQL 的版本</h5><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> psycopg2</span><br><span class="line"></span><br><span class="line">conn = psycopg2.connect(database=<span class="string">'arduino'</span>, user=<span class="string">'postgres'</span>, password=<span class="string">'postgres'</span>,</span><br><span class="line">                        host=<span class="string">'192.168.56.101'</span>, port=<span class="string">'5432'</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">with</span> conn:</span><br><span class="line"></span><br><span class="line">    cursor = conn.cursor()</span><br><span class="line">    cursor.execute(<span class="string">'SELECT version()'</span>)</span><br><span class="line"></span><br><span class="line">    version = cursor.fetchone()[<span class="number">0</span>]</span><br><span class="line">    print(version)</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>使用<code>with</code>关键字，Python 自动释放资源。 还提供错误处理。</p>
+</blockquote>
+<h5 id="execute-普通执行"><a href="#execute-普通执行" class="headerlink" title="execute() 普通执行"></a>execute() 普通执行</h5><p><code>execute()</code>执行数据库操作（查询或命令）。</p>
+<p>例：创建cars表并插入几行</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> psycopg2</span><br><span class="line"></span><br><span class="line">conn = psycopg2.connect(database=<span class="string">'arduino'</span>, user=<span class="string">'postgres'</span>, password=<span class="string">'postgres'</span>,</span><br><span class="line">                        host=<span class="string">'192.168.56.101'</span>, port=<span class="string">'5432'</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">with</span> conn:</span><br><span class="line">    cursor = conn.cursor()</span><br><span class="line"></span><br><span class="line">    cursor.execute(<span class="string">"DROP TABLE IF EXISTS cars"</span>)</span><br><span class="line">    cursor.execute(<span class="string">"CREATE TABLE cars(id SERIAL PRIMARY KEY, name VARCHAR(255), price INT)"</span>)</span><br><span class="line">    cursor.execute(<span class="string">"INSERT INTO cars(name, price) VALUES('Audi', 52642)"</span>)</span><br><span class="line">    cursor.execute(<span class="string">"INSERT INTO cars(name, price) VALUES('Mercedes', 57127)"</span>)</span><br><span class="line">    cursor.execute(<span class="string">"INSERT INTO cars(name, price) VALUES('Skoda', 9000)"</span>)</span><br><span class="line">    cursor.execute(<span class="string">"INSERT INTO cars(name, price) VALUES('Volvo', 29000)"</span>)</span><br><span class="line">    cursor.execute(<span class="string">"INSERT INTO cars(name, price) VALUES('Bentley', 350000)"</span>)</span><br><span class="line">    cursor.execute(<span class="string">"INSERT INTO cars(name, price) VALUES('Citroen', 21000)"</span>)</span><br><span class="line">    cursor.execute(<span class="string">"INSERT INTO cars(name, price) VALUES('Hummer', 41400)"</span>)</span><br><span class="line">    cursor.execute(<span class="string">"INSERT INTO cars(name, price) VALUES('Volkswagen', 21600)"</span>)</span><br><span class="line">    </span><br><span class="line">    conn.commit()</span><br></pre></td></tr></table></figure>
+
+<img src="/images/Python-%E6%93%8D%E4%BD%9C-PostgreSQL/image-20200413160842168.png" alt="image-20200413160842168" style="zoom:50%;">
+
+<h5 id="executemany-参数化执行"><a href="#executemany-参数化执行" class="headerlink" title="executemany() 参数化执行"></a>executemany() 参数化执行</h5><p><code>execute()</code>是一条一条写的，很笨；而<code>executemany()</code>可以参数化执行，这样sql语句只需要写一条就行了。</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> psycopg2</span><br><span class="line"></span><br><span class="line">conn = psycopg2.connect(database=<span class="string">'arduino'</span>, user=<span class="string">'postgres'</span>, password=<span class="string">'postgres'</span>,</span><br><span class="line">                        host=<span class="string">'192.168.56.101'</span>, port=<span class="string">'5432'</span>)</span><br><span class="line"></span><br><span class="line">cars = (</span><br><span class="line">    (<span class="number">1</span>, <span class="string">'Audi'</span>, <span class="number">52642</span>),</span><br><span class="line">    (<span class="number">2</span>, <span class="string">'Mercedes'</span>, <span class="number">57127</span>),</span><br><span class="line">    (<span class="number">3</span>, <span class="string">'Skoda'</span>, <span class="number">9000</span>),</span><br><span class="line">    (<span class="number">4</span>, <span class="string">'Volvo'</span>, <span class="number">29000</span>),</span><br><span class="line">    (<span class="number">5</span>, <span class="string">'Bentley'</span>, <span class="number">350000</span>),</span><br><span class="line">    (<span class="number">6</span>, <span class="string">'Citroen'</span>, <span class="number">21000</span>),</span><br><span class="line">    (<span class="number">7</span>, <span class="string">'Hummer'</span>, <span class="number">41400</span>),</span><br><span class="line">    (<span class="number">8</span>, <span class="string">'Volkswagen'</span>, <span class="number">21600</span>)</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="keyword">with</span> conn:</span><br><span class="line">    cursor = conn.cursor()</span><br><span class="line"></span><br><span class="line">    cursor.execute(<span class="string">"DROP TABLE IF EXISTS cars"</span>)</span><br><span class="line">    cursor.execute(<span class="string">"CREATE TABLE cars(id SERIAL PRIMARY KEY, name VARCHAR(255), price INT)"</span>)</span><br><span class="line">    insert_query = <span class="string">"INSERT INTO cars(id, name, price) VALUES(%s, %s, %s)"</span></span><br><span class="line">    cursor.executemany(insert_query, cars)</span><br><span class="line"></span><br><span class="line">    conn.commit()</span><br></pre></td></tr></table></figure>
+
+<h5 id="fetchall-获取所有行"><a href="#fetchall-获取所有行" class="headerlink" title="fetchall() 获取所有行"></a>fetchall() 获取所有行</h5><p><code>fetchall()</code>获取查询结果的所有（剩余）行，并将它们作为<strong>元组列表</strong>返回。 如果没有更多记录可获取，则返回一个空列表：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> psycopg2</span><br><span class="line"></span><br><span class="line">conn = psycopg2.connect(database=<span class="string">'arduino'</span>, user=<span class="string">'postgres'</span>, password=<span class="string">'postgres'</span>,</span><br><span class="line">                        host=<span class="string">'192.168.56.101'</span>, port=<span class="string">'5432'</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">with</span> conn:</span><br><span class="line">    cursor = conn.cursor()</span><br><span class="line">    cursor.execute(<span class="string">"SELECT * FROM cars;"</span>)</span><br><span class="line"></span><br><span class="line">    rows = cursor.fetchall()</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> row <span class="keyword">in</span> rows:</span><br><span class="line">        print(<span class="string">f"<span class="subst">&#123;row[<span class="number">0</span>]&#125;</span> <span class="subst">&#123;row[<span class="number">1</span>]&#125;</span> <span class="subst">&#123;row[<span class="number">2</span>]&#125;</span>"</span>)</span><br><span class="line">----</span><br><span class="line"><span class="number">1</span> Audi <span class="number">52642</span></span><br><span class="line"><span class="number">2</span> Mercedes <span class="number">57127</span></span><br><span class="line"><span class="number">3</span> Skoda <span class="number">9000</span></span><br><span class="line"><span class="number">4</span> Volvo <span class="number">29000</span></span><br><span class="line"><span class="number">5</span> Bentley <span class="number">350000</span></span><br><span class="line"><span class="number">6</span> Citroen <span class="number">21000</span></span><br><span class="line"><span class="number">7</span> Hummer <span class="number">41400</span></span><br><span class="line"><span class="number">8</span> Volkswagen <span class="number">21600</span></span><br></pre></td></tr></table></figure>
+
+<h5 id="fetchone-获取下一行"><a href="#fetchone-获取下一行" class="headerlink" title="fetchone 获取下一行"></a>fetchone 获取下一行</h5><p><code>fetchone()</code>返回查询结果集的下一行，返回单个元组，或者在没有更多数据可用时返回<code>None</code>：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> psycopg2</span><br><span class="line"></span><br><span class="line">conn = psycopg2.connect(database=<span class="string">'arduino'</span>, user=<span class="string">'postgres'</span>, password=<span class="string">'postgres'</span>,</span><br><span class="line">                        host=<span class="string">'192.168.56.101'</span>, port=<span class="string">'5432'</span>)</span><br><span class="line"><span class="keyword">with</span> conn:</span><br><span class="line">    cursor = conn.cursor()</span><br><span class="line">    cursor.execute(<span class="string">"SELECT * FROM cars;"</span>)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">while</span> <span class="literal">True</span>:</span><br><span class="line">        row = cursor.fetchone()</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> row == <span class="literal">None</span>:</span><br><span class="line">            <span class="keyword">break</span></span><br><span class="line">----</span><br><span class="line"><span class="number">1</span> Audi <span class="number">52642</span></span><br><span class="line"><span class="number">2</span> Mercedes <span class="number">57127</span></span><br><span class="line"><span class="number">3</span> Skoda <span class="number">9000</span></span><br><span class="line"><span class="number">4</span> Volvo <span class="number">29000</span></span><br><span class="line"><span class="number">5</span> Bentley <span class="number">350000</span></span><br><span class="line"><span class="number">6</span> Citroen <span class="number">21000</span></span><br><span class="line"><span class="number">7</span> Hummer <span class="number">41400</span></span><br><span class="line"><span class="number">8</span> Volkswagen <span class="number">21600</span></span><br></pre></td></tr></table></figure>
+
+<h5 id="字典游标"><a href="#字典游标" class="headerlink" title="字典游标"></a>字典游标</h5><p>默认游标检索元祖中的数据，是0、1、2的形式；使用字典游标后，就可以通过列名称来引用数据：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> psycopg2</span><br><span class="line"><span class="keyword">import</span> psycopg2.extras <span class="comment"># 倒入 extras 模块</span></span><br><span class="line"></span><br><span class="line">conn = psycopg2.connect(database=<span class="string">'arduino'</span>, user=<span class="string">'postgres'</span>, password=<span class="string">'postgres'</span>,</span><br><span class="line">                        host=<span class="string">'192.168.56.101'</span>, port=<span class="string">'5432'</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">with</span> conn:</span><br><span class="line">    <span class="comment"># cursor = conn.cursor()</span></span><br><span class="line">    cursor = conn.cursor(cursor_factory=psycopg2.extras.DictCursor) <span class="comment"># 创建一个 DictCursor</span></span><br><span class="line">    cursor.execute(<span class="string">"SELECT * FROM cars;"</span>)</span><br><span class="line"></span><br><span class="line">    rows = cursor.fetchall()</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> row <span class="keyword">in</span> rows:</span><br><span class="line">        <span class="comment">#print(f"&#123;row[0]&#125; &#123;row[1]&#125; &#123;row[2]&#125;")</span></span><br><span class="line">        print(<span class="string">f"<span class="subst">&#123;row[<span class="string">'id'</span>]&#125;</span> <span class="subst">&#123;row[<span class="string">'name'</span>]&#125;</span> <span class="subst">&#123;row[<span class="string">'price'</span>]&#125;</span>"</span>)</span><br></pre></td></tr></table></figure>
+
+<h5 id="参数化查询"><a href="#参数化查询" class="headerlink" title="参数化查询"></a>参数化查询</h5><p>当使用参数化查询时，我们使用占位符，而不是直接将值写入语句。 参数化查询可提高安全性和性能。</p>
+<p>psycopg2 模块支持两种类型的占位符：ANSI C printf 格式和 Python 扩展格式。</p>
+<p>（1）ANSI C printf 格式</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> psycopg2</span><br><span class="line"></span><br><span class="line">conn = psycopg2.connect(database=<span class="string">'arduino'</span>, user=<span class="string">'postgres'</span>, password=<span class="string">'postgres'</span>,</span><br><span class="line">                        host=<span class="string">'192.168.56.101'</span>, port=<span class="string">'5432'</span>)</span><br><span class="line"></span><br><span class="line">uId = <span class="number">1</span></span><br><span class="line">uPrice = <span class="number">62300</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">with</span> conn:</span><br><span class="line">    cursor = conn.cursor()</span><br><span class="line">    cursor.execute(<span class="string">"UPDATE cars SET price=%s WHERE id=%s"</span>, (uPrice, uId))</span><br><span class="line">    conn.commit()</span><br><span class="line">    </span><br><span class="line">    print(<span class="string">f"Number of rows updated: <span class="subst">&#123;cursor.rowcount&#125;</span>"</span>)</span><br><span class="line">----</span><br><span class="line">Number of rows updated: <span class="number">1</span></span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>字符<code>%s</code>是值的占位符</p>
+</blockquote>
+<p>（2）Python 扩展格式</p>
+<p>使用<code>pyformat</code>参数化语句选择汽车的名称和价格：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> psycopg2</span><br><span class="line"></span><br><span class="line">conn = psycopg2.connect(database=<span class="string">'arduino'</span>, user=<span class="string">'postgres'</span>, password=<span class="string">'postgres'</span>,</span><br><span class="line">                        host=<span class="string">'192.168.56.101'</span>, port=<span class="string">'5432'</span>)</span><br><span class="line"></span><br><span class="line">uId = <span class="number">3</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">with</span> conn:</span><br><span class="line">    cursor = conn.cursor()</span><br><span class="line">    cursor.execute(<span class="string">"SELECT * FROM cars WHERE id=%(id)s"</span>, &#123;<span class="string">'id'</span>: uId&#125;)</span><br><span class="line">    row = cursor.fetchone()</span><br><span class="line"></span><br><span class="line">    print(<span class="string">f"<span class="subst">&#123;row[<span class="number">0</span>]&#125;</span> <span class="subst">&#123;row[<span class="number">1</span>]&#125;</span> <span class="subst">&#123;row[<span class="number">2</span>]&#125;</span>"</span>)</span><br><span class="line">----</span><br><span class="line"><span class="number">3</span> Skoda <span class="number">9000</span></span><br></pre></td></tr></table></figure>
+
+<h5 id="导入和导出数据"><a href="#导入和导出数据" class="headerlink" title="导入和导出数据"></a>导入和导出数据</h5><p>可以使用<code>copy_to()</code>和<code>copy_from()</code>导出和导入数据。</p>
+<p>（1）导出数据</p>
+<p>将数据从 cars 表复制到 cars.csv 文件中：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> psycopg2, sys</span><br><span class="line"></span><br><span class="line">conn = <span class="literal">None</span></span><br><span class="line">fout = <span class="literal">None</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">try</span>:</span><br><span class="line">    conn = psycopg2.connect(database=<span class="string">'arduino'</span>, user=<span class="string">'postgres'</span>, password=<span class="string">'postgres'</span>,</span><br><span class="line">                            host=<span class="string">'192.168.56.101'</span>, port=<span class="string">'5432'</span>)</span><br><span class="line">    cursor = conn.cursor()</span><br><span class="line"></span><br><span class="line">    fout = open(<span class="string">'/Users/minmin/Desktop/cars.csv'</span>, <span class="string">'w'</span>)</span><br><span class="line">    cursor.copy_to(fout, <span class="string">'cars'</span>, sep=<span class="string">","</span>)</span><br><span class="line"><span class="keyword">except</span> psycopg2.DatabaseError <span class="keyword">as</span> e:</span><br><span class="line">    print(<span class="string">f"Error <span class="subst">&#123;e&#125;</span>"</span>)</span><br><span class="line">    sys.exit(<span class="number">1</span>)</span><br><span class="line"><span class="keyword">except</span> IOError <span class="keyword">as</span> e:</span><br><span class="line">    print(<span class="string">f"Error <span class="subst">&#123;e&#125;</span>"</span>)</span><br><span class="line">    sys.exit(<span class="number">1</span>)</span><br><span class="line"><span class="keyword">finally</span>:</span><br><span class="line">    <span class="keyword">if</span> conn:</span><br><span class="line">        conn.close()</span><br><span class="line">    <span class="keyword">if</span> fout:</span><br><span class="line">        fout.close()</span><br></pre></td></tr></table></figure>
+
+<p>（2）导入数据</p>
+<p>读取 cars.csv 文件的内容，并将其导入至清空的 cars 表：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> psycopg2, sys</span><br><span class="line"></span><br><span class="line">conn = <span class="literal">None</span></span><br><span class="line">f = <span class="literal">None</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">try</span>:</span><br><span class="line">    conn = psycopg2.connect(database=<span class="string">'arduino'</span>, user=<span class="string">'postgres'</span>, password=<span class="string">'postgres'</span>,</span><br><span class="line">                            host=<span class="string">'192.168.56.101'</span>, port=<span class="string">'5432'</span>)</span><br><span class="line">    cursor = conn.cursor()</span><br><span class="line"></span><br><span class="line">    f = open(<span class="string">'/Users/minmin/Desktop/cars.csv'</span>, <span class="string">'r'</span>)</span><br><span class="line">    cursor.copy_from(f, <span class="string">'cars'</span>, sep=<span class="string">","</span>)</span><br><span class="line">    conn.commit()</span><br><span class="line"></span><br><span class="line"><span class="keyword">except</span> psycopg2.DatabaseError <span class="keyword">as</span> e:</span><br><span class="line">    <span class="keyword">if</span> conn:</span><br><span class="line">        conn.rollback()</span><br><span class="line"></span><br><span class="line">    print(<span class="string">f"Error <span class="subst">&#123;e&#125;</span>"</span>)</span><br><span class="line">    sys.exit(<span class="number">1</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">except</span> IOError <span class="keyword">as</span> e:</span><br><span class="line">    <span class="keyword">if</span> conn:</span><br><span class="line">        conn.rollback()</span><br><span class="line"></span><br><span class="line">    print(<span class="string">f"Error <span class="subst">&#123;e&#125;</span>"</span>)</span><br><span class="line">    sys.exit(<span class="number">1</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">finally</span>:</span><br><span class="line">    <span class="keyword">if</span> conn:</span><br><span class="line">        conn.close()</span><br><span class="line">    <span class="keyword">if</span> f:</span><br><span class="line">        f.close()</span><br></pre></td></tr></table></figure>
+
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Python/" rel="tag"># Python</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-next post-nav-item">
+                <a href="/2020/04/08/%E5%AE%89%E8%A3%85CentOS-Minimal%E7%89%88%E5%90%8E%E7%9A%84%E9%97%AE%E9%A2%98/" rel="next" title="安装CentOS Minimal版后的问题">
+                  <i class="fa fa-chevron-left"></i> 安装CentOS Minimal版后的问题
+                </a>
+            </div>
+
+            <span class="post-nav-divider"></span>
+
+            <div class="post-nav-prev post-nav-item">
+            </div>
+          </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-5"><a class="nav-link" href="#使用-try-except-finally-获取-PostgreSQL-的版本"><span class="nav-number">1.</span> <span class="nav-text">使用 try-except-finally 获取 PostgreSQL 的版本</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#使用-with-获取-PostgreSQL-的版本"><span class="nav-number">2.</span> <span class="nav-text">使用 with 获取 PostgreSQL 的版本</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#execute-普通执行"><span class="nav-number">3.</span> <span class="nav-text">execute() 普通执行</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#executemany-参数化执行"><span class="nav-number">4.</span> <span class="nav-text">executemany() 参数化执行</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#fetchall-获取所有行"><span class="nav-number">5.</span> <span class="nav-text">fetchall() 获取所有行</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#fetchone-获取下一行"><span class="nav-number">6.</span> <span class="nav-text">fetchone 获取下一行</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#字典游标"><span class="nav-number">7.</span> <span class="nav-text">字典游标</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#参数化查询"><span class="nav-number">8.</span> <span class="nav-text">参数化查询</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#导入和导出数据"><span class="nav-number">9.</span> <span class="nav-text">导入和导出数据</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <img class="site-author-image" itemprop="image" alt="MIN MIN"
+    src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">MIN MIN</p>
+  <div class="site-description" itemprop="description">即使最后没有人为你鼓掌，也要优雅地谢幕，感谢自己的认真付出。</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">61</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">13</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+        <span class="site-state-item-count">32</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/ashermin" title="GitHub &amp;rarr; https:&#x2F;&#x2F;github.com&#x2F;ashermin" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+<div class="copyright">
+  
+  &copy; 2019 – 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user-circle"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">MIN MIN</span>
+</div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+<script src="/js/utils.js"></script>
+<script src="/js/schemes/pisces.js"></script>
+<script src="/js/next-boot.js"></script>
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+</body>
+</html>
