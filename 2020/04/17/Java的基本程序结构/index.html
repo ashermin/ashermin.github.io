@@ -1,0 +1,737 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.0.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/avatar.jpg">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/avatar.jpg">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/avatar.jpg">
+  <link rel="mask-icon" href="/images/avatar.jpg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+
+
+<script id="hexo-configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '7.4.2',
+    exturl: false,
+    sidebar: {"position":"left","width":260,"display":"post","offset":12,"onmobile":false},
+    copycode: {"enable":true,"show_result":true,"style":"default"},
+    back2top: {"enable":true,"sidebar":false,"scrollpercent":true},
+    bookmark: {"enable":false,"color":"#222","save":"auto"},
+    fancybox: false,
+    mediumzoom: false,
+    lazyload: false,
+    pangu: false,
+    algolia: {
+      appID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    localsearch: {"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},
+    path: '',
+    motion: {"enable":false,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    translation: {
+      copy_button: '复制',
+      copy_success: '复制成功',
+      copy_failure: '复制失败'
+    },
+    sidebarPadding: 40
+  };
+</script>
+
+  <meta name="description" content="基本变量类型Java 是强类型语言，必须要给每个变量声明一种类型。一共有 8 种基本类型：4 种整型、2 种浮点型、1 种字符型和 1 种布尔类型。1. 整型   类型 存储需求 取值范围    int 4 字节 -2147483648 ~ 2147483647   short 2 字节 -32768 ~ 32767   long 8 字节 -9223372036854775808 ~ 92233">
+<meta name="keywords" content="Java">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Java的基本程序结构">
+<meta property="og:url" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2020&#x2F;04&#x2F;17&#x2F;Java%E7%9A%84%E5%9F%BA%E6%9C%AC%E7%A8%8B%E5%BA%8F%E7%BB%93%E6%9E%84&#x2F;index.html">
+<meta property="og:site_name" content="MIN MIN">
+<meta property="og:description" content="基本变量类型Java 是强类型语言，必须要给每个变量声明一种类型。一共有 8 种基本类型：4 种整型、2 种浮点型、1 种字符型和 1 种布尔类型。1. 整型   类型 存储需求 取值范围    int 4 字节 -2147483648 ~ 2147483647   short 2 字节 -32768 ~ 32767   long 8 字节 -9223372036854775808 ~ 92233">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;images&#x2F;Java%E7%9A%84%E5%9F%BA%E6%9C%AC%E7%A8%8B%E5%BA%8F%E7%BB%93%E6%9E%84&#x2F;image-20200417210326755.png">
+<meta property="og:updated_time" content="2020-04-22T12:14:52.700Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;images&#x2F;Java%E7%9A%84%E5%9F%BA%E6%9C%AC%E7%A8%8B%E5%BA%8F%E7%BB%93%E6%9E%84&#x2F;image-20200417210326755.png">
+
+<link rel="canonical" href="http://yoursite.com/2020/04/17/Java%E7%9A%84%E5%9F%BA%E6%9C%AC%E7%A8%8B%E5%BA%8F%E7%BB%93%E6%9E%84/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true,
+    isPage: false,
+    isArchive: false
+  };
+</script>
+
+  <title>Java的基本程序结构 | MIN MIN</title>
+  
+
+
+  <script>
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?cad2a7930afd095772e571e6eab3628f";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+  <!--  -->
+<link href='//fonts.googleapis.com/css?family=Kaushan+Script' rel='stylesheet' type='text/css'>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">MIN MIN</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+        <p class="site-subtitle">BLOG</p>
+  </div>
+
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档</a>
+
+  </li>
+  </ul>
+
+</nav>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/04/17/Java%E7%9A%84%E5%9F%BA%E6%9C%AC%E7%A8%8B%E5%BA%8F%E7%BB%93%E6%9E%84/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="MIN MIN">
+      <meta itemprop="description" content="即使最后没有人为你鼓掌，也要优雅地谢幕，感谢自己的认真付出。">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="MIN MIN">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Java的基本程序结构
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-04-17 13:55:02" itemprop="dateCreated datePublished" datetime="2020-04-17T13:55:02+08:00">2020-04-17</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-04-22 20:14:52" itemprop="dateModified" datetime="2020-04-22T20:14:52+08:00">2020-04-22</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Java/" itemprop="url" rel="index">
+                    <span itemprop="name">Java</span>
+                  </a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h2 id="基本变量类型"><a href="#基本变量类型" class="headerlink" title="基本变量类型"></a>基本变量类型</h2><p>Java 是强类型语言，必须要给每个变量声明一种类型。</p><p>一共有 8 种基本类型：4 种整型、2 种浮点型、1 种字符型和 1 种布尔类型。</p><h4 id="1-整型"><a href="#1-整型" class="headerlink" title="1. 整型"></a>1. 整型</h4><table>
+<thead>
+<tr>
+<th>类型</th>
+<th>存储需求</th>
+<th>取值范围</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>int</strong></td>
+<td>4 字节</td>
+<td>-2147483648 ~ 2147483647</td>
+</tr>
+<tr>
+<td>short</td>
+<td>2 字节</td>
+<td>-32768 ~ 32767</td>
+</tr>
+<tr>
+<td>long</td>
+<td>8 字节</td>
+<td>-9223372036854775808 ~ 9223372036854775807（结尾需要加<code>L</code>/<code>l</code>）</td>
+</tr>
+<tr>
+<td>byte</td>
+<td>1 字节</td>
+<td>-128 ~ 127</td>
+</tr>
+</tbody></table><a id="more"></a>
+
+
+<p>当 long 都满足不了时，可以使用 BigInteger 类。</p>
+<h4 id="2-浮点型"><a href="#2-浮点型" class="headerlink" title="2. 浮点型"></a>2. 浮点型</h4><table>
+<thead>
+<tr>
+<th>类型</th>
+<th>存储需求</th>
+<th>取值范围</th>
+<th>有效位数</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>float</td>
+<td>4 字节</td>
+<td>大约 ± 3.402 823 47E+38F （结尾需要加<code>F</code>/<code>f</code>）</td>
+<td>6～7 位</td>
+</tr>
+<tr>
+<td><strong>double</strong></td>
+<td>8 字节</td>
+<td>大约 ± 1.797 693 134 862 315 70E+308</td>
+<td>15 位</td>
+</tr>
+</tbody></table>
+<blockquote>
+<p>⚠️注意：float 和 double 只能用来做科学计算或者是工程计算；在商业计算中要用<code>java.math.BigDecimal</code>来解决</p>
+</blockquote>
+<h4 id="2-5-BigInteger-和-BigDecimal-类"><a href="#2-5-BigInteger-和-BigDecimal-类" class="headerlink" title="2.5 BigInteger 和 BigDecimal 类"></a>2.5 BigInteger 和 BigDecimal 类</h4><p>使用静态的<code>valueOf()</code>方法可以将普通的数值转换为大数值。</p>
+<p>普通的加减乘除在大数值中是四个方法：<code>add()</code>、<code>substract()</code>、<code>multiply()</code>和<code>divide()</code>。</p>
+<p>例：计算 30!</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">BigInteger b = BigInteger.valueOf(<span class="number">1</span>);</span><br><span class="line"><span class="keyword">for</span>(<span class="keyword">int</span> i = <span class="number">1</span>; i &lt;= <span class="number">30</span>; i++)</span><br><span class="line">  b = b.multiply(BigInteger.valueOf(i)); </span><br><span class="line">----</span><br><span class="line"><span class="number">265252859812191058636308480000000</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="3-字符型-char"><a href="#3-字符型-char" class="headerlink" title="3. 字符型 char"></a>3. 字符型 char</h4><p>char 表示 Unicode 编码的单个字符，是用单引号的，如<code>&#39;A&#39;</code>（编码值为65所对应的字符常量）；而<code>&quot;A&quot;</code>是包含一个字符 A 的字符串。</p>
+<p>⚠️注意：不建议使用 char 类型！</p>
+<h4 id="4-布尔型"><a href="#4-布尔型" class="headerlink" title="4. 布尔型"></a>4. 布尔型</h4><p>只能是 false 和 true，不能用整型值来代替。</p>
+<h4 id="5-常量"><a href="#5-常量" class="headerlink" title="5. 常量"></a>5. 常量</h4><p>常量 final 只能被赋值一次，一旦赋值就不能更改。一般常量名全大写。</p>
+<p>类常量 static final 可以在一个类的多个方法中使用，定义时要位于 main 方法的外部。加了 public 就可以在其他类使用这个常量。如：</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Constant</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">double</span> PI = <span class="number">3.1415926</span>;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span></span>&#123;</span><br><span class="line">        <span class="keyword">int</span> r = <span class="number">10</span>;</span><br><span class="line">        System.out.println(<span class="string">"面积为："</span> + PI * r * r);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="运算符"><a href="#运算符" class="headerlink" title="运算符"></a>运算符</h2><p>整数被 0 除会产生一个异常，而浮点数被 0 除会得到无穷大或 NaN。</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">int</span> x = <span class="number">10</span>;</span><br><span class="line">System.out.println(x / <span class="number">0</span>);</span><br><span class="line"><span class="comment">// java.lang.ArithmeticException: / by zero</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">double</span> y = -<span class="number">10.0</span>;</span><br><span class="line">System.out.println(y / <span class="number">0</span>);</span><br><span class="line"><span class="comment">// -Infinity</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="1-数学函数-Math"><a href="#1-数学函数-Math" class="headerlink" title="1. 数学函数 Math"></a>1. 数学函数 Math</h4><p>Math 类所有的数学方法可以参见 <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Math.html" target="_blank" rel="noopener">Oracle 官网</a>。</p>
+<p>计算一个数值的平方根 <code>Math.sqrt(double x)</code>：</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">double</span> y = Math.sqrt(<span class="number">4</span>); <span class="comment">// 2.0</span></span><br></pre></td></tr></table></figure>
+
+<p>幂运算，计算 y 的 x 次方 <code>Math.pow(double y, double x)</code>：</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">double</span> z = Math.pow(<span class="number">2</span>, <span class="number">3</span>); <span class="comment">// 8.0</span></span><br></pre></td></tr></table></figure>
+
+<p>数学常量：</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">Math.PI</span><br><span class="line">Math.E</span><br></pre></td></tr></table></figure>
+
+<h4 id="2-数值类型转换"><a href="#2-数值类型转换" class="headerlink" title="2. 数值类型转换"></a>2. 数值类型转换</h4><p>数值类型之间的转换在整数转到浮点数时，可能会丢失精度：</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">int</span> a = <span class="number">123456789</span>;</span><br><span class="line"><span class="keyword">float</span> b = a; <span class="comment">// 1.23456792E8</span></span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p><code>123456789</code>是一个大整数，它所包含的位数比 float 的有效位数多。</p>
+</blockquote>
+<p>下图表示数值类型之间的合法自动转换。实线表示无精度丢失；虚线表示可能会精度丢失。</p>
+<img src="/images/Java%E7%9A%84%E5%9F%BA%E6%9C%AC%E7%A8%8B%E5%BA%8F%E7%BB%93%E6%9E%84/image-20200417210326755.png" alt="image-20200417210326755" style="zoom:50%;">
+
+<p>也可以对数值类型进行强制转换：</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">double</span> a = <span class="number">9.998</span>;</span><br><span class="line"><span class="keyword">int</span> b = (<span class="keyword">int</span>)a;             <span class="comment">// 9</span></span><br><span class="line"><span class="keyword">int</span> c = (<span class="keyword">int</span>)Math.round(a); <span class="comment">// 10</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="3-三元运算"><a href="#3-三元运算" class="headerlink" title="3. 三元运算"></a>3. 三元运算</h4><p>如果 x &lt; y 则为 x ，否则为 y：</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">x &lt; y ? x : y</span><br></pre></td></tr></table></figure>
+
+<h2 id="字符串-String"><a href="#字符串-String" class="headerlink" title="字符串 String"></a>字符串 String</h2><h4 id="1-String-API"><a href="#1-String-API" class="headerlink" title="1. String API"></a>1. String API</h4><p>String 类的所有方法可以参见 <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html" target="_blank" rel="noopener">Oracle 官网</a>。</p>
+<p>（1）返回字符串中指定位置的字符</p>
+<ul>
+<li><code>char charAt(int index)</code></li>
+</ul>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 获取 Hello 中第二个字符 e</span></span><br><span class="line">String str = <span class="string">"Hello"</span>;</span><br><span class="line"><span class="keyword">char</span> c = str.charAt(<span class="number">1</span>); <span class="comment">// e</span></span><br></pre></td></tr></table></figure>
+
+<p>（2）两字符串按字典序比较</p>
+<ul>
+<li><code>int compareTo(String other)</code><ul>
+<li>字符串位于 other 之前，返回负数</li>
+<li>字符串位于 other 之后，返回正数</li>
+<li>相等，返回 0</li>
+</ul>
+</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">String str = <span class="string">"abcdef"</span>;</span><br><span class="line"><span class="keyword">int</span> comp = str.compareTo(<span class="string">"defghi"</span>); <span class="comment">// -3</span></span><br></pre></td></tr></table></figure>
+
+<p>（3）判断字符串内容是否相等</p>
+<ul>
+<li><code>boolean equals(Object other)</code></li>
+<li>忽略大小写：<code>boolean equalsIgnoreCase(String other)</code></li>
+</ul>
+<blockquote>
+<p>⚠️注意：</p>
+<ol>
+<li>不要使用<code>==</code>检测两个字符串是否相等，它判断的是对象地址是否相同；</li>
+<li>如果a是<code>null</code>，则会报错。可以利用<code>&amp;&amp;</code>来解决或者把非null对象放前面：</li>
+</ol>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">if</span>(a != <span class="keyword">null</span> &amp;&amp; a.equals(<span class="string">"hello"</span>))</span><br></pre></td></tr></table></figure>
+</blockquote>
+<p>（4）判断字符串是否以 xxx 开头/结尾</p>
+<ul>
+<li><code>boolean startsWith(String str)</code></li>
+<li><code>boolean endsWith(String str)</code></li>
+</ul>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">String str = <span class="string">"abcdef"</span>;</span><br><span class="line"><span class="keyword">boolean</span> start = str.startsWith(<span class="string">"abc"</span>); <span class="comment">// true</span></span><br><span class="line"><span class="keyword">boolean</span> end = str.endsWith(<span class="string">"def"</span>); <span class="comment">// true</span></span><br></pre></td></tr></table></figure>
+
+<p>（5）从左往右查询与字符串匹配的第一个子串的开始位置</p>
+<ul>
+<li>从索引 0 开始：<code>int indexOf(String str)</code></li>
+<li>从索引 fromIndex 开始：<code>int indexOf(String str, int fromIndex)</code></li>
+<li>不存在子串，返回 -1</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">String str = <span class="string">"abcabcdef"</span>;</span><br><span class="line"><span class="keyword">int</span> index = str.indexOf(<span class="string">"ab"</span>); <span class="comment">// 0</span></span><br><span class="line"><span class="keyword">int</span> indexF = str.indexOf(<span class="string">"ab"</span>, <span class="number">1</span>); <span class="comment">// 3</span></span><br></pre></td></tr></table></figure>
+
+<p>（6）从右往左查询与字符串匹配的最后一个子串的开始位置</p>
+<ul>
+<li>从最右开始往左：<code>int lastIndexOf(String str)</code></li>
+<li>从指定的 fromIndex 开始往左：<code>int lastIndexOf(String str, int fromIndex)</code></li>
+</ul>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">String str = <span class="string">"abcabcdef"</span>;</span><br><span class="line"><span class="keyword">int</span> index = str.lastIndexOf(<span class="string">"ab"</span>); <span class="comment">// 3</span></span><br><span class="line"><span class="keyword">int</span> indexLast = str.lastIndexOf(<span class="string">"ab"</span>, <span class="number">3</span>); <span class="comment">// 3</span></span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>虽然指定的第 3 个是<code>a</code>，但是它后面也是完整的<code>ab</code>，所以也算！</p>
+</blockquote>
+<p>（7）返回字符串的长度</p>
+<ul>
+<li><code>int length()</code></li>
+</ul>
+<p>（8）字符串的替换</p>
+<ul>
+<li><code>String replace(CharSequence old, CharSequence new)</code></li>
+</ul>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">String old_str = <span class="string">"abcabcdef"</span>;</span><br><span class="line">String new_str = old_str.replace(<span class="string">"abc"</span>, <span class="string">"123"</span>); <span class="comment">// 123123def</span></span><br></pre></td></tr></table></figure>
+
+<p>（9）字符串的截取</p>
+<ul>
+<li>从 beginlndex 到最后：<code>String substring(int beginIndex)</code></li>
+<li>从 beginlndex 到 endlndex-1：<code>String substring(int beginIndex, int endIndex)</code></li>
+</ul>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">String old_str = <span class="string">"abcabcdef"</span>;</span><br><span class="line">String new_str = old_str.substring(<span class="number">1</span>, <span class="number">3</span>); <span class="comment">// bc</span></span><br></pre></td></tr></table></figure>
+
+<p>（10）字符串的大小写</p>
+<ul>
+<li>全小写：<code>String toLowerCase()</code></li>
+<li>全大写：<code>String toUpperCase()</code></li>
+</ul>
+<p>（11）删除字符串的空格</p>
+<ul>
+<li><code>String trim()</code></li>
+</ul>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">String str = <span class="string">"  a  b  c  "</span>;</span><br><span class="line">String str_trim = str.trim(); <span class="comment">// a  b  c</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="2-StringBuilder-类"><a href="#2-StringBuilder-类" class="headerlink" title="2. StringBuilder 类"></a>2. StringBuilder 类</h4><p>许多小段的字符串拼接，使用普通的字符串拼接每次都会构建一个新的 String 对象，既耗时又占空间。可以采用 StringBuilder 类，最后调用<code>toString()</code>方法得到一个 String 对象。</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">StringBuilder builder = <span class="keyword">new</span> StringBuilder();</span><br><span class="line">builder.append(<span class="string">'a'</span>);</span><br><span class="line">builder.append(<span class="string">"abcd"</span>);</span><br><span class="line">String str = builder.toString(); <span class="comment">// aabcd</span></span><br></pre></td></tr></table></figure>
+
+<p>下面是 StringBuilder 类的常用 API：</p>
+<p>（1）返回字符数</p>
+<ul>
+<li><code>int length()</code></li>
+</ul>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">StringBuilder builder = <span class="keyword">new</span> StringBuilder();</span><br><span class="line">builder.append(<span class="string">"aabcd"</span>);</span><br><span class="line">System.out.println(builder.length()); <span class="comment">// 5</span></span><br></pre></td></tr></table></figure>
+
+<p>（2）将第 i 个字符设为 c</p>
+<ul>
+<li><code>void setCharAt(int i, char c)</code></li>
+</ul>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">StringBuilder builder = <span class="keyword">new</span> StringBuilder();</span><br><span class="line">builder.append(<span class="string">"aabcd"</span>);</span><br><span class="line">builder.setCharAt(<span class="number">1</span>, <span class="string">'A'</span>); <span class="comment">// aAbcd</span></span><br></pre></td></tr></table></figure>
+
+<p>（3）指定位置插入一个字符串/字符</p>
+<ul>
+<li><code>StringBuilder insert(int offset,  String str)</code></li>
+<li><code>StringBuilder insert(int offset,  Char c)</code></li>
+</ul>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">StringBuilder builder = <span class="keyword">new</span> StringBuilder();</span><br><span class="line">builder.append(<span class="string">"abcd"</span>);</span><br><span class="line">builder.insert(<span class="number">1</span>, <span class="string">"111"</span>); <span class="comment">// a111bcd</span></span><br><span class="line">builder.insert(<span class="number">2</span>, <span class="string">'2'</span>); <span class="comment">// a1211bcd</span></span><br></pre></td></tr></table></figure>
+
+<p>（4）删除指定范围的字符</p>
+<ul>
+<li><code>StringBuilder delete(int startIndex, int endIndex)</code><ul>
+<li>范围：<code>[startIndex, endIndex)</code></li>
+</ul>
+</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">StringBuilder builder = <span class="keyword">new</span> StringBuilder();</span><br><span class="line">builder.append(<span class="string">"123456789"</span>);</span><br><span class="line">builder.delete(<span class="number">2</span>, <span class="number">4</span>); <span class="comment">// 1256789</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="3-输入和输出"><a href="#3-输入和输出" class="headerlink" title="3. 输入和输出"></a>3. 输入和输出</h4><h5 id="3-1-控制台输入"><a href="#3-1-控制台输入" class="headerlink" title="3.1 控制台输入"></a>3.1 控制台输入</h5><p>构造一个 Scanner 对象，并与“标准输入流” System.in 关联。</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> java.util.Scanner;</span><br><span class="line">Scanner in = <span class="keyword">new</span> Scanner(System.in);</span><br></pre></td></tr></table></figure>
+
+<p>Scanner 对象常用的方法：</p>
+<ul>
+<li>输入的下一行：<code>String nextline()</code></li>
+<li>输入的下一个单词（以空格为分隔符）：<code>String next()</code></li>
+<li>数字：<code>int nextInt()</code></li>
+<li>浮点数：<code>double nextDouble()</code></li>
+<li>检测输入中是否还有其它单词：<code>boolean hasNext()</code></li>
+<li>检测输入中是否还有其它数字：<code>boolean hasNextInt()</code></li>
+<li>检测输入中是否还有其它浮点数：<code>boolean hasNextDouble()</code></li>
+</ul>
+<blockquote>
+<p>⚠️注意：当使用的类不是在基本 <em>java.lang</em> 包中时，就要引入。</p>
+</blockquote>
+<h5 id="3-2-格式化输出"><a href="#3-2-格式化输出" class="headerlink" title="3.2 格式化输出"></a>3.2 格式化输出</h5><p><code>f</code>浮点数，<code>s</code>字符串，<code>d</code>十进制整数</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">double</span> num = <span class="number">12345.6789</span>;</span><br><span class="line">System.out.printf(<span class="string">"num = %.2f\n"</span>, num); <span class="comment">// num = 12345.68</span></span><br><span class="line">System.out.printf(<span class="string">"%2$s is %1$,.2f"</span>, num, <span class="string">"num"</span>); <span class="comment">// num is 12,345.68</span></span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>常见的转义字符：</p>
+<ul>
+<li><code>\n</code>表示换行符</li>
+<li><code>\r</code>表示回车符</li>
+<li><code>\t</code>表示Tab</li>
+<li><code>\u###</code>表示一个Unicode编码的字符</li>
+</ul>
+</blockquote>
+<h4 id="4-空串与-null"><a href="#4-空串与-null" class="headerlink" title="4. 空串与 null"></a>4. 空串与 null</h4><p>空串<code>&quot;&quot;</code>是一个 Java 对象，其长度为 0 ，内容为空；而 null 没有任何对象。</p>
+<p>例：检查一个字符串既不为空串也不是 null</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">if</span>(str != <span class="keyword">null</span> &amp;&amp; str.length() != <span class="number">0</span>)</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>首先要检查 str 不为 null</p>
+</blockquote>
+<h2 id="流程控制"><a href="#流程控制" class="headerlink" title="流程控制"></a>流程控制</h2><h4 id="if-判断"><a href="#if-判断" class="headerlink" title="if 判断"></a>if 判断</h4><p>在判断<strong>浮点数</strong>相等时，不能直接用<code>==</code>，很不靠谱！而应该用差值小于某个临界值来判断。</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">double</span> a = <span class="number">1</span> - <span class="number">9.0</span> / <span class="number">10</span>; <span class="comment">//0.09999999999999998</span></span><br><span class="line"><span class="keyword">if</span>(Math.abs(a-<span class="number">0.1</span>)&lt;<span class="number">0.00001</span>)&#123;</span><br><span class="line">    System.out.println(<span class="string">"true"</span>);</span><br><span class="line">&#125;<span class="keyword">else</span>&#123;</span><br><span class="line">    System.out.println(<span class="string">"false"</span>);</span><br><span class="line">&#125;</span><br><span class="line">----</span><br><span class="line"><span class="keyword">true</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="增强-for-循环"><a href="#增强-for-循环" class="headerlink" title="增强 for 循环"></a>增强 for 循环</h4><p>collection 集合表达式必须为<strong>数组</strong>或<strong>实现了<code>Iterable</code>接口的类对象</strong>。格式：</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">for</span> (variable : collection) statement</span><br></pre></td></tr></table></figure>
+
+<h4 id="switch-（少用）"><a href="#switch-（少用）" class="headerlink" title="switch （少用）"></a>switch （少用）</h4><ul>
+<li>case语句没有花括号<code>{}</code></li>
+<li>不要漏写 break，不写 break会执行下一个 case</li>
+<li>执行相同的内容可以把 case 写在一起</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">String a = <span class="string">"world"</span>;</span><br><span class="line"><span class="keyword">switch</span>(a)&#123;</span><br><span class="line">    <span class="keyword">case</span> <span class="string">"hello"</span>:</span><br><span class="line">        System.out.println(<span class="string">"It's hello."</span>);</span><br><span class="line">        <span class="keyword">break</span>;</span><br><span class="line">    <span class="keyword">case</span> <span class="string">"world"</span>:</span><br><span class="line">    <span class="keyword">case</span> <span class="string">"hello world"</span>:</span><br><span class="line">        System.out.println(<span class="string">"It's world or hello world"</span>);</span><br><span class="line">        <span class="keyword">break</span>;</span><br><span class="line">    <span class="keyword">default</span>:</span><br><span class="line">        System.out.println(<span class="string">"It's other"</span>);</span><br><span class="line">        <span class="keyword">break</span>;</span><br><span class="line">&#125;</span><br><span class="line">----</span><br><span class="line">It<span class="string">'s world or hello world</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="数组"><a href="#数组" class="headerlink" title="数组"></a>数组</h2><p>创建数组时，数字数组默认为 0；boolean 数组默认为 false；对象数组默认为 null。</p>
+<p>数组不能改变大小，若超出预设的范围，则会抛异常：</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">int</span>[] a = <span class="keyword">new</span> <span class="keyword">int</span>[<span class="number">100</span>];</span><br><span class="line">System.out.println(a[<span class="number">100</span>]); <span class="comment">// java.lang.ArrayIndexOutOfBoundsException</span></span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>若想扩展数组大小，应使用数组列表（ArrayList）结构。</p>
+</blockquote>
+<h4 id="数组拷贝"><a href="#数组拷贝" class="headerlink" title="数组拷贝"></a>数组拷贝</h4><p>变量名的拷贝，引用的数组地址还是同一个：</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">int</span>[] odd = &#123;<span class="number">2</span>, <span class="number">3</span>, <span class="number">5</span>, <span class="number">7</span>, <span class="number">11</span>, <span class="number">13</span>&#125;;</span><br><span class="line"><span class="keyword">int</span>[] oddNumber = odd;</span><br><span class="line">oddNumber[<span class="number">1</span>] = <span class="number">17</span>; <span class="comment">// odd[1] = 17</span></span><br></pre></td></tr></table></figure>
+
+<p>将一个数组的值拷贝到另一个数组中，得使用<code>Arrays.copyOf()</code>：</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">int</span>[] odd = &#123;<span class="number">2</span>, <span class="number">3</span>, <span class="number">5</span>, <span class="number">7</span>, <span class="number">11</span>, <span class="number">13</span>&#125;;</span><br><span class="line"><span class="keyword">int</span>[] oddNumber = Arrays.copyOf(odd, odd.length-<span class="number">2</span>); <span class="comment">// &#123;2, 3, 5, 7&#125;</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="数组排序"><a href="#数组排序" class="headerlink" title="数组排序"></a>数组排序</h4><p>数值型数组排序使用<code>Arrays.sort()</code>方法。</p>
+<h4 id="java-util-Arrays-类的-API"><a href="#java-util-Arrays-类的-API" class="headerlink" title="java.util.Arrays 类的 API"></a>java.util.Arrays 类的 API</h4><p>（1）返回数组元素：<code>static String toString(type[] a)</code></p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">int</span>[] odd = &#123;<span class="number">2</span>, <span class="number">3</span>, <span class="number">5</span>, <span class="number">7</span>, <span class="number">11</span>, <span class="number">13</span>&#125;;</span><br><span class="line">System.out.println(Arrays.toString(odd)); <span class="comment">// [2, 3, 5, 7, 11, 13]</span></span><br></pre></td></tr></table></figure>
+
+<p>（2）拷贝数组：上面有案例，<code>static type copyOf(type[] a, int length)</code></p>
+<p>（3）指定拷贝数组区间：<code>static type copyOfRange(type[] a, int start, int end)</code></p>
+<p>截取的范围是<code>[start, end)</code></p>
+<p>（4）格式化数组元素均为某值：<code>static void fill(type[] a, type v)</code></p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">int</span>[] odd = &#123;<span class="number">2</span>, <span class="number">3</span>, <span class="number">5</span>, <span class="number">7</span>, <span class="number">11</span>, <span class="number">13</span>&#125;;</span><br><span class="line">Arrays.fill(odd, <span class="number">0</span>);</span><br><span class="line">System.out.println(Arrays.toString(odd)); <span class="comment">// [0, 0, 0, 0, 0, 0]</span></span><br></pre></td></tr></table></figure>
+
+<p>（5）两个数字相等：<code>static boolean equals(type[] a, type[] b)</code></p>
+<p>数组大小相等，且元素对应相等，则返回 true。</p>
+<h4 id="二维数组"><a href="#二维数组" class="headerlink" title="二维数组"></a>二维数组</h4><p>快速打印一个二维数组可以使用<code>Arrays.deepToString()</code>方法：</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">int</span>[][] a = &#123;</span><br><span class="line">  &#123;<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>&#125;,</span><br><span class="line">  &#123;<span class="number">6</span>, <span class="number">7</span>, <span class="number">8</span>, <span class="number">9</span>, <span class="number">10</span>&#125;,</span><br><span class="line">  &#123;<span class="number">11</span>, <span class="number">12</span>, <span class="number">13</span>, <span class="number">14</span>, <span class="number">15</span>&#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line">System.out.println(Arrays.deepToString(a));</span><br><span class="line">----</span><br><span class="line">[[<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>], [<span class="number">6</span>, <span class="number">7</span>, <span class="number">8</span>, <span class="number">9</span>, <span class="number">10</span>], [<span class="number">11</span>, <span class="number">12</span>, <span class="number">13</span>, <span class="number">14</span>, <span class="number">15</span>]]</span><br></pre></td></tr></table></figure>
+
+<h4 id="练习"><a href="#练习" class="headerlink" title="练习"></a>练习</h4><p>（1）从 49 个数值中抽取 6 个</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> java.util.Arrays;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Random6In49</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span></span>&#123;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">int</span> n = <span class="number">49</span>;</span><br><span class="line">        <span class="keyword">int</span>[] jackpot = <span class="keyword">new</span> <span class="keyword">int</span>[n];</span><br><span class="line">        <span class="keyword">for</span>(<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; jackpot.length; i++)</span><br><span class="line">            jackpot[i] = i + <span class="number">1</span>;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">int</span>[] winner = <span class="keyword">new</span> <span class="keyword">int</span>[<span class="number">6</span>];</span><br><span class="line">        <span class="keyword">for</span>(<span class="keyword">int</span> j = <span class="number">0</span>; j &lt; <span class="number">6</span>; j++)&#123;</span><br><span class="line">            <span class="keyword">int</span> ranIndex = (<span class="keyword">int</span>)(Math.random() * n);</span><br><span class="line">            winner[j] = jackpot[ranIndex];</span><br><span class="line">            jackpot[ranIndex] = jackpot[n-<span class="number">1</span>];</span><br><span class="line">            n--;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        System.out.println(Arrays.toString(winner)); <span class="comment">// [35, 38, 40, 8, 44, 47]</span></span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Java/" rel="tag"># Java</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-next post-nav-item">
+                <a href="/2020/04/13/Python-%E6%93%8D%E4%BD%9C-PostgreSQL/" rel="next" title="Python 操作 PostgreSQL">
+                  <i class="fa fa-chevron-left"></i> Python 操作 PostgreSQL
+                </a>
+            </div>
+
+            <span class="post-nav-divider"></span>
+
+            <div class="post-nav-prev post-nav-item">
+                <a href="/2020/04/22/Java-%E7%B1%BB%E4%B8%8E%E5%AF%B9%E8%B1%A1/" rel="prev" title="Java 类与对象">
+                  Java 类与对象 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#基本变量类型"><span class="nav-number">1.</span> <span class="nav-text">基本变量类型</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-整型"><span class="nav-number">1.0.1.</span> <span class="nav-text">1. 整型</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-浮点型"><span class="nav-number">1.0.2.</span> <span class="nav-text">2. 浮点型</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-5-BigInteger-和-BigDecimal-类"><span class="nav-number">1.0.3.</span> <span class="nav-text">2.5 BigInteger 和 BigDecimal 类</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-字符型-char"><span class="nav-number">1.0.4.</span> <span class="nav-text">3. 字符型 char</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#4-布尔型"><span class="nav-number">1.0.5.</span> <span class="nav-text">4. 布尔型</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#5-常量"><span class="nav-number">1.0.6.</span> <span class="nav-text">5. 常量</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#运算符"><span class="nav-number">2.</span> <span class="nav-text">运算符</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-数学函数-Math"><span class="nav-number">2.0.1.</span> <span class="nav-text">1. 数学函数 Math</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-数值类型转换"><span class="nav-number">2.0.2.</span> <span class="nav-text">2. 数值类型转换</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-三元运算"><span class="nav-number">2.0.3.</span> <span class="nav-text">3. 三元运算</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#字符串-String"><span class="nav-number">3.</span> <span class="nav-text">字符串 String</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-String-API"><span class="nav-number">3.0.1.</span> <span class="nav-text">1. String API</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-StringBuilder-类"><span class="nav-number">3.0.2.</span> <span class="nav-text">2. StringBuilder 类</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-输入和输出"><span class="nav-number">3.0.3.</span> <span class="nav-text">3. 输入和输出</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#3-1-控制台输入"><span class="nav-number">3.0.3.1.</span> <span class="nav-text">3.1 控制台输入</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#3-2-格式化输出"><span class="nav-number">3.0.3.2.</span> <span class="nav-text">3.2 格式化输出</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#4-空串与-null"><span class="nav-number">3.0.4.</span> <span class="nav-text">4. 空串与 null</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#流程控制"><span class="nav-number">4.</span> <span class="nav-text">流程控制</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#if-判断"><span class="nav-number">4.0.1.</span> <span class="nav-text">if 判断</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#增强-for-循环"><span class="nav-number">4.0.2.</span> <span class="nav-text">增强 for 循环</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#switch-（少用）"><span class="nav-number">4.0.3.</span> <span class="nav-text">switch （少用）</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#数组"><span class="nav-number">5.</span> <span class="nav-text">数组</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#数组拷贝"><span class="nav-number">5.0.1.</span> <span class="nav-text">数组拷贝</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#数组排序"><span class="nav-number">5.0.2.</span> <span class="nav-text">数组排序</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#java-util-Arrays-类的-API"><span class="nav-number">5.0.3.</span> <span class="nav-text">java.util.Arrays 类的 API</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#二维数组"><span class="nav-number">5.0.4.</span> <span class="nav-text">二维数组</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#练习"><span class="nav-number">5.0.5.</span> <span class="nav-text">练习</span></a></li></ol></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <img class="site-author-image" itemprop="image" alt="MIN MIN"
+    src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">MIN MIN</p>
+  <div class="site-description" itemprop="description">即使最后没有人为你鼓掌，也要优雅地谢幕，感谢自己的认真付出。</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">63</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">13</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+        <span class="site-state-item-count">33</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/ashermin" title="GitHub &amp;rarr; https:&#x2F;&#x2F;github.com&#x2F;ashermin" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+<div class="copyright">
+  
+  &copy; 2019 – 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user-circle"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">MIN MIN</span>
+</div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+<script src="/js/utils.js"></script>
+<script src="/js/schemes/pisces.js"></script>
+<script src="/js/next-boot.js"></script>
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+</body>
+</html>

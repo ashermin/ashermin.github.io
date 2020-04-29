@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.0.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/avatar.jpg">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/avatar.jpg">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/avatar.jpg">
+  <link rel="mask-icon" href="/images/avatar.jpg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+
+
+<script id="hexo-configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '7.4.2',
+    exturl: false,
+    sidebar: {"position":"left","width":260,"display":"post","offset":12,"onmobile":false},
+    copycode: {"enable":true,"show_result":true,"style":"default"},
+    back2top: {"enable":true,"sidebar":false,"scrollpercent":true},
+    bookmark: {"enable":false,"color":"#222","save":"auto"},
+    fancybox: false,
+    mediumzoom: false,
+    lazyload: false,
+    pangu: false,
+    algolia: {
+      appID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    localsearch: {"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},
+    path: '',
+    motion: {"enable":false,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    translation: {
+      copy_button: '复制',
+      copy_success: '复制成功',
+      copy_failure: '复制失败'
+    },
+    sidebarPadding: 40
+  };
+</script>
+
+  <meta name="description" content="类的定义和使用预定义的类对于时间，标准 Java 类库包含两个类：Date 类表示时间，LocalDate 类表示日期。LocalDate 类的 API： LocalDate.now()：当前日期，如 2020-04-22  LocalDate.of(int year, int month, int day)：指定日期  int getYear()：年  int getMonthValue()：月">
+<meta name="keywords" content="Java">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Java 类与对象">
+<meta property="og:url" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2020&#x2F;04&#x2F;22&#x2F;Java-%E7%B1%BB%E4%B8%8E%E5%AF%B9%E8%B1%A1&#x2F;index.html">
+<meta property="og:site_name" content="MIN MIN">
+<meta property="og:description" content="类的定义和使用预定义的类对于时间，标准 Java 类库包含两个类：Date 类表示时间，LocalDate 类表示日期。LocalDate 类的 API： LocalDate.now()：当前日期，如 2020-04-22  LocalDate.of(int year, int month, int day)：指定日期  int getYear()：年  int getMonthValue()：月">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2020-04-29T12:37:38.785Z">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://yoursite.com/2020/04/22/Java-%E7%B1%BB%E4%B8%8E%E5%AF%B9%E8%B1%A1/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true,
+    isPage: false,
+    isArchive: false
+  };
+</script>
+
+  <title>Java 类与对象 | MIN MIN</title>
+  
+
+
+  <script>
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?cad2a7930afd095772e571e6eab3628f";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+  <!--  -->
+<link href='//fonts.googleapis.com/css?family=Kaushan+Script' rel='stylesheet' type='text/css'>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">MIN MIN</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+        <p class="site-subtitle">BLOG</p>
+  </div>
+
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档</a>
+
+  </li>
+  </ul>
+
+</nav>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/04/22/Java-%E7%B1%BB%E4%B8%8E%E5%AF%B9%E8%B1%A1/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="MIN MIN">
+      <meta itemprop="description" content="即使最后没有人为你鼓掌，也要优雅地谢幕，感谢自己的认真付出。">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="MIN MIN">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Java 类与对象
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-04-22 20:58:13" itemprop="dateCreated datePublished" datetime="2020-04-22T20:58:13+08:00">2020-04-22</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-04-29 20:37:38" itemprop="dateModified" datetime="2020-04-29T20:37:38+08:00">2020-04-29</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Java/" itemprop="url" rel="index">
+                    <span itemprop="name">Java</span>
+                  </a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h2 id="类的定义和使用"><a href="#类的定义和使用" class="headerlink" title="类的定义和使用"></a>类的定义和使用</h2><h4 id="预定义的类"><a href="#预定义的类" class="headerlink" title="预定义的类"></a>预定义的类</h4><p>对于时间，标准 Java 类库包含两个类：Date 类表示时间，LocalDate 类表示日期。</p><p>LocalDate 类的 API：</p><ul>
+<li><p><code>LocalDate.now()</code>：当前日期，如 2020-04-22</p>
+</li>
+<li><p><code>LocalDate.of(int year, int month, int day)</code>：指定日期</p>
+</li>
+<li><p><code>int getYear()</code>：年</p>
+</li>
+<li><p><code>int getMonthValue()</code>：月</p>
+</li>
+<li><p><code>int getDayOfMonth()</code>：日</p>
+</li>
+<li><p><code>DayOfWeek getDayOfWeek()</code>：星期几</p>
+<ul>
+<li><code>getValue()</code>：1～7，表示星期一～星期日</li>
+</ul>
+</li>
+<li><p><code>LocalDate plusDays(int n)</code>：加 n 天</p>
+</li>
+<li><p><code>LocalDate minusDays(int n)</code>：减 n 天</p>
+</li>
+</ul><a id="more"></a>
+
+
+<h4 id="自定义类"><a href="#自定义类" class="headerlink" title="自定义类"></a>自定义类</h4><p>一个源文件中，只能有一个公有类，但是可以有无限个非公有类。</p>
+<p>一个方法中，隐式参数用<code>this</code>表示，就是在方法前面（一般在类的开头那）已经定义好的对象。</p>
+<h2 id="静态属性和方法"><a href="#静态属性和方法" class="headerlink" title="静态属性和方法"></a>静态属性和方法</h2><p>静态就是<code>static</code>，它属于类且不属于类对象的变量和函数。</p>
+<p>若将某个字段定义为<code>static</code>静态域，则这个类所属的对象实例们将共享这一个静态域。即静态域属于类，不属于对象。</p>
+<p>静态方法操作的是类，它不能操作对象。若某对象调用静态方法，那么计算的结果与这个对象无关。</p>
+<h2 id="包管理-amp-访问修饰符"><a href="#包管理-amp-访问修饰符" class="headerlink" title="包管理 &amp; 访问修饰符"></a>包管理 &amp; 访问修饰符</h2><p>要将一个类放入包，需将包的名字放在源文件的开头，如：</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> com.horstiann.corejava;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Employee</span></span>&#123;</span><br><span class="line">  ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>Java 中 4 个访问修饰符的范围：</p>
+<ul>
+<li>public：所有类</li>
+<li>protected：本包和所有子类可见<ul>
+<li>适用不提供一般途径，而应在子类中重新定义的方法</li>
+</ul>
+</li>
+<li>默认：本包可见</li>
+<li>private：仅本类可见</li>
+</ul>
+<h2 id="继承-amp-多态"><a href="#继承-amp-多态" class="headerlink" title="继承 &amp; 多态"></a>继承 &amp; 多态</h2><p>如果子类要引用超类的方法，就得使用<code>super</code>关键词，如<code>super.getName()</code>。</p>
+<p>子类可以对超类的方法进行覆盖重写。如：超类 Employee 有<code>getSalary()</code>方法来得到每月工资，子类 Manager 可以重写这个方法，加上年终奖：</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">getSalary</span><span class="params">()</span> </span>&#123;</span><br><span class="line">  <span class="keyword">int</span> salary = <span class="keyword">super</span>.getSalary();</span><br><span class="line">  <span class="keyword">return</span> salary + <span class="keyword">this</span>.bonus;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>Manager 是 Employee 的子类，这里的 employees 属于 Manager 类。</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">Manager[] managers = <span class="keyword">new</span> Manager[<span class="number">10</span>];</span><br><span class="line">Employee[] employees = managers;</span><br></pre></td></tr></table></figure>
+
+<p>不允许扩展的类为 final 类，它不能再创建子类了，它的方法为 final，但是不包括域。</p>
+<blockquote>
+<p>⚠️注意：除非所有继承的方法都有意义，否则不要使用继承！</p>
+</blockquote>
+<h4 id="抽象类"><a href="#抽象类" class="headerlink" title="抽象类"></a>抽象类</h4><p>抽象类不能被实例化，但可以创建子类对象：</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">Person p = <span class="keyword">new</span> Student(<span class="string">"zhangsan"</span>);</span><br></pre></td></tr></table></figure>
+
+<p>抽象类只能被继承，强迫子类实现其抽象方法，且方法没有代码：</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 抽象类 People</span></span><br><span class="line"><span class="keyword">abstract</span> <span class="class"><span class="keyword">class</span> <span class="title">People</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">abstract</span> <span class="keyword">void</span> <span class="title">cry</span><span class="params">()</span></span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Baby</span> <span class="keyword">extends</span> <span class="title">People</span></span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">cry</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        System.out.println(<span class="string">"wa, wa, wa..."</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="自定义类应覆盖-equals-hashCode-toString-方法"><a href="#自定义类应覆盖-equals-hashCode-toString-方法" class="headerlink" title="自定义类应覆盖 equals/hashCode/toString 方法"></a>自定义类应覆盖 equals/hashCode/toString 方法</h3><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">equals</span><span class="params">(Object o)</span> </span>&#123;</span><br><span class="line">  <span class="keyword">if</span> (<span class="keyword">this</span> == o) <span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line">  <span class="keyword">if</span> (o == <span class="keyword">null</span> || getClass() != o.getClass()) <span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line">  Employee employee = (Employee) o;</span><br><span class="line">  <span class="keyword">return</span> salary == employee.salary &amp;&amp;</span><br><span class="line">    Objects.equals(name, employee.name);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">hashCode</span><span class="params">()</span> </span>&#123;</span><br><span class="line">  <span class="keyword">return</span> Objects.hash(name, salary);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> String <span class="title">toString</span><span class="params">()</span> </span>&#123;</span><br><span class="line">  <span class="keyword">return</span> <span class="keyword">this</span>.name + <span class="string">":"</span> + <span class="keyword">this</span>.salary;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="泛型数组"><a href="#泛型数组" class="headerlink" title="泛型数组"></a>泛型数组</h3><p>泛型数组不需要制定数组的长度，若数组空间满了，则会自动创建一个更大的数组。</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">ArrayList&lt;Employee&gt; staff = <span class="keyword">new</span> ArrayList&lt;&gt;();</span><br><span class="line">ArrayList&lt;Employee&gt; staff = <span class="keyword">new</span> ArrayList&lt;&gt;(<span class="number">100</span>); <span class="comment">// 指定初始容量</span></span><br></pre></td></tr></table></figure>
+
+<p>若已经确定了元素的数量，可以在填充元素之前就设置好<code>ArrayList</code>的大小，可以大大提高效率：</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">final</span> <span class="keyword">int</span> N = <span class="number">10000000</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 没调用 ensureCapacity() 方法初始化 ArrayList 对象</span></span><br><span class="line">ArrayList&lt;String&gt; list1 = <span class="keyword">new</span> ArrayList&lt;&gt;();</span><br><span class="line"><span class="keyword">long</span> startTime1 = System.currentTimeMillis();</span><br><span class="line"><span class="keyword">for</span>(<span class="keyword">int</span> i = <span class="number">0</span>; i &lt;= N; i++)</span><br><span class="line">  list1.add(<span class="string">"Hello"</span>);</span><br><span class="line"><span class="keyword">long</span> endTime1 = System.currentTimeMillis();</span><br><span class="line">System.out.println(<span class="string">"没掉用ensureCapacity()方法所用时间："</span> + (endTime1-startTime1) + <span class="string">"ms"</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 调用 ensureCapacity() 方法初始化 ArrayList 对象</span></span><br><span class="line">ArrayList&lt;String&gt; list2 = <span class="keyword">new</span> ArrayList&lt;&gt;();</span><br><span class="line"><span class="keyword">long</span> startTime2 = System.currentTimeMillis();</span><br><span class="line">list2.ensureCapacity(N); <span class="comment">// 预先设置大小</span></span><br><span class="line"><span class="keyword">for</span>(<span class="keyword">int</span> i = <span class="number">0</span>; i &lt;= N; i++)</span><br><span class="line">  list2.add(<span class="string">"Hello"</span>);</span><br><span class="line"><span class="keyword">long</span> endTime2 = System.currentTimeMillis();</span><br><span class="line">System.out.println(<span class="string">"掉用ensureCapacity()方法所用时间："</span> + (endTime2-startTime2) + <span class="string">"ms"</span>);</span><br><span class="line">----</span><br><span class="line">没掉用ensureCapacity()方法所用时间：<span class="number">122</span>ms</span><br><span class="line">掉用ensureCapacity()方法所用时间：<span class="number">77</span>ms</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>若确定数组列表大小不再变化，可以调用<code>trimToSize()</code>来锁定当前数组大小，这样可以通过GC回收多余的存储空间。</p>
+</blockquote>
+<p>ArrayList 的常用函数：</p>
+<ul>
+<li><code>void set(int index, E obj)</code>：覆盖数组中已经存在的元素值</li>
+<li><code>E get(int index)</code>：得到指定位置的元素值</li>
+<li><code>void add(int index, E obj)</code>：添加值，向后移动元素（不适合大数值，大数值用链表）</li>
+<li><code>E remove(int index)</code>：删除值，后面的元素向前移动（被删除的元素又返回值返回）</li>
+</ul>
+<h2 id="对象包装"><a href="#对象包装" class="headerlink" title="对象包装"></a>对象包装</h2><p>字符串转为整型：</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">int</span> x = Integer.parseInt(<span class="string">"5"</span>);</span><br><span class="line">Integer y = Integer.valueOf(<span class="string">"5"</span>);</span><br></pre></td></tr></table></figure>
+
+<h2 id="参数无限量"><a href="#参数无限量" class="headerlink" title="参数无限量"></a>参数无限量</h2><p>一个方法可以装下无限量的参数。</p>
+<p>例：计算若干个数的最大值</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">GetMaxValue</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">double</span> max = getMax(<span class="number">2</span>, <span class="number">5</span>, <span class="number">11</span>, <span class="number">6</span>);</span><br><span class="line">        System.out.println(max); <span class="comment">// 11.0</span></span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">static</span> <span class="keyword">double</span> <span class="title">getMax</span><span class="params">(<span class="keyword">double</span>... values)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">double</span> maxValue = Double.NEGATIVE_INFINITY;</span><br><span class="line">        <span class="keyword">for</span>(<span class="keyword">double</span> value : values) &#123;</span><br><span class="line">            <span class="keyword">if</span>(value &gt; maxValue)</span><br><span class="line">                maxValue = value;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> maxValue;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="枚举"><a href="#枚举" class="headerlink" title="枚举"></a>枚举</h2><p>对于枚举类的比较，使用<code>==</code>，而不要使用<del><code>equals</code></del>，因为每个实例在 JVM 都是唯一的。</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">EnumTest</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        Subject s = Subject.Math;</span><br><span class="line">        <span class="keyword">if</span>(s == Subject.Math)</span><br><span class="line">            System.out.println(<span class="string">"数学"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">enum</span> Subject&#123;</span><br><span class="line">        Math, Chinese, English;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>枚举类的方法：</p>
+<ul>
+<li><code>name()</code>：返回枚举值的名字</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">String name = Subject.Chinese.name(); <span class="comment">// Chinese</span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><code>ordinal()</code>：返回定义的枚举值的顺序，从 0 开始</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">int</span> n = Subject.Chinese.ordinal(); <span class="comment">// 1</span></span><br></pre></td></tr></table></figure>
+
+<p>如果要指定枚举值的顺序，不因枚举值在类中顺序变换而变换，可以定义<code>private</code>构造方法来实现：</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">EnumTest</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        Subject s = Subject.Chinese;</span><br><span class="line">        <span class="keyword">if</span>(s.index == <span class="number">3</span>)</span><br><span class="line">            System.out.println(<span class="string">"语文"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">enum</span> Subject&#123;</span><br><span class="line">        Math(<span class="number">1</span>), Chinese(<span class="number">3</span>), English(<span class="number">2</span>);</span><br><span class="line"></span><br><span class="line">        <span class="keyword">public</span> <span class="keyword">final</span> <span class="keyword">int</span> index;</span><br><span class="line">        <span class="function"><span class="keyword">private</span> <span class="title">Subject</span><span class="params">(<span class="keyword">int</span> index)</span></span>&#123;</span><br><span class="line">            <span class="keyword">this</span>.index = index;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>枚举类比较适合在<code>switch</code>中使用：</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Main</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        Weekday day = Weekday.SUN;</span><br><span class="line">        <span class="keyword">switch</span>(day) &#123;</span><br><span class="line">        <span class="keyword">case</span> MON:</span><br><span class="line">        <span class="keyword">case</span> TUE:</span><br><span class="line">        <span class="keyword">case</span> WED:</span><br><span class="line">        <span class="keyword">case</span> THU:</span><br><span class="line">        <span class="keyword">case</span> FRI:</span><br><span class="line">            System.out.println(<span class="string">"Today is "</span> + day + <span class="string">". Work at office!"</span>);</span><br><span class="line">            <span class="keyword">break</span>;</span><br><span class="line">        <span class="keyword">case</span> SAT:</span><br><span class="line">        <span class="keyword">case</span> SUN:</span><br><span class="line">            System.out.println(<span class="string">"Today is "</span> + day + <span class="string">". Work at home!"</span>);</span><br><span class="line">            <span class="keyword">break</span>;</span><br><span class="line">        <span class="keyword">default</span>:</span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> RuntimeException(<span class="string">"cannot process "</span> + day);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">enum</span> Weekday &#123;</span><br><span class="line">    MON, TUE, WED, THU, FRI, SAT, SUN;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Java/" rel="tag"># Java</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-next post-nav-item">
+                <a href="/2020/04/17/Java%E7%9A%84%E5%9F%BA%E6%9C%AC%E7%A8%8B%E5%BA%8F%E7%BB%93%E6%9E%84/" rel="next" title="Java的基本程序结构">
+                  <i class="fa fa-chevron-left"></i> Java的基本程序结构
+                </a>
+            </div>
+
+            <span class="post-nav-divider"></span>
+
+            <div class="post-nav-prev post-nav-item">
+            </div>
+          </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#类的定义和使用"><span class="nav-number">1.</span> <span class="nav-text">类的定义和使用</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#预定义的类"><span class="nav-number">1.0.1.</span> <span class="nav-text">预定义的类</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#自定义类"><span class="nav-number">1.0.2.</span> <span class="nav-text">自定义类</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#静态属性和方法"><span class="nav-number">2.</span> <span class="nav-text">静态属性和方法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#包管理-amp-访问修饰符"><span class="nav-number">3.</span> <span class="nav-text">包管理 &amp; 访问修饰符</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#继承-amp-多态"><span class="nav-number">4.</span> <span class="nav-text">继承 &amp; 多态</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#抽象类"><span class="nav-number">4.0.1.</span> <span class="nav-text">抽象类</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#自定义类应覆盖-equals-hashCode-toString-方法"><span class="nav-number">4.1.</span> <span class="nav-text">自定义类应覆盖 equals/hashCode/toString 方法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#泛型数组"><span class="nav-number">4.2.</span> <span class="nav-text">泛型数组</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#对象包装"><span class="nav-number">5.</span> <span class="nav-text">对象包装</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#参数无限量"><span class="nav-number">6.</span> <span class="nav-text">参数无限量</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#枚举"><span class="nav-number">7.</span> <span class="nav-text">枚举</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <img class="site-author-image" itemprop="image" alt="MIN MIN"
+    src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">MIN MIN</p>
+  <div class="site-description" itemprop="description">即使最后没有人为你鼓掌，也要优雅地谢幕，感谢自己的认真付出。</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">63</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">13</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+        <span class="site-state-item-count">33</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/ashermin" title="GitHub &amp;rarr; https:&#x2F;&#x2F;github.com&#x2F;ashermin" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+<div class="copyright">
+  
+  &copy; 2019 – 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user-circle"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">MIN MIN</span>
+</div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+<script src="/js/utils.js"></script>
+<script src="/js/schemes/pisces.js"></script>
+<script src="/js/next-boot.js"></script>
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+</body>
+</html>
