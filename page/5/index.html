@@ -191,6 +191,89 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/11/30/CentOS-7%E5%AE%89%E8%A3%85MySQL/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="MIN MIN">
+      <meta itemprop="description" content="即使最后没有人为你鼓掌，也要优雅地谢幕，感谢自己的认真付出。">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="MIN MIN">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          
+            <a href="/2019/11/30/CentOS-7%E5%AE%89%E8%A3%85MySQL/" class="post-title-link" itemprop="url">CentOS 7 安装 MySQL</a>
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2019-11-30 23:30:07" itemprop="dateCreated datePublished" datetime="2019-11-30T23:30:07+08:00">2019-11-30</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-04-11 10:47:36" itemprop="dateModified" datetime="2020-04-11T10:47:36+08:00">2020-04-11</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Linux/" itemprop="url" rel="index">
+                    <span itemprop="name">Linux</span>
+                  </a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h4 id="检查系统上是否已经装了MySQL"><a href="#检查系统上是否已经装了MySQL" class="headerlink" title="检查系统上是否已经装了MySQL"></a>检查系统上是否已经装了MySQL</h4><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> rpm -qa | grep mysql</span></span><br></pre></td></tr></table></figure><p>如果有，则卸载它：</p><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> sudo rpm -e --nodeps xxx</span></span><br></pre></td></tr></table></figure><h4 id="安装MySQL"><a href="#安装MySQL" class="headerlink" title="安装MySQL"></a>安装MySQL</h4><p>MySQL被Oracle收购后，CentOS的镜像仓库中提供的默认的数据库也变为了MariaDB，为了解决这个问题，需要先下载MySQL的repo源：</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2019/11/30/CentOS-7%E5%AE%89%E8%A3%85MySQL/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+        
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/11/30/Hive%E7%8E%AF%E5%A2%83%E9%83%A8%E7%BD%B2/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -949,105 +1032,6 @@
   
   
 
-        
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/11/20/Maven%E5%9F%BA%E7%A1%80/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.jpg">
-      <meta itemprop="name" content="MIN MIN">
-      <meta itemprop="description" content="即使最后没有人为你鼓掌，也要优雅地谢幕，感谢自己的认真付出。">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="MIN MIN">
-    </span>
-      <header class="post-header">
-        <h1 class="post-title" itemprop="name headline">
-          
-            <a href="/2019/11/20/Maven%E5%9F%BA%E7%A1%80/" class="post-title-link" itemprop="url">Maven基础</a>
-        </h1>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2019-11-20 20:22:43" itemprop="dateCreated datePublished" datetime="2019-11-20T20:22:43+08:00">2019-11-20</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-01-01 12:20:38" itemprop="dateModified" datetime="2020-01-01T12:20:38+08:00">2020-01-01</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Maven/" itemprop="url" rel="index">
-                    <span itemprop="name">Maven</span>
-                  </a>
-                </span>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h3 id="Maven介绍"><a href="#Maven介绍" class="headerlink" title="Maven介绍"></a>Maven介绍</h3><p>Maven是一个Java项目管理和构建工具，其目录结构都是约定好的标准结构，所以不能随意修改目录结构：</p><ul>
-<li>src<ul>
-<li>main<ul>
-<li>java——Java源码</li>
-<li>resources——资源文件</li>
-</ul>
-</li>
-<li>test<ul>
-<li>java——Java测试文件</li>
-<li>resources——测试资源文件</li>
-</ul>
-</li>
-</ul>
-</li>
-<li>target——编译输出</li>
-<li>pom.xml——项目描述文件</li>
-</ul>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2019/11/20/Maven%E5%9F%BA%E7%A1%80/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
   </div>
 
   
@@ -1098,7 +1082,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">63</span>
+          <span class="site-state-item-count">64</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
